@@ -19,13 +19,13 @@ cables
 ------------
 
 .. automodule:: stewbeet.contrib.simplenergy.cables
-   :members: ENERGY_CABLE_FACES, ENERGY_CABLE_MODELS_FOLDER, ITEM_CABLE_SIDES, ITEM_CABLE_TEXTURES, copy_block_texture, energy_cable_variant, energy_cables_models, item_cables_models, model_dispatch, register_servo_models, register_servo_textures, servo_mechanisms_models, servo_toggle, write_cable_update, write_energy_cable_variants, write_item_cable_variant, write_servo_functions
+   :members: ENERGY_CABLE_SIDES, ENERGY_CABLE_TILES, ITEM_CABLE_SIDES, ITEM_CABLE_TEXTURES, EnergyCableSide, copy_block_texture, energy_cable_centre_face, energy_cable_elements, energy_cable_variant, energy_cables_models, item_cables_models, model_dispatch, register_servo_models, register_servo_textures, servo_mechanisms_models, servo_toggle, write_cable_update, write_item_cable_variant, write_servo_functions
 
 energy_lib_calls
 --------------------------------
 
 .. automodule:: stewbeet.contrib.simplenergy.energy_lib_calls
-   :members: insert_lib_calls, write_energy_calls
+   :members: insert_lib_calls
 
 gui
 ------

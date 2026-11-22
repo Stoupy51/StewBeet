@@ -31,12 +31,12 @@
     aria-haspopup="true"
     aria-expanded="false"
     data-url="https://stoupy51.github.io/stewbeet/switcher.json"
-    data-current="3.15.1"
+    data-current="3.16.0"
   >
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
       <path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"></path>
     </svg>
-    <span>3.15.1</span>
+    <span>3.16.0</span>
   </button>
   <ul role="menu" aria-hidden="true"></ul>
 </div>
@@ -334,10 +334,81 @@
 </section>
 <section id="module-stewbeet.contrib.simplenergy.cables">
 <span id="cables"></span><h2>cables<a class="headerlink" href="#module-stewbeet.contrib.simplenergy.cables" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.EnergyCableSide">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">EnergyCableSide</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">letter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">bit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">face</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">u_axis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">arm_from</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">arm_to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A side an energy cable connects by, and the arm its model draws there when connected.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.EnergyCableSide.letter">
+<span class="sig-name descname"><span class="pre">letter</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide.letter" title="Link to this definition">#</a></dt>
+<dd><p>Its letter in the variant names.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.EnergyCableSide.bit">
+<span class="sig-name descname"><span class="pre">bit</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide.bit" title="Link to this definition">#</a></dt>
+<dd><p>Its bit in the <code class="docutils literal notranslate"><span class="pre">energy.data</span></code> model score.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.EnergyCableSide.face">
+<span class="sig-name descname"><span class="pre">face</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide.face" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.EnergyCableSide.axis">
+<span class="sig-name descname"><span class="pre">axis</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide.axis" title="Link to this definition">#</a></dt>
+<dd><p>The model axis it points along, 0 for x.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.EnergyCableSide.u_axis">
+<span class="sig-name descname"><span class="pre">u_axis</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide.u_axis" title="Link to this definition">#</a></dt>
+<dd><p>The model axis the texture’s u coordinate follows on its face.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.EnergyCableSide.edges">
+<span class="sig-name descname"><span class="pre">edges</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide.edges" title="Link to this definition">#</a></dt>
+<dd><p>The letters of the sides at the top, right, bottom and left edges of its face.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.EnergyCableSide.arm_from">
+<span class="sig-name descname"><span class="pre">arm_from</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide.arm_from" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.EnergyCableSide.arm_to">
+<span class="sig-name descname"><span class="pre">arm_to</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide.arm_to" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py data">
-<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.ENERGY_CABLE_FACES">
-<span class="sig-name descname"><span class="pre">ENERGY_CABLE_FACES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(('u',</span> <span class="pre">2),</span> <span class="pre">('d',</span> <span class="pre">1),</span> <span class="pre">('n',</span> <span class="pre">4),</span> <span class="pre">('s',</span> <span class="pre">8),</span> <span class="pre">('e',</span> <span class="pre">32),</span> <span class="pre">('w',</span> <span class="pre">16))</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.ENERGY_CABLE_FACES" title="Link to this definition">#</a></dt>
-<dd><p>Each face of an energy cable in the order its variant name lists them, and its bit in the <code class="docutils literal notranslate"><span class="pre">energy.data</span></code> model score.</p>
+<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.ENERGY_CABLE_SIDES">
+<span class="sig-name descname"><span class="pre">ENERGY_CABLE_SIDES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide" title="stewbeet.contrib.simplenergy.cables.EnergyCableSide"><span class="pre">EnergyCableSide</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(EnergyCableSide(letter='u',</span> <span class="pre">bit=2,</span> <span class="pre">face='up',</span> <span class="pre">axis=1,</span> <span class="pre">u_axis=0,</span> <span class="pre">edges='nesw',</span> <span class="pre">arm_from=[4,</span> <span class="pre">12,</span> <span class="pre">4],</span> <span class="pre">arm_to=[12,</span> <span class="pre">16,</span> <span class="pre">12]),</span> <span class="pre">EnergyCableSide(letter='d',</span> <span class="pre">bit=1,</span> <span class="pre">face='down',</span> <span class="pre">axis=1,</span> <span class="pre">u_axis=0,</span> <span class="pre">edges='senw',</span> <span class="pre">arm_from=[4,</span> <span class="pre">-4,</span> <span class="pre">4],</span> <span class="pre">arm_to=[12,</span> <span class="pre">4,</span> <span class="pre">12]),</span> <span class="pre">EnergyCableSide(letter='n',</span> <span class="pre">bit=4,</span> <span class="pre">face='north',</span> <span class="pre">axis=2,</span> <span class="pre">u_axis=0,</span> <span class="pre">edges='uwde',</span> <span class="pre">arm_from=[4,</span> <span class="pre">4,</span> <span class="pre">0],</span> <span class="pre">arm_to=[12,</span> <span class="pre">12,</span> <span class="pre">4]),</span> <span class="pre">EnergyCableSide(letter='s',</span> <span class="pre">bit=8,</span> <span class="pre">face='south',</span> <span class="pre">axis=2,</span> <span class="pre">u_axis=0,</span> <span class="pre">edges='uedw',</span> <span class="pre">arm_from=[4,</span> <span class="pre">4,</span> <span class="pre">12],</span> <span class="pre">arm_to=[12,</span> <span class="pre">12,</span> <span class="pre">16]),</span> <span class="pre">EnergyCableSide(letter='e',</span> <span class="pre">bit=32,</span> <span class="pre">face='east',</span> <span class="pre">axis=0,</span> <span class="pre">u_axis=2,</span> <span class="pre">edges='unds',</span> <span class="pre">arm_from=[12,</span> <span class="pre">4,</span> <span class="pre">4],</span> <span class="pre">arm_to=[16,</span> <span class="pre">12,</span> <span class="pre">12]),</span> <span class="pre">EnergyCableSide(letter='w',</span> <span class="pre">bit=16,</span> <span class="pre">face='west',</span> <span class="pre">axis=0,</span> <span class="pre">u_axis=2,</span> <span class="pre">edges='usdn',</span> <span class="pre">arm_from=[0,</span> <span class="pre">4,</span> <span class="pre">4],</span> <span class="pre">arm_to=[4,</span> <span class="pre">12,</span> <span class="pre">12]))</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.ENERGY_CABLE_SIDES" title="Link to this definition">#</a></dt>
+<dd><p>The sides of an energy cable in the order its variant names list them. The down arm reaches 4 pixels lower.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.ENERGY_CABLE_TILES">
+<span class="sig-name descname"><span class="pre">ENERGY_CABLE_TILES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'0000':</span> <span class="pre">[12,</span> <span class="pre">12,</span> <span class="pre">16,</span> <span class="pre">16],</span> <span class="pre">'0011':</span> <span class="pre">[8,</span> <span class="pre">8,</span> <span class="pre">12,</span> <span class="pre">12],</span> <span class="pre">'0111':</span> <span class="pre">[12,</span> <span class="pre">8,</span> <span class="pre">16,</span> <span class="pre">12],</span> <span class="pre">'1000':</span> <span class="pre">[12,</span> <span class="pre">1,</span> <span class="pre">16,</span> <span class="pre">5],</span> <span class="pre">'1010':</span> <span class="pre">[12,</span> <span class="pre">1,</span> <span class="pre">16,</span> <span class="pre">5],</span> <span class="pre">'1111':</span> <span class="pre">[8,</span> <span class="pre">12,</span> <span class="pre">12,</span> <span class="pre">16]}</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.ENERGY_CABLE_TILES" title="Link to this definition">#</a></dt>
+<dd><p>The texture tile of a centre face, by which of its top, right, bottom and left edges meet an arm, before rotation.</p>
 </dd></dl>
 
 <dl class="py data">
@@ -355,9 +426,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.energy_cables_models">
 <span class="sig-name descname"><span class="pre">energy_cables_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.energy_cables_models" title="Link to this definition">#</a></dt>
-<dd><p>Setup energy cables models and functions for SimplEnergy.
-# TODO: Cables connected to solar panels do not looks normal, the face connected to the solar panel is missing therefore we can see a hole. Fix it.
-<a class="reference external" href="https://media.discordapp.net/attachments/1573002195358585043/1573002195690070187/image.png?ex=6b006bf4&amp;is=6aff1a74&amp;hm=cc581679b569afbfb8136c91d5be5fc170fd88a82a28f18e5dca566519e7ea12&amp;format=webp&amp;quality=lossless&amp;width=1536&amp;height=922">https://media.discordapp.net/attachments/1573002195358585043/1573002195690070187/image.png?ex=6b006bf4&amp;is=6aff1a74&amp;hm=cc581679b569afbfb8136c91d5be5fc170fd88a82a28f18e5dca566519e7ea12&amp;format=webp&amp;quality=lossless&amp;width=1536&amp;height=922</a></p>
+<dd><p>Setup energy cables models and functions for SimplEnergy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>cables</strong> – List of cables to setup. (e.g. [“simple_cable”, “advanced_cable”, “elite_cable”])</p>
@@ -366,15 +435,37 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.write_energy_cable_variants">
-<span class="sig-name descname"><span class="pre">write_energy_cable_variants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.write_energy_cable_variants" title="Link to this definition">#</a></dt>
-<dd><p>Write the cable’s model of every connection variant, from the shapes under <code class="docutils literal notranslate"><span class="pre">ENERGY_CABLE_MODELS_FOLDER</span></code>.</p>
+<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.energy_cable_elements">
+<span class="sig-name descname"><span class="pre">energy_cable_elements</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">JsonDict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.energy_cable_elements" title="Link to this definition">#</a></dt>
+<dd><p>The model elements of an energy cable connected on the sides the bits of <code class="docutils literal notranslate"><span class="pre">i</span></code> set: its centre, and one arm per connection.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.energy_cable_centre_face">
+<span class="sig-name descname"><span class="pre">energy_cable_centre_face</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">JsonDict</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.energy_cable_centre_face" title="Link to this definition">#</a></dt>
+<dd><p>The face of the cable’s centre whose top, right, bottom and left edges meet an arm where <code class="docutils literal notranslate"><span class="pre">edges</span></code> holds a 1.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">energy_cable_centre_face</span><span class="p">(</span><span class="s2">"0110"</span><span class="p">)</span>
+<span class="go">{'uv': [8, 8, 12, 12], 'rotation': 270, 'texture': '#0'}</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.cables.energy_cable_variant">
 <span class="sig-name descname"><span class="pre">energy_cable_variant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/cables.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.cables.energy_cable_variant" title="Link to this definition">#</a></dt>
-<dd><p>The variant model of an energy cable connected on the faces the bits of <code class="docutils literal notranslate"><span class="pre">i</span></code> set.</p>
+<dd><p>The variant model of an energy cable connected on the sides the bits of <code class="docutils literal notranslate"><span class="pre">i</span></code> set.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">energy_cable_variant</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="nf">energy_cable_variant</span><span class="p">(</span><span class="mi">1</span> <span class="o">|</span> <span class="mi">2</span> <span class="o">|</span> <span class="mi">32</span><span class="p">)</span>
 <span class="go">('variant', 'variant_ude')</span>
 </pre></div>
@@ -540,17 +631,9 @@ an even rotation enables it back to normal. As the check only acts when the pari
 <section id="module-stewbeet.contrib.simplenergy.energy_lib_calls">
 <span id="energy-lib-calls"></span><h2>energy_lib_calls<a class="headerlink" href="#module-stewbeet.contrib.simplenergy.energy_lib_calls" title="Link to this heading">#</a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.energy_lib_calls.write_energy_calls">
-<span class="sig-name descname"><span class="pre">write_energy_calls</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">funcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="stewbeet.core.cls.html#stewbeet.core.cls.block_functions.BlockFunctions" title="stewbeet.core.cls.block_functions.BlockFunctions"><span class="pre">BlockFunctions</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">energy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">ns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/energy_lib_calls.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.energy_lib_calls.write_energy_calls" title="Link to this definition">#</a></dt>
-<dd><p>Register one custom block with the energy library, as a cable, a machine or a battery.</p>
+<dt class="sig sig-object py" id="stewbeet.contrib.simplenergy.energy_lib_calls.insert_lib_calls">
+<span class="sig-name descname"><span class="pre">insert_lib_calls</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/contrib/simplenergy/energy_lib_calls.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.contrib.simplenergy.energy_lib_calls.insert_lib_calls" title="Link to this definition">#</a></dt>
+<dd><p>Does nothing: the custom blocks plugin registers the blocks with energy settings.</p>
 </dd></dl>
 
 </section>
@@ -636,11 +719,24 @@ an even rotation enables it back to normal. As the check only acts when the pari
 </ul>
 </li>
 <li><a class="reference internal" href="#module-stewbeet.contrib.simplenergy.cables">cables</a><ul>
-<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.ENERGY_CABLE_FACES"><code class="docutils literal notranslate"><span class="pre">ENERGY_​CABLE_​FACES</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide"><code class="docutils literal notranslate"><span class="pre">EnergyCableSide</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide.letter"><code class="docutils literal notranslate"><span class="pre">EnergyCableSide​.letter</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide.bit"><code class="docutils literal notranslate"><span class="pre">EnergyCableSide​.bit</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide.face"><code class="docutils literal notranslate"><span class="pre">EnergyCableSide​.face</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide.axis"><code class="docutils literal notranslate"><span class="pre">EnergyCableSide​.axis</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide.u_axis"><code class="docutils literal notranslate"><span class="pre">EnergyCableSide​.u_​axis</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide.edges"><code class="docutils literal notranslate"><span class="pre">EnergyCableSide​.edges</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide.arm_from"><code class="docutils literal notranslate"><span class="pre">EnergyCableSide​.arm_​from</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.EnergyCableSide.arm_to"><code class="docutils literal notranslate"><span class="pre">EnergyCableSide​.arm_​to</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.ENERGY_CABLE_SIDES"><code class="docutils literal notranslate"><span class="pre">ENERGY_​CABLE_​SIDES</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.ENERGY_CABLE_TILES"><code class="docutils literal notranslate"><span class="pre">ENERGY_​CABLE_​TILES</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.ITEM_CABLE_SIDES"><code class="docutils literal notranslate"><span class="pre">ITEM_​CABLE_​SIDES</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.ITEM_CABLE_TEXTURES"><code class="docutils literal notranslate"><span class="pre">ITEM_​CABLE_​TEXTURES</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.energy_cables_models"><code class="docutils literal notranslate"><span class="pre">energy_​cables_​models()</span></code></a></li>
-<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.write_energy_cable_variants"><code class="docutils literal notranslate"><span class="pre">write_​energy_​cable_​variants()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.energy_cable_elements"><code class="docutils literal notranslate"><span class="pre">energy_​cable_​elements()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.energy_cable_centre_face"><code class="docutils literal notranslate"><span class="pre">energy_​cable_​centre_​face()</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.energy_cable_variant"><code class="docutils literal notranslate"><span class="pre">energy_​cable_​variant()</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.write_cable_update"><code class="docutils literal notranslate"><span class="pre">write_​cable_​update()</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.contrib.simplenergy.cables.item_cables_models"><code class="docutils literal notranslate"><span class="pre">item_​cables_​models()</span></code></a></li>
@@ -655,7 +751,7 @@ an even rotation enables it back to normal. As the check only acts when the pari
 </ul>
 </li>
 <li><a class="reference internal" href="#module-stewbeet.contrib.simplenergy.energy_lib_calls">energy_​lib_​calls</a><ul>
-<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.energy_lib_calls.write_energy_calls"><code class="docutils literal notranslate"><span class="pre">write_​energy_​calls()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.contrib.simplenergy.energy_lib_calls.insert_lib_calls"><code class="docutils literal notranslate"><span class="pre">insert_​lib_​calls()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-stewbeet.contrib.simplenergy.gui">gui</a><ul>
@@ -720,5 +816,5 @@ an even rotation enables it back to normal. As the check only acts when the pari
   <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
   <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
   <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle section navigation">
-  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=27746a97"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=23646e3d"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
 </html>

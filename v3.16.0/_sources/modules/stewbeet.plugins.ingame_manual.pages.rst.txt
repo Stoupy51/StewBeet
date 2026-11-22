@@ -1,0 +1,58 @@
+📄 pages
+==============
+
+.. automodule:: stewbeet.plugins.ingame_manual.pages
+
+base
+--------
+
+.. automodule:: stewbeet.plugins.ingame_manual.pages.base
+   :members: Page, Transformer
+
+browser_page
+------------------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.pages.browser_page
+   :members: CategoryBrowserPage
+
+button_layout
+--------------------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.pages.button_layout
+   :members: ButtonLayout, Position
+
+category_page
+--------------------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.pages.category_page
+   :members: CategoryPage
+
+custom_page
+----------------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.pages.custom_page
+   :members: CustomPage
+
+intro_page
+--------------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.pages.intro_page
+   :members: IntroPage
+
+item_page
+------------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.pages.item_page
+   :members: ItemPage
+
+raw_page
+----------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.pages.raw_page
+   :members: RawPage
+
+texture_page
+------------------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.pages.texture_page
+   :members: TexturePage

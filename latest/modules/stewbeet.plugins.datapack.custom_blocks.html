@@ -31,12 +31,12 @@
     aria-haspopup="true"
     aria-expanded="false"
     data-url="https://stoupy51.github.io/stewbeet/switcher.json"
-    data-current="3.15.1"
+    data-current="3.16.0"
   >
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
       <path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"></path>
     </svg>
-    <span>3.15.1</span>
+    <span>3.16.0</span>
   </button>
   <ul role="menu" aria-hidden="true"></ul>
 </div>
@@ -523,6 +523,65 @@ the player having clicked the top of the block below.</p>
 </dd></dl>
 
 </section>
+<section id="module-stewbeet.plugins.datapack.custom_blocks.energy">
+<span id="energy"></span><h2>energy<a class="headerlink" href="#module-stewbeet.plugins.datapack.custom_blocks.energy" title="Link to this heading">#</a></h2>
+<p>Registers the custom blocks with energy settings in the energy library, and refuses cables on their blocked faces.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="stewbeet.plugins.datapack.custom_blocks.energy.ENERGY_DIRECTIONS">
+<span class="sig-name descname"><span class="pre">ENERGY_DIRECTIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('up',</span> <span class="pre">'down',</span> <span class="pre">'north',</span> <span class="pre">'south',</span> <span class="pre">'east',</span> <span class="pre">'west')</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/datapack/custom_blocks/energy.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.datapack.custom_blocks.energy.ENERGY_DIRECTIONS" title="Link to this definition">#</a></dt>
+<dd><p>The directions in the order the energy library numbers them, each followed by its opposite.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="stewbeet.plugins.datapack.custom_blocks.energy.HORIZONTAL_FACINGS">
+<span class="sig-name descname"><span class="pre">HORIZONTAL_FACINGS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(('north',</span> <span class="pre">'-45..45'),</span> <span class="pre">('east',</span> <span class="pre">'45..135'),</span> <span class="pre">('south',</span> <span class="pre">'135..-135'),</span> <span class="pre">('west',</span> <span class="pre">'-135..-45'))</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/datapack/custom_blocks/energy.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.datapack.custom_blocks.energy.HORIZONTAL_FACINGS" title="Link to this definition">#</a></dt>
+<dd><p>Where a machine’s front points for each range of its <code class="docutils literal notranslate"><span class="pre">y_rotation</span></code>, clockwise, as the wrench turns it.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="stewbeet.plugins.datapack.custom_blocks.energy.RELATIVE_FACES">
+<span class="sig-name descname"><span class="pre">RELATIVE_FACES</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'back':</span> <span class="pre">2,</span> <span class="pre">'front':</span> <span class="pre">0,</span> <span class="pre">'left':</span> <span class="pre">1,</span> <span class="pre">'right':</span> <span class="pre">3}</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/datapack/custom_blocks/energy.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.datapack.custom_blocks.energy.RELATIVE_FACES" title="Link to this definition">#</a></dt>
+<dd><p>How many clockwise steps each side face is from the front, left and right as seen by a player facing the front.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.plugins.datapack.custom_blocks.energy.write_energy">
+<span class="sig-name descname"><span class="pre">write_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/datapack/custom_blocks/energy.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.datapack.custom_blocks.energy.write_energy" title="Link to this definition">#</a></dt>
+<dd><p>Register every placeable custom block whose <code class="docutils literal notranslate"><span class="pre">custom_data</span></code> has <code class="docutils literal notranslate"><span class="pre">energy</span></code>, and refuse cables on its <code class="docutils literal notranslate"><span class="pre">blocked_faces</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.plugins.datapack.custom_blocks.energy.write_energy_calls">
+<span class="sig-name descname"><span class="pre">write_energy_calls</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">funcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="stewbeet.core.cls.html#stewbeet.core.cls.block_functions.BlockFunctions" title="stewbeet.core.cls.block_functions.BlockFunctions"><span class="pre">BlockFunctions</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">energy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">JsonDict</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">ns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/datapack/custom_blocks/energy.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.datapack.custom_blocks.energy.write_energy_calls" title="Link to this definition">#</a></dt>
+<dd><p>Register one custom block with the energy library, as a cable, a machine or a battery.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.plugins.datapack.custom_blocks.energy.cable_refusals">
+<span class="sig-name descname"><span class="pre">cable_refusals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/datapack/custom_blocks/energy.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.datapack.custom_blocks.energy.cable_refusals" title="Link to this definition">#</a></dt>
+<dd><p>The commands refusing a cable on one face of the machines with <code class="docutils literal notranslate"><span class="pre">tag</span></code>, for each way the machine can face.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>face</strong> – <code class="docutils literal notranslate"><span class="pre">top</span></code>, <code class="docutils literal notranslate"><span class="pre">bottom</span></code>, or a key of <code class="docutils literal notranslate"><span class="pre">RELATIVE_FACES</span></code>.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nf">cable_refusals</span><span class="p">(</span><span class="s2">"a.solar"</span><span class="p">,</span> <span class="s2">"top"</span><span class="p">)</span>
+<span class="go">['execute if entity @s[tag=a.solar] if score #cable.in energy.data matches 1 run scoreboard players set #cable.out energy.data 0']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="nf">split</span><span class="p">(</span><span class="s2">" matches "</span><span class="p">)[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nf">cable_refusals</span><span class="p">(</span><span class="s2">"a.generator"</span><span class="p">,</span> <span class="s2">"front"</span><span class="p">)]</span>
+<span class="go">['3', '5', '2', '4']</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
 <section id="module-stewbeet.plugins.datapack.custom_blocks.host_states">
 <span id="host-states"></span><h2>host_states<a class="headerlink" href="#module-stewbeet.plugins.datapack.custom_blocks.host_states" title="Link to this heading">#</a></h2>
 <p>Displays following a host state that changes after placement, as the corner a stairs host makes or a furnace burning.</p>
@@ -979,6 +1038,15 @@ and on the half the placer clicked when <code class="docutils literal notranslat
 <li><a class="reference internal" href="#stewbeet.plugins.datapack.custom_blocks.destroying.write_signal_listeners"><code class="docutils literal notranslate"><span class="pre">write_​signal_​listeners()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#module-stewbeet.plugins.datapack.custom_blocks.energy">energy</a><ul>
+<li><a class="reference internal" href="#stewbeet.plugins.datapack.custom_blocks.energy.ENERGY_DIRECTIONS"><code class="docutils literal notranslate"><span class="pre">ENERGY_​DIRECTIONS</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.datapack.custom_blocks.energy.HORIZONTAL_FACINGS"><code class="docutils literal notranslate"><span class="pre">HORIZONTAL_​FACINGS</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.datapack.custom_blocks.energy.RELATIVE_FACES"><code class="docutils literal notranslate"><span class="pre">RELATIVE_​FACES</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.datapack.custom_blocks.energy.write_energy"><code class="docutils literal notranslate"><span class="pre">write_​energy()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.datapack.custom_blocks.energy.write_energy_calls"><code class="docutils literal notranslate"><span class="pre">write_​energy_​calls()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.datapack.custom_blocks.energy.cable_refusals"><code class="docutils literal notranslate"><span class="pre">cable_​refusals()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-stewbeet.plugins.datapack.custom_blocks.host_states">host_​states</a><ul>
 <li><a class="reference internal" href="#stewbeet.plugins.datapack.custom_blocks.host_states.write_host_state"><code class="docutils literal notranslate"><span class="pre">write_​host_​state()</span></code></a></li>
 </ul>
@@ -1084,5 +1152,5 @@ and on the half the placer clicked when <code class="docutils literal notranslat
   <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
   <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
   <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle section navigation">
-  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=27746a97"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=23646e3d"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
 </html>

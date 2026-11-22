@@ -31,12 +31,12 @@
     aria-haspopup="true"
     aria-expanded="false"
     data-url="https://stoupy51.github.io/stewbeet/switcher.json"
-    data-current="3.15.1"
+    data-current="3.16.0"
   >
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
       <path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"></path>
     </svg>
-    <span>3.15.1</span>
+    <span>3.16.0</span>
   </button>
   <ul role="menu" aria-hidden="true"></ul>
 </div>
@@ -523,6 +523,20 @@ Files come in sorted order, so a pack loads the same way on every file system.</
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.plugins.initialize.beet_patches.console_safe_emit">
+<span class="sig-name descname"><span class="pre">console_safe_emit</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">emit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LogRecord</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LogRecord</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/initialize/beet_patches.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.initialize.beet_patches.console_safe_emit" title="Link to this definition">#</a></dt>
+<dd><p>Wrap beet’s <code class="docutils literal notranslate"><span class="pre">LogHandler.emit</span></code>, which draws through prompt_toolkit, to print the plain message where that raises.</p>
+<p>prompt_toolkit needs a real Windows console. In Git Bash or a redirected output it raises, and a caller swallowing the error
+(such as a weld run under <code class="docutils literal notranslate"><span class="pre">Muffle</span></code>) then fails without a word.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="stewbeet.plugins.initialize.beet_patches.apply_beet_patches">
 <span class="sig-name descname"><span class="pre">apply_beet_patches</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/initialize/beet_patches.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.initialize.beet_patches.apply_beet_patches" title="Link to this definition">#</a></dt>
 <dd><p>Install every beet monkey patch, once per process.</p>
@@ -752,6 +766,7 @@ skipped so the font never points at a missing texture.</p>
 <li><a class="reference internal" href="#stewbeet.plugins.initialize.beet_patches.reuse_unchanged_png_bytes"><code class="docutils literal notranslate"><span class="pre">reuse_​unchanged_​png_​bytes()</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.initialize.beet_patches.stable_png_save"><code class="docutils literal notranslate"><span class="pre">stable_​png_​save()</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.initialize.beet_patches.stable_png_incremental_save"><code class="docutils literal notranslate"><span class="pre">stable_​png_​incremental_​save()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.initialize.beet_patches.console_safe_emit"><code class="docutils literal notranslate"><span class="pre">console_​safe_​emit()</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.initialize.beet_patches.apply_beet_patches"><code class="docutils literal notranslate"><span class="pre">apply_​beet_​patches()</span></code></a></li>
 </ul>
 </li>
@@ -833,5 +848,5 @@ skipped so the font never points at a missing texture.</p>
   <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
   <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
   <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle section navigation">
-  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=27746a97"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=23646e3d"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
 </html>

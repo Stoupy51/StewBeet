@@ -13,6 +13,11 @@ destroying
 
 .. automodule:: stewbeet.plugins.datapack.custom_blocks.destroying
 
+energy
+------------
+
+.. automodule:: stewbeet.plugins.datapack.custom_blocks.energy
+
 host_states
 ----------------------
 
