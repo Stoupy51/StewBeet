@@ -37,12 +37,7 @@ from .cables import (
 	write_servo_functions as write_servo_functions,
 )
 from .energy_lib_calls import (
-	ENERGY_DIRECTIONS as ENERGY_DIRECTIONS,
-	HORIZONTAL_FACINGS as HORIZONTAL_FACINGS,
-	RELATIVE_FACES as RELATIVE_FACES,
-	cable_refusals as cable_refusals,
 	insert_lib_calls as insert_lib_calls,
-	write_energy_calls as write_energy_calls,
 )
 from .gui import (
 	GuiTranslation as GuiTranslation,

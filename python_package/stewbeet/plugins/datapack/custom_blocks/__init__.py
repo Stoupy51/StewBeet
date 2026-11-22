@@ -26,6 +26,7 @@ from .destroying import (
 	write_signal_listeners,
 	write_vanilla_checks,
 )
+from .energy import write_energy
 from .host_states import write_host_state
 from .interactions import write_interactions
 from .machines import write_machine
@@ -95,6 +96,7 @@ def beet_default(ctx: Context):
 	write_signal_listeners(ns)
 	write_stats_totals(ns, has_growing_seed)
 	write_head_searches(ns)
+	write_energy(ns)
 
 
 # Functions
