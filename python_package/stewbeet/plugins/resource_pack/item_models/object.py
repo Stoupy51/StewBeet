@@ -23,7 +23,7 @@ from ....core.cls.items.item import Item
 from ....core.cls.resource import Resource
 from ....core.constants import CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA
 from ....core.utils.io import set_json_encoder, set_model_encoder, texture_mcmeta
-from ....core.utils.models import UVLOCK_TURNS, cake_element, flipped, stairs_corner, uv_locked, vanilla_elements, with_margin
+from ....core.utils.models import UVLOCK_TURNS, flipped, stairs_corner, uv_locked, vanilla_elements, with_margin
 
 
 # Constants
@@ -448,8 +448,9 @@ class AutoModel:
 		if shape.parent == "block/cake":
 			for i in range(1, 7):
 				slice_content: JsonDict = {"parent": f"block/cake_slice{i}", "textures": content["textures"]}
+				slice_elements: JsonList = vanilla_elements(slice_content["parent"]) or []
 				if self.margin_scale() != 1.0:
-					slice_content["elements"] = [with_margin(cake_element(i), self.margin_scale())]
+					slice_content["elements"] = [with_margin(element, self.margin_scale()) for element in slice_elements]
 				Resource(Model, f"item/{self.obj.id}_slice{i}{on_off}").write(set_model_encoder(Model(slice_content), max_level=2))
 		return content
 

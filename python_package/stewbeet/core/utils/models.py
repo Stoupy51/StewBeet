@@ -5,58 +5,44 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
+import copy
 import math
+from pathlib import Path
 
+import stouputils as stp
+from beet import Model
+from beet.contrib.vanilla import Vanilla
 from stouputils.typing import JsonDict, JsonList
+
+from ..__memory__ import Mem
 
 # Constants
 DIRECTIONS: dict[str, tuple[int, int, int]] = {
 	"north": (0, 0, -1), "south": (0, 0, 1), "east": (1, 0, 0), "west": (-1, 0, 0), "up": (0, 1, 0), "down": (0, -1, 0),
 }
 
-CUBE_ELEMENT: JsonDict = {
-	"from": [0, 0, 0], "to": [16, 16, 16],
-	"faces": {direction: {"texture": f"#{direction}", "cullface": direction} for direction in DIRECTIONS},
-}
-""" The element of `block/cube`, which every cube shaped vanilla model inherits. """
-
 UVLOCK_TURNS: dict[int, int] = {2: 90, 3: 180, 4: 270}
 """ Degrees about Y of the model copy shown for each `#rotation` score, 1 (a placer looking south) showing the model itself. """
 
-CUBE_PARENTS: tuple[str, ...] = (
-	"block/cube", "block/cube_all", "block/cube_bottom_top", "block/cube_column", "block/orientable", "block/orientable_with_bottom",
-)
-""" Vanilla models drawing `CUBE_ELEMENT`, without their optional "minecraft:" namespace. """
-
 
 # Functions
-def cake_element(bites: int) -> JsonDict:
-	""" The element of `block/cake` (0 bites) or `block/cake_slice<bites>`.
-
-	>>> cake_element(2)["from"], cake_element(2)["faces"]["west"]
-	([5, 0, 1], {'texture': '#inside'})
-	"""
-	return {"from": [1 + 2 * bites, 0, 1], "to": [15, 8, 15], "faces": {
-		"down": {"texture": "#bottom", "cullface": "down"}, "up": {"texture": "#top"},
-		"north": {"texture": "#side"}, "south": {"texture": "#side"},
-		"west": {"texture": "#inside" if bites else "#side"}, "east": {"texture": "#side"},
-	}}
-
-
 def vanilla_elements(parent: str) -> JsonList | None:
-	""" The elements a vanilla parent model draws, None when it is not one of the cube or cake models.
+	""" A copy of the elements a vanilla model draws, its own or its nearest parent's, None when none of them draws any.
 
-	>>> vanilla_elements("minecraft:block/cube_all") == [CUBE_ELEMENT], vanilla_elements("block/stairs")
-	(True, None)
+	Answers are kept per Minecraft version in the project cache, so the client jar is only opened for a parent never asked before.
 	"""
-	path: str = parent.removeprefix("minecraft:")
-	if path in CUBE_PARENTS:
-		return [CUBE_ELEMENT]
-	if path == "block/cake":
-		return [cake_element(0)]
-	if path.startswith("block/cake_slice"):
-		return [cake_element(int(path.removeprefix("block/cake_slice")))]
-	return None
+	key: str = parent if ":" in parent else f"minecraft:{parent}"
+	cache_path: Path = Mem.ctx.cache["stewbeet"].get_path(f"vanilla_model_elements-{Mem.ctx.minecraft_version}")
+	known: JsonDict = stp.json_load(cache_path) if cache_path.exists() else {}
+	if key not in known:
+		models = Mem.ctx.inject(Vanilla).mount("assets/minecraft/models").assets.models
+		model: Model | None = models.get(key)
+		while model is not None and "elements" not in model.data:
+			grandparent: str | None = model.data.get("parent")
+			model = models.get(grandparent if ":" in grandparent else f"minecraft:{grandparent}") if grandparent else None
+		known[key] = model.data["elements"] if model else None
+		stp.json_dump(known, file=cache_path)
+	return copy.deepcopy(known[key])
 
 
 def with_margin(element: JsonDict, scale: float) -> JsonDict:
