@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { HiX } from 'react-icons/hi';
 
-export interface LightboxImage {
+interface LightboxImage {
     src: string;
     alt: string;
     /** Scales with nearest-neighbour, for pixel art. */
@@ -14,7 +14,7 @@ export interface LightboxImage {
  * The image blown up to fill the screen. Closes on a click anywhere or on Escape.
  * Portalled to <body>, since a card that clips or transforms its content would trap a fixed overlay.
  */
-export const ImageLightbox = ({ image, onClose }: { image: LightboxImage | null; onClose: () => void }) => {
+const ImageLightbox = ({ image, onClose }: { image: LightboxImage | null; onClose: () => void }) => {
     useEffect(() => {
         if (!image) return;
         const closeOnEscape = (event: KeyboardEvent) => {

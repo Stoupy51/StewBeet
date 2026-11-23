@@ -6,7 +6,7 @@ import { Testimonial } from './Testimonial';
 import { ControlProof } from './ControlProof';
 import { Gains } from './Gains';
 import { Spotlights } from './Spotlights';
-import { BuiltWith } from './BuiltWith';
+import { ShowcaseStrip } from './ShowcaseStrip';
 import { StandingOnGiants } from './StandingOnGiants';
 import { GetStarted } from './GetStarted';
 import { Footer } from './Footer';
@@ -44,7 +44,7 @@ function HomePage() {
         <ControlProof />
         <Gains />
         <Spotlights />
-        <BuiltWith />
+        <ShowcaseStrip />
         <StandingOnGiants />
         <GetStarted />
       </main>

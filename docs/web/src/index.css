@@ -97,6 +97,10 @@
     @apply flex items-center justify-center w-9 h-9 bg-mc-slot;
     box-shadow: inset 2px 2px 0 #373737, inset -2px -2px 0 #ffffff;
   }
+  /* The white overlay the game lays over a slot under the cursor. */
+  .mc-slot-hover { position: relative; }
+  .mc-slot-hover::after { content: ''; position: absolute; inset: 2px; background: #ffffff; opacity: 0; transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1); }
+  .group:hover .mc-slot-hover::after, .group:focus-visible .mc-slot-hover::after { opacity: 0.45; }
   .mc-tooltip {
     border: 2px solid transparent;
     background: linear-gradient(#100010, #100010) padding-box, linear-gradient(#5000ff, #28007f) border-box;
@@ -482,6 +486,12 @@ html[data-transition='panel']::view-transition-new(doc-main) { animation: none; 
   [data-play] .crack-row::after {
     animation: crack 600ms steps(3, end) both;
     animation-delay: calc(var(--row, 0) * 80ms);
+  }
+  /* The Showcase strip fills its slots the way _give_all fills a chest, the first eight one after the other. */
+  [data-armed]:not([data-play]) .slot-fill { opacity: 0; }
+  [data-play] .slot-fill {
+    animation: build-drop 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(min(var(--slot, 0), 8) * 90ms);
   }
   [data-play] .crack-drop {
     animation: build-drop 400ms cubic-bezier(0.16, 1, 0.3, 1) 1100ms both;

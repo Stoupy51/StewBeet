@@ -112,16 +112,11 @@ export const translations = {
         // Built with StewBeet
         builtWith: {
             title: '{n} public projects are built with StewBeet',
-            subtitle: 'Two of them at scale, with the source you can read.',
-            seeAll: 'See the full list on GitHub',
-            unitSourceLines: 'lines of Python (no comments) produce',
-            itemsAlt: 'Every item in {project}, drawn from its build',
-            sourceLink: 'source',
-            unitFunctions: '.mcfunction',
-            unitJson: '.json',
-            unitTextures: 'textures',
-            stardustDesc: 'A large progression pack: custom ore tiers, blocks, paintings and a full in-game manual.',
-            simplenergyDesc: 'An energy and machine library other packs depend on, with cables, generators and machines.',
+            subtitle: "Other datapackers' projects first, then the author's packs and libraries. Each card opens its source.",
+            community: 'community',
+            previous: 'Previous projects',
+            next: 'Next projects',
+            filesFrom: '{files} files from {lines} lines of Python',
         },
 
         // Standing on giants: one line on the home page, the roles on /credits
@@ -164,64 +159,6 @@ export const translations = {
             templatesLink: 'The three templates',
         },
 
-        // Showcase / plugins listing
-        showcase: {
-            subtitle: 'Each step of the build is a plugin you can enable, disable or replace.',
-            legend: 'Legend:',
-            fullyDependent: 'Fully dependent',
-            partlyDependent: 'Partly dependent',
-            independent: 'Independent',
-        },
-
-        // Plugins Table
-        pluginsTable: {
-            category: 'Category',
-            plugin: 'Plugin',
-            description: 'Description',
-            image: 'Image',
-            dependency: 'Dependency',
-            // Categories
-            categoryCore: 'Core',
-            categoryResourcePack: 'Resource Pack',
-            categoryRecipes: 'Recipes',
-            categoryCustomContent: 'Custom Content',
-            categoryDocumentation: 'Documentation',
-            categoryDatapack: 'Datapack',
-            categoryFinalization: 'Finalization',
-            categoryAutomation: 'Automation',
-            categoryBuild: 'Build',
-            categoryCompatibility: 'Compatibility',
-            // Plugins
-            initializeDesc: 'Initializes the framework and sets up project metadata',
-            verifyDefinitionsDesc: 'Validates the structure of definitions and checks consistency',
-            soundsDesc: 'Processes sound files and generates sounds.json automatically',
-            itemModelsDesc: 'Automatically generates item and block models',
-            checkPowerOf2Desc: 'Validates that textures use power-of-2 resolutions',
-            customRecipesDesc: 'Generates vanilla, smithed, furnace, and pulverizer recipes',
-            customPaintingsDesc: 'Creates custom painting variants',
-            ingameManualDesc: 'Generates an interactive in-game manual with documentation',
-            loadingDesc: 'Sets up the loading system with versioning',
-            customBlocksDesc: 'Implements placement, destruction, and interaction for custom blocks',
-            lootTablesDesc: 'Generates loot tables and give-all functionality',
-            sortersDesc: 'Generates sorting functions for NBT lists',
-            simpledrawerDesc: 'Adds SimpleDrawer material compatibility for compacted drawers',
-            neoEnchantDesc: 'Provides NeoEnchant veinminer compatibility for custom ores',
-            customBlocksTickingDesc: 'Configures the ticking system for custom blocks',
-            basicDatapackStructureDesc: 'Creates the timing structure (tick, second, minute)',
-            dependenciesDesc: 'Manages external library dependencies',
-            checkUnusedTexturesDesc: 'Identifies unused textures in the resource pack',
-            langFileDesc: 'Automatically generates language files',
-            textRendersDesc: 'Turns the `render` key of text components into item images',
-            headersDesc: 'Adds automatic headers to mcfunction files',
-            scoreboardConstantsDesc: 'Detects scoreboard constant usages and generates initialization commands',
-            archiveDesc: 'Creates zip archives of datapacks and resource packs',
-            mergeSmithedWeldDesc: 'Merges datapacks and resource packs with libraries',
-            copyToDestinationDesc: 'Copies generated packs to destination folders',
-            livereloadDesc: 'Auto in-game /reload on each build via link or copy destinations',
-            computeSha1Desc: 'Computes SHA1 hashes for all zip files',
-            sourceMapsDesc: 'Emits source maps linking generated commands back to the Python that wrote them',
-        },
-
         // Documentation Page
         documentation: {
             title: 'Documentation',
@@ -246,8 +183,8 @@ export const translations = {
             equationsDesc: 'Chainable Equation builders that compile to scoreboard commands.',
             apiDesc: 'Every class and function of the Python package, generated from the code.',
             howItFitsDesc: 'What beet, bolt and mecha do, and where StewBeet plugs in.',
+            pluginsLead: 'Each step of the build is a plugin you can enable, disable or replace.',
             allPlugins: 'Every plugin, in pipeline order',
-            plugins: 'Plugins and what they depend on',
         },
 
         // Markdown Page
@@ -632,16 +569,11 @@ export const translations = {
         // Built with StewBeet
         builtWith: {
             title: '{n} projets publics sont faits avec StewBeet',
-            subtitle: 'Deux d\'entre eux à grande échelle, avec le code que vous pouvez lire.',
-            seeAll: 'Voir la liste complète sur GitHub',
-            unitSourceLines: 'lignes de Python (hors commentaires) produisent',
-            itemsAlt: 'Tous les items de {project}, tirés de son build',
-            sourceLink: 'code source',
-            unitFunctions: '.mcfunction',
-            unitJson: '.json',
-            unitTextures: 'textures',
-            stardustDesc: 'Un gros pack de progression : paliers de minerais, custom blocks, paintings et un manuel en jeu complet.',
-            simplenergyDesc: 'Une bibliothèque d\'énergie et de machines dont d\'autres packs dépendent : câbles, générateurs et machines.',
+            subtitle: "Les projets d'autres datapackers d'abord, puis les packs et bibliothèques de l'auteur. Chaque carte ouvre son code source.",
+            community: 'communauté',
+            previous: 'Projets précédents',
+            next: 'Projets suivants',
+            filesFrom: '{files} fichiers depuis {lines} lignes de Python',
         },
 
         // Standing on giants: one line on the home page, the roles on /credits
@@ -684,64 +616,6 @@ export const translations = {
             templatesLink: 'Les trois templates',
         },
 
-        // Showcase / plugins listing
-        showcase: {
-            subtitle: 'Chaque étape du build est un plugin que vous pouvez activer, désactiver ou remplacer.',
-            legend: 'Légende :',
-            fullyDependent: 'Entièrement dépendant',
-            partlyDependent: 'Partiellement dépendant',
-            independent: 'Indépendant',
-        },
-
-        // Plugins Table
-        pluginsTable: {
-            category: 'Catégorie',
-            plugin: 'Plugin',
-            description: 'Description',
-            image: 'Image',
-            dependency: 'Dépendance',
-            // Categories
-            categoryCore: 'Noyau',
-            categoryResourcePack: 'Pack de Ressources',
-            categoryRecipes: 'Recipes',
-            categoryCustomContent: 'Custom Content',
-            categoryDocumentation: 'Documentation',
-            categoryDatapack: 'Datapack',
-            categoryFinalization: 'Finalisation',
-            categoryAutomation: 'Automatisation',
-            categoryBuild: 'Construction',
-            categoryCompatibility: 'Compatibilité',
-            // Plugins
-            initializeDesc: 'Initialise le framework et configure les métadonnées du projet',
-            verifyDefinitionsDesc: 'Valide la structure des définitions et vérifie la cohérence',
-            soundsDesc: 'Traite les fichiers audio et génère sounds.json automatiquement',
-            itemModelsDesc: 'Génère automatiquement les item models et block models',
-            checkPowerOf2Desc: 'Valide que les textures utilisent des résolutions en puissance de 2',
-            customRecipesDesc: 'Génère des recipes vanilla, smithed, furnace et pulverizer',
-            customPaintingsDesc: 'Crée des variantes de custom paintings',
-            ingameManualDesc: 'Génère un manuel interactif en jeu avec documentation',
-            loadingDesc: 'Configure le système de chargement avec versioning',
-            customBlocksDesc: 'Implémente le placement, la destruction et l\'interaction pour les custom blocks',
-            lootTablesDesc: 'Génère les loot tables et la fonctionnalité give-all',
-            sortersDesc: 'Génère des fonctions de tri pour les listes NBT',
-            simpledrawerDesc: 'Ajoute la compatibilité matériaux SimpleDrawer pour les tiroirs compactés',
-            neoEnchantDesc: 'Fournit la compatibilité veinminer NeoEnchant pour les custom ores',
-            customBlocksTickingDesc: 'Configure le système de ticking pour les custom blocks',
-            basicDatapackStructureDesc: 'Crée la structure temporelle (tick, seconde, minute)',
-            dependenciesDesc: 'Gère les dépendances de bibliothèques externes',
-            checkUnusedTexturesDesc: 'Identifie les textures inutilisées dans le pack de ressources',
-            langFileDesc: 'Génère automatiquement les fichiers de langue',
-            textRendersDesc: 'Transforme la clé `render` des components de texte en images d\'items',
-            headersDesc: 'Ajoute des en-têtes automatiques aux fichiers mcfunction',
-            scoreboardConstantsDesc: 'Détecte les constantes de scoreboard et génère leurs commandes d\'initialisation',
-            archiveDesc: 'Crée des archives zip des datapacks et packs de ressources',
-            mergeSmithedWeldDesc: 'Fusionne les datapacks et packs de ressources avec les bibliothèques',
-            copyToDestinationDesc: 'Copie les packs générés vers les dossiers de destination',
-            livereloadDesc: 'Rechargement /reload automatique en jeu à chaque build (link ou destinations)',
-            computeSha1Desc: 'Calcule les hachages SHA1 pour tous les fichiers zip',
-            sourceMapsDesc: 'Genere des source maps reliant les commandes generees au Python qui les a ecrites',
-        },
-
         // Documentation Page
         documentation: {
             title: 'Documentation',
@@ -766,8 +640,8 @@ export const translations = {
             equationsDesc: 'Des constructeurs Equation chaînables qui compilent en commandes scoreboard.',
             apiDesc: 'Chaque classe et fonction du package Python, générées depuis le code.',
             howItFitsDesc: 'Ce que font beet, bolt et mecha, et où StewBeet se branche.',
+            pluginsLead: 'Chaque étape du build est un plugin que vous pouvez activer, désactiver ou remplacer.',
             allPlugins: "Tous les plugins, dans l'ordre du pipeline",
-            plugins: 'Les plugins et ce dont ils dépendent',
         },
 
         // Markdown Page

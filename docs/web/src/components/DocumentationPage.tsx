@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { API_REFERENCE, DOC_PAGES, PLUGIN_GROUPS, PLUGIN_INDEX, SECTIONS, docHref, type DocPage, type PluginGroup, type Section } from '../docsPages';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
-import { DependencyMark, PluginsTable } from './PluginsTable';
 import { useTranslation } from '../i18n/useTranslation';
 
 /** The translation key of the one-line description of each page that has one. */
@@ -51,19 +50,20 @@ const PageLink = ({ page }: { page: DocPage }) => {
     );
 };
 
-/** Every docs page by section, in the order and colours of the page list, then the plugins table. */
+/** Every docs page by section, in the colours of the page list, the plugins last. */
 export const DocumentationPage = () => {
     const { t, language } = useTranslation();
     const location = useLocation();
 
-    // /#plugins of the home page redirects to the plugins table here
+    // /docs#plugins, the old address of the plugins table, lands on their section
     useEffect(() => {
         if (!location.hash) return;
         const element = document.querySelector(location.hash);
         if (element) setTimeout(() => element.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
     }, [location]);
 
-    const sections = Object.keys(SECTIONS) as Section[];
+    // The plugins come last: a reader looks one up by name, the guides are read in order
+    const sections = [...(Object.keys(SECTIONS) as Section[]).filter((section) => section !== 'plugins'), 'plugins' as const];
     const pagesOf = (section: Section) => DOC_PAGES.filter((page) => page.section === section);
 
     return (
@@ -76,12 +76,12 @@ export const DocumentationPage = () => {
                 </header>
 
                 {sections.map((section) => (
-                    <section key={section} className="frame px-4 py-10 lg:px-12 border-t border-border grid gap-4 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-12">
+                    <section key={section} id={section === 'plugins' ? 'plugins' : undefined} className="frame px-4 py-10 lg:px-12 border-t border-border scroll-mt-14 grid gap-4 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-12">
                         <SectionTitle section={section} />
                         {section === 'plugins' ? (
-                            <div className="grid gap-x-10 gap-y-6 sm:grid-cols-2">
-                                <p className="sm:col-span-2 text-[0.9375rem] text-text-muted">
-                                    {t('showcase.subtitle')}{' '}
+                            <div className="grid gap-x-10 gap-y-6 sm:grid-cols-2 xl:grid-cols-3">
+                                <p className="sm:col-span-2 xl:col-span-3 text-[0.9375rem] text-text-muted">
+                                    {t('documentation.pluginsLead')}{' '}
                                     <Link to={docHref(PLUGIN_INDEX, language)} className="text-link underline underline-offset-2">{t('documentation.allPlugins')}</Link>
                                 </p>
                                 {(Object.keys(PLUGIN_GROUPS) as PluginGroup[]).map((group) => (
@@ -113,16 +113,6 @@ export const DocumentationPage = () => {
                     </section>
                 ))}
 
-                <section id="plugins" className="frame px-4 py-12 lg:px-12 lg:py-16 border-t border-border scroll-mt-14">
-                    <h2 className="text-[1.75rem] lg:text-[2.25rem] leading-tight font-bold">{t('documentation.plugins')}</h2>
-                    <p className="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-sm text-text-muted">
-                        <span>{t('showcase.legend')}</span>
-                        <DependencyMark level="full" />
-                        <DependencyMark level="partial" />
-                        <DependencyMark level="none" />
-                    </p>
-                    <div className="mt-8"><PluginsTable /></div>
-                </section>
             </main>
             <Footer />
         </div>
