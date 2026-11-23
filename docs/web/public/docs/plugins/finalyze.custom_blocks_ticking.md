@@ -1,142 +1,56 @@
 
-# stewbeet.plugins.finalyze.custom_blocks_ticking
+# Block ticking
 
-The `finalyze.custom_blocks_ticking` plugin automatically sets up ticking functionality<br>
-for custom blocks by detecting timing functions in the custom_blocks folder.<br>
-It generates the necessary infrastructure to call these functions efficiently, including<br>
-entity tagging, scoreboard optimization, and proper integration with versioned functions.<br>
-Supports multiple timing intervals: `tick`, `tick_2`, `second`, `second_5`, and `minute`.
+Runs a function of your block on every placed copy of it, each tick, second or minute. Write the function and this plugin finds it.
 
-**Required**: Custom block functions in the `custom_blocks/` folder  
-**Optional**: Custom blocks with `block_name/tick.mcfunction` or `block_name/second.mcfunction` files  
-**Related**: Works with `datapack.custom_blocks` plugin for block infrastructure
+It runs in the `basic` and `extensive` templates as `stewbeet.plugins.finalyze.custom_blocks_ticking`, with no configuration. [Source](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/finalyze/custom_blocks_ticking/__init__.py)
 
-### <u>Some Features Showcase</u>
+## Make a block tick
 
-**Automatically links custom blocks timing functions efficiently:**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.custom_blocks_ticking.timers.jpg">
+Write one of these functions in the block's folder, `custom_blocks/<block>/`:
 
-**Source Code**: [`stewbeet/plugins/finalyze/custom_blocks_ticking/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/finalyze/custom_blocks_ticking/__init__.py)
+| Function | Runs |
+|---|---|
+| `tick` | Every tick, 20 times a second |
+| `tick_2` | Every 2 ticks |
+| `second` | Every second |
+| `second_5` | Every 5 seconds |
+| `minute` | Every minute |
 
-
-## What it does
-
-- Automatically detects custom block timing functions (tick, tick_2, second, second_5, minute)
-- Sets up entity tagging system for ticking custom blocks
-- Implements scoreboard-based performance optimization
-- Integrates with versioned function system for proper timing
-- Provides efficient execution only when ticking entities exist
-- Adds statistics tracking for ticking entities
-
-## Configuration
-
-### Basic Example Configuration
-```yaml
-pipeline:
-  - ...
-  - stewbeet.plugins.datapack.custom_blocks  # Optional if you are adding custom blocks functions yourself
-  - ...
-  - stewbeet.plugins.finalyze.custom_blocks_ticking
-  - ...
-# No specific configuration required - automatically detects timing functions
-# Create timing functions in custom_blocks folder:
-# custom_blocks/{block_name}/tick.mcfunction       - Runs every tick (20 times/second)
-# custom_blocks/{block_name}/tick_2.mcfunction     - Runs every 2 ticks (10 times/second)
-# custom_blocks/{block_name}/second.mcfunction     - Runs every second
-# custom_blocks/{block_name}/second_5.mcfunction   - Runs every 5 seconds
-# custom_blocks/{block_name}/minute.mcfunction     - Runs every minute
-```
-
-When writing those functions from Python, take the path from the block rather than
-retyping the convention: see [Resource Locations](../1_definitions_setup/en.md#-resource-locations):
+Take its path from the block rather than typing it:
 
 ```python
-obj = Block.from_id("electric_furnace")
-write_function(obj.functions.tick, "...")
-write_function(obj.functions.second, "...")
-
-# Or build the accessor directly from the block ID: same paths, and it works
-# even for IDs that have no Block definition:
-write_function(BlockFunctions("electric_furnace").tick, "...")
+obj = Block.from_id("solar_panel")
+write_function(obj.functions.second, """
+scoreboard players add @s energy.storage 5
+""")
 ```
 
-### Configuration Options
+The function runs as the block's item display, at its position.
 
-| Option                | Type      | Default       | Description                                                     |
-| --------------------- | --------- | ------------- | --------------------------------------------------------------- |
-| `tick.mcfunction`     | file      | Auto-detected | Custom block function that runs every tick (20 times/second)    |
-| `tick_2.mcfunction`   | file      | Auto-detected | Custom block function that runs every 2 ticks (10 times/second) |
-| `second.mcfunction`   | file      | Auto-detected | Custom block function that runs every second                    |
-| `second_5.mcfunction` | file      | Auto-detected | Custom block function that runs every 5 seconds                 |
-| `minute.mcfunction`   | file      | Auto-detected | Custom block function that runs every minute (60 seconds)       |
-| Function Detection    | automatic | N/A           | Scans `custom_blocks/` folder for timing functions              |
-| Entity Optimization   | automatic | Enabled       | Uses scoreboards to optimize execution when no entities exist   |
+## What this plugin writes
 
-## Features
+For each function name a block uses, here `second`:
 
-### Automatic Function Detection
-Scans the custom_blocks folder for timing functions:
-- 📁 Searches for functions in `{namespace}:custom_blocks/{block}/` folder
-- ⚡ Detects `tick.mcfunction` for every-tick execution (20 times/second)
-- ⏱️ Detects `tick_2.mcfunction` for every 2 ticks execution (10 times/second)
-- 🕐 Detects `second.mcfunction` for once-per-second execution
-- ⏰ Detects `second_5.mcfunction` for every 5 seconds execution
-- ⏲️ Detects `minute.mcfunction` for every minute execution
-- 🎯 Validates proper folder structure and naming
+- The block's `place_secondary` tags its display `<namespace>.second` and counts it in `#second_entities`.
+- Its `destroy` takes it off the count.
+- The pack's `second` function calls `custom_blocks/second` while the count is above 0.
+- `custom_blocks/second` sends each tagged display to its block's function:
 
-### Entity Tagging System
-Sets up proper entity tags for ticking custom blocks:
-- 🔖 Adds tags during block placement (`place_secondary`)
-- ⚡ Creates `{namespace}.tick` tags for tick-based execution
-- 🔄 Creates `{namespace}.tick_2` tags for 2-tick intervals
-- ⏰ Creates `{namespace}.second` tags for second-based ticking
-- ⏱️ Creates `{namespace}.second_5` tags for 5-second intervals
-- ⏲️ Creates `{namespace}.minute` tags for minute-based execution
-- 🧹 Removes tags during block destruction to prevent memory leaks
+```mcfunction title="custom_blocks/second.mcfunction"
+execute if entity @s[tag=simplenergy.solar_panel] run function simplenergy:custom_blocks/solar_panel/second
+execute if entity @s[tag=simplenergy.pulverizer] run function simplenergy:custom_blocks/pulverizer/second
+```
 
-### Performance Optimization
-Implements scoreboard-based optimization for efficient execution:
-- ⚡ Tracks `#tick_entities` count for tick functions
-- 🔄 Tracks `#tick_2_entities` count for 2-tick functions
-- 🔢 Tracks `#second_entities` count for second functions
-- ⏱️ Tracks `#second_5_entities` count for 5-second functions
-- ⏲️ Tracks `#minute_entities` count for minute functions
-- 🎯 Only executes when entities with tags exist
-- ⚙️ Prevents unnecessary function calls when no ticking blocks are present
+`/function <namespace>:_stats_custom_blocks` also lists how many placed blocks run each function.
 
-### Versioned Function Integration
-Integrates with the versioned function system for proper timing:
-- ⚡ Adds to versioned `tick` function for every-tick execution
-- 🔄 Adds to versioned `tick_2` function for 2-tick execution
-- ⏰ Adds to versioned `second` function for once-per-second execution
-- ⏱️ Adds to versioned `second_5` function for 5-second execution
-- ⏲️ Adds to versioned `minute` function for every-minute execution
-- 🎯 Uses scoreboard checks to optimize performance
-- 📋 Proper integration with existing timing infrastructure
+## Limits
 
-### Custom Block Function Distribution
-Creates centralized distribution functions for multiple custom blocks:
-- ⚡ Generates `{namespace}:custom_blocks/tick` distribution function
-- 🔄 Creates `{namespace}:custom_blocks/tick_2` distribution function
-- 📦 Generates `{namespace}:custom_blocks/second` distribution function
-- ⏱️ Creates `{namespace}:custom_blocks/second_5` distribution function
-- ⏲️ Generates `{namespace}:custom_blocks/minute` distribution function
-- 🏷️ Uses entity tags to route to specific block functions
-- 🔄 Allows multiple custom blocks to have ticking functionality
-
-### Statistics Integration
-Adds ticking entity statistics to the stats system:
-- 📊 Initializes scoreboard values for statistics
-- ⚡ Reports count of entities with tick tags
-- 🔄 Reports count of entities with tick_2 tags
-- 📈 Reports count of entities with second tags
-- ⏱️ Reports count of entities with second_5 tags
-- ⏲️ Reports count of entities with minute tags
-- 🎯 Integrates with existing `_stats_custom_blocks` system 
+- The tag is given when a block is placed. A block placed before its function existed does not run it until it is broken and placed again.
+- Only a function named exactly as in the table, directly in the block's folder, counts.
+- A thousand blocks on `tick` run their function 20,000 times a second. The [Performance](../10_performance/en.md) guide shows what to move to `second`.
 
 ## Next steps
 
-- [Configuring the build](../3_beet_config/en.md): where this plugin sits in the pipeline.
-- [All plugins](README.md): the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+- [Performance](../10_performance/en.md): keeping many ticking blocks cheap.
 
