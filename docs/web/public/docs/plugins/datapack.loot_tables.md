@@ -28,6 +28,10 @@ Item.from_id("life_crystal").loot_table
 
 An item with `skip_gives=True` gets none of these.
 
+`/function <namespace>:_give_all` gives the chests. Here the first two, placed side by side:
+
+<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/datapack.loot_tables.give_all.jpg" alt="The first two give-all chests of SimplEnergy placed as a double chest, holding the pack's items" width="680" height="462">
+
 ## Limits
 
 - Each loot table gives the item and nothing else. A drop with a chance, a tool condition or Fortune is a loot table you write yourself.
