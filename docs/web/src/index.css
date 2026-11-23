@@ -457,35 +457,36 @@ html[data-transition='panel']::view-transition-new(doc-main) { animation: none; 
 }
 
 /*
- * The gains comparison: the eight hand-written files crack in three stages like a mined block, then
- * the definition replacing them drops in. Without data-armed, or with reduced motion, the cracks
- * show at their last stage. The crack is a pixel pattern masking the text colour, kept faint enough
- * to read the paths through.
+ * The gains comparison: the eight hand-written files are struck through one after the other, then
+ * the definition replacing them drops in. Without data-armed, or with reduced motion, the lines are
+ * already drawn.
  */
-.crack-row { position: relative; }
-.crack-row::after {
+.strike-row { position: relative; }
+.strike-row::after {
   content: '';
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
   pointer-events: none;
   background: currentColor;
-  opacity: 0.14;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cpath d='M2 3h2v1h1v2h2v1h2V6h2v2h1v1h1v2h-1v-1h-2V9h-1v2H8v1H6v-2H5V8H4V6H3V5H2z M10 2h1v2h1v1h-1V4h-1z M1 12h2v1h1v1H2v-1H1z'/%3E%3C/svg%3E") 0 0 / 32px 16px space;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cpath d='M2 3h2v1h1v2h2v1h2V6h2v2h1v1h1v2h-1v-1h-2V9h-1v2H8v1H6v-2H5V8H4V6H3V5H2z M10 2h1v2h1v1h-1V4h-1z M1 12h2v1h1v1H2v-1H1z'/%3E%3C/svg%3E") 0 0 / 32px 16px space;
+  opacity: 0.55;
+  transform-origin: left;
 }
-@keyframes crack {
-  from { opacity: 0; }
-  to   { opacity: 0.14; }
+@keyframes strike {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
 }
 .gains-wrap pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 .gains-scroll pre { white-space: pre; overflow-x: auto; }
 
 @media (prefers-reduced-motion: no-preference) {
-  [data-armed]:not([data-play]) .crack-row::after { opacity: 0; }
-  [data-armed]:not([data-play]) .crack-drop { opacity: 0; }
-  [data-play] .crack-row::after {
-    animation: crack 600ms steps(3, end) both;
-    animation-delay: calc(var(--row, 0) * 80ms);
+  [data-armed]:not([data-play]) .strike-row::after { transform: scaleX(0); }
+  [data-armed]:not([data-play]) .gains-drop { opacity: 0; }
+  [data-play] .strike-row::after {
+    animation: strike 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--row, 0) * 90ms);
   }
   /* The Showcase strip fills its slots the way _give_all fills a chest, the first eight one after the other. */
   [data-armed]:not([data-play]) .slot-fill { opacity: 0; }
@@ -493,7 +494,7 @@ html[data-transition='panel']::view-transition-new(doc-main) { animation: none; 
     animation: build-drop 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-delay: calc(min(var(--slot, 0), 8) * 90ms);
   }
-  [data-play] .crack-drop {
+  [data-play] .gains-drop {
     animation: build-drop 400ms cubic-bezier(0.16, 1, 0.3, 1) 1100ms both;
   }
 

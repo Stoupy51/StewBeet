@@ -13,7 +13,7 @@ const CodePanel = ({ title, code, wrap = false }: { title: string; code: string;
     </div>
 );
 
-/** The eight files of one hand-written block crack like a mined block, and the definition that replaces them drops in. */
+/** The eight files of one hand-written block are struck through, and the definition that replaces them drops in. */
 const Comparison = () => {
     const { t } = useTranslation();
     const frame = useRef<HTMLDivElement>(null);
@@ -27,14 +27,14 @@ const Comparison = () => {
                 <p className="font-pixel text-[0.8125rem] text-text-muted">{t('gains.byHand')}</p>
                 <ul className="mt-3 border-t border-border font-mono text-xs">
                     {BY_HAND.map(({ path, role }, index) => (
-                        <li key={path} className="crack-row flex items-baseline justify-between gap-3 py-2 border-b border-border" style={{ '--row': index } as React.CSSProperties}>
+                        <li key={path} className="strike-row flex items-baseline justify-between gap-3 py-2 border-b border-border" style={{ '--row': index } as React.CSSProperties}>
                             <span className="truncate">{path}</span>
                             <span className="flex-shrink-0 text-text-muted">{role}</span>
                         </li>
                     ))}
                 </ul>
             </div>
-            <div className="crack-drop">
+            <div className="gains-drop">
                 <p className="font-pixel text-[0.8125rem] text-generated">{t('gains.withStewbeet')}</p>
                 <p className="mt-3 flex items-baseline gap-3">
                     <span className="font-pixel text-5xl leading-none text-generated">1</span>
