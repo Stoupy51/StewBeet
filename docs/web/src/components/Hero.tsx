@@ -11,6 +11,8 @@ import stats from '../generated/stats.json';
 const RELEASES_URL = 'https://github.com/Stoupy51/StewBeet/releases';
 const BLOCK_RENDER = '/generated/hero/resource_pack__assets__stardust__textures__font__high_res__life_crystal_block.png';
 const CRYSTAL_TEXTURE = '/img/hero/life_crystal.png';
+/** Taken in Minecraft 26.3 with Stardust Fragment's built packs, the build's last frame. */
+const INGAME_CAPTURE = '/img/hero/life_crystal_block_ingame.webp';
 
 /** The name and lore of the block, as `playground/hero/src/definitions.py` gives them and the game shows them. */
 const BLOCK_NAME = 'Life Crystal Block';
@@ -63,7 +65,7 @@ const BuildProof = () => {
                 <div className="hero-code" dangerouslySetInnerHTML={{ __html: block.html }} />
             </div>
 
-            <div className="mt-5 lg:-mt-[18px] lg:ml-16 flex flex-col lg:flex-row lg:items-start gap-2.5 lg:gap-3.5">
+            <div className="mt-5 lg:-mt-[18px] lg:ml-16 grid lg:grid-cols-[auto_auto] lg:justify-start items-start gap-2.5 lg:gap-x-3.5 lg:gap-y-3">
                 <div className="mc-panel self-start flex gap-0.5 p-3 lg:p-2.5 outline outline-4 outline-surface">
                     <div className="mc-slot"><img src={BLOCK_RENDER} alt={BLOCK_NAME} width={32} height={32} className="build-drop" style={{ '--slot': 0 } as React.CSSProperties} /></div>
                     <div className="mc-slot"><img src={CRYSTAL_TEXTURE} alt="Life Crystal" width={32} height={32} className="pixelated build-drop" style={{ '--slot': 1 } as React.CSSProperties} /></div>
@@ -72,7 +74,7 @@ const BuildProof = () => {
                     <div className="mc-slot lg:hidden" />
                     <div className="mc-slot lg:hidden" />
                 </div>
-                <div className="mc-tooltip self-start ml-[26px] lg:ml-0 lg:mt-[26px] px-2.5 py-2" role="note">
+                <div className="mc-tooltip self-start ml-[26px] lg:ml-0 lg:mt-[26px] lg:row-span-2 px-2.5 py-2" role="note">
                     <p className="text-white">{BLOCK_NAME}</p>
                     <p className="text-mc-lore italic">{BLOCK_LORE}</p>
                     <p className="mt-2 build-rise" style={{ '--row': 0 } as React.CSSProperties}>{t('hero.writtenByBuild')}</p>
@@ -82,6 +84,10 @@ const BuildProof = () => {
                         </p>
                     ))}
                 </div>
+                <figure className="build-rise lg:col-start-1 lg:row-start-2 lg:w-[11rem]" style={{ '--row': TOOLTIP_ROWS.length + 2 } as React.CSSProperties}>
+                    <img src={INGAME_CAPTURE} alt={t('hero.ingameAlt')} width={528} height={396} className="w-full border border-border" />
+                    <figcaption className="mt-1.5 font-pixel text-[0.6875rem] text-text-muted">{t('hero.ingameCaption')}</figcaption>
+                </figure>
             </div>
 
             <p className="mt-3 lg:mt-4 text-[0.8125rem] leading-normal text-text-muted">
@@ -103,7 +109,7 @@ export const Hero = () => {
         <section id="hero" className="pt-14 lg:pt-16">
             <div className="frame px-4 pt-7 pb-10 lg:px-12 lg:py-16 lg:grid lg:grid-cols-[minmax(0,1fr)_35rem] lg:gap-14">
                 <div className="flex flex-col">
-                    <a href={RELEASES_URL} target="_blank" rel="noopener noreferrer" className="self-start inline-flex items-center min-h-6 font-pixel text-[0.6875rem] lg:text-[0.8125rem] text-text-muted hover:text-text transition-colors">
+                    <a href={RELEASES_URL} target="_blank" rel="noopener noreferrer" className="self-start inline-block min-h-6 leading-6 font-pixel text-[0.6875rem] lg:text-[0.8125rem] text-text-muted hover:text-text transition-colors">
                         v{stats.version}
                         {/* The age is computed again in the browser, days after the prerender, so the text may differ. */}
                         {stats.releasedAt && <span suppressHydrationWarning>, {releaseAge(daysSince(stats.releasedAt), t)}</span>}

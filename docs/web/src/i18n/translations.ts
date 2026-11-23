@@ -38,6 +38,8 @@ export const translations = {
             resourcePackFiles: 'Resource pack files: {n}',
             proofCaption: '{n} files from this one definition. The first slot holds the render the build makes for the in-game manual.',
             replay: 'Play the build again',
+            ingameCaption: 'In game, Minecraft 26.3',
+            ingameAlt: 'The Life Crystal Block placed in a Minecraft world',
         },
 
         // A user quote, beside the objection it answers
@@ -656,6 +658,8 @@ export const translations = {
             resourcePackFiles: 'Fichiers du resource pack : {n}',
             proofCaption: '{n} fichiers à partir de cette seule définition. La première case contient le rendu que le build fait pour le manuel en jeu.',
             replay: 'Rejouer le build',
+            ingameCaption: 'En jeu, Minecraft 26.3',
+            ingameAlt: 'Le Life Crystal Block posé dans un monde Minecraft',
         },
 
         // A user quote, beside the objection it answers
