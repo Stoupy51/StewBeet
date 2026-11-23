@@ -23,6 +23,7 @@ const THEMED = {
   'section-start': ['#63d96b', '#1f7a2a'],
   'section-guides': ['#7c9cff', '#3045c0'],
   'section-plugins': ['#f0b23c', '#8a5a00'],
+  'section-contrib': ['#fe5acc', '#cb1b98'],
   'section-reference': ['#d98cf0', '#8b2fa3'],
   'section-understand': ['#5fd3e0', '#0b6f7a'],
 };

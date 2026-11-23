@@ -17,7 +17,7 @@ import { savedLanguage, useLanguage, type Language } from '../context/LanguageCo
 import { useTranslation } from '../i18n/useTranslation';
 import { useMarkdownContent } from '../context/MarkdownContentContext';
 import { PrehighlightedCode } from '../hooks/useShiki';
-import { DOC_PAGES, SECTIONS, docHref, docSrc, findDocPage, hrefSrc, pageAt, srcHref } from '../docsPages';
+import { SECTIONS, docHref, docSrc, findDocPage, hrefSrc, pageAt, srcHref } from '../docsPages';
 import { markdownPageMeta } from '../utils/pageMeta';
 import { headingTextToSlug, slugify } from '../utils/slugify';
 import { metaValue, rehypeCodeTabs, rehypeSteps, rehypeTableLabels, remarkCodeMeta, textOf } from '../utils/docMarkdown';
@@ -94,8 +94,6 @@ function loadDoc(src: string): Promise<Doc> {
 
 /** Where the reader left each page, for the back and forward buttons. */
 const scrollPositions = new Map<string, number>();
-
-const pageOrder = (src: string) => DOC_PAGES.findIndex((page) => page.src.en === src || page.src.fr === src);
 
 /**
  * A view transition of the page column. The column is one element in both states, so the old
@@ -335,7 +333,7 @@ export const MarkdownPage: React.FC = () => {
         // The same page in another language: the reader stays where they were
         const position = leavingPage && leavingPage === findDocPage(next.src) ? readingPosition() : null;
         const restored = navigationType === 'POP' && !hash ? scrollPositions.get(next.src) : undefined;
-        const kind = pagesOpen ? 'panel' : position ? 'language' : pageOrder(next.src) < pageOrder(leaving) ? 'back' : 'forward';
+        const kind = pagesOpen ? 'panel' : position ? 'language' : 'page';
 
         transitionDoc(main.current, kind, () => {
             flushSync(() => {
@@ -422,12 +420,12 @@ export const MarkdownPage: React.FC = () => {
         };
     }, []);
 
-    // The H2s, for "On this page": deeper levels would turn a long guide's list into a second page.
     const headings = useMemo<TocHeading[]>(() => {
         const withoutCode = shown.content.replace(/```[\s\S]*?```/g, '');
-        return [...withoutCode.matchAll(/^##\s+(.+)$/gm)].map(([, text]) => ({
+        return [...withoutCode.matchAll(/^(#{2,4})\s+(.+)$/gm)].map(([, hashes, text]) => ({
             id: headingTextToSlug(text.trim()),
             text: text.replace(/<[^>]*>/g, '').replace(/\*\*|`/g, '').trim(),
+            level: hashes.length,
         }));
     }, [shown.content]);
 
@@ -473,7 +471,7 @@ export const MarkdownPage: React.FC = () => {
 
     return (
         <div className="doc-page min-h-screen">
-            <Navbar subbar={<DocBar headings={headings} onOpenPages={() => setPagesOpen(true)} onJump={goToHeading} />} onLanguageChange={changeLanguage} />
+            <Navbar subbar={<DocBar headings={headings.filter(({ level }) => level === 2)} onOpenPages={() => setPagesOpen(true)} onJump={goToHeading} />} onLanguageChange={changeLanguage} />
             {pagesOpen && <PagesPanel current={page} onClose={() => setPagesOpen(false)} />}
             {pending && <div className="doc-progress" aria-hidden="true" />}
 

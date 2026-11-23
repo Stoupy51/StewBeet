@@ -3,10 +3,9 @@ import { HiRefresh } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
 import { useIntro } from '../hooks/useIntro';
 import { TrustStrip } from './TrustStrip';
-import type { FileNode } from './FileTree';
 import { DOC_PAGES, docHref } from '../docsPages';
 import heroCode from '../generated/heroCode.json';
-import heroOutput from '../generated/heroOutput.json';
+import { BLOCK_FILES } from '../heroBuild';
 import stats from '../generated/stats.json';
 
 const RELEASES_URL = 'https://github.com/Stoupy51/StewBeet/releases';
@@ -27,13 +26,7 @@ function releaseAge(days: number, t: (key: string) => string): string {
     return t('hero.releasedDaysAgo').replace('{n}', String(days));
 }
 
-function leaves(nodes: FileNode[]): FileNode[] {
-    return nodes.flatMap((node) => node.children ? leaves(node.children) : [node]);
-}
-
-/** The files the build wrote from the block definition, as python_package/scripts/build_hero_output.py recorded them. */
-const blockFiles = leaves(heroOutput.tree as FileNode[]).filter((leaf) => leaf.snippet === 'block');
-const count = (part: string) => blockFiles.filter((leaf) => leaf.path?.includes(part)).length;
+const count = (part: string) => BLOCK_FILES.filter((leaf) => leaf.path?.includes(part)).length;
 const TOOLTIP_ROWS: [string, number][] = [
     ['hero.blockFunctions', count('/function/custom_blocks/')],
     ['hero.crafterRecipes', count('/smithed_crafter/')],
@@ -92,7 +85,7 @@ const BuildProof = () => {
             </div>
 
             <p className="mt-3 lg:mt-4 text-[0.8125rem] leading-normal text-text-muted">
-                {t('hero.proofCaption').replace('{n}', String(blockFiles.length))}{' '}
+                {t('hero.proofCaption').replace('{n}', String(BLOCK_FILES.length))}{' '}
                 <button type="button" onClick={replayBuild} className="motion-reduce:hidden inline-flex items-center gap-1 min-h-6 text-link hover:text-text transition-colors">
                     <HiRefresh className="w-3.5 h-3.5" aria-hidden="true" />
                     {t('hero.replay')}

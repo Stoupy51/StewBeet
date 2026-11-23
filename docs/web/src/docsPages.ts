@@ -6,9 +6,9 @@
  */
 import type { Language } from './context/LanguageContext';
 
-export type Section = 'start' | 'guides' | 'plugins' | 'reference';
+export type Section = 'start' | 'guides' | 'plugins' | 'contrib' | 'reference';
 
-export type PluginGroup = 'items' | 'recipes' | 'resourcePack' | 'text' | 'build' | 'compatibility';
+export type PluginGroup = 'items' | 'recipes' | 'resourcePack' | 'text' | 'functions' | 'output' | 'development' | 'compatibility';
 
 export interface DocPage {
     /** Its address under /docs, the same in both languages, with `_` and never `-`. A plugin's is its module name. */
@@ -26,6 +26,7 @@ export const SECTIONS: Record<Section, { title: Record<Language, string>; text: 
     start: { title: { en: 'Start here', fr: 'Commencer ici' }, text: 'text-section-start', bg: 'bg-section-start', border: 'border-section-start' },
     guides: { title: { en: 'Guides', fr: 'Guides' }, text: 'text-section-guides', bg: 'bg-section-guides', border: 'border-section-guides' },
     plugins: { title: { en: 'Plugins', fr: 'Plugins' }, text: 'text-section-plugins', bg: 'bg-section-plugins', border: 'border-section-plugins' },
+    contrib: { title: { en: 'Contrib', fr: 'Contrib' }, text: 'text-section-contrib', bg: 'bg-section-contrib', border: 'border-section-contrib' },
     reference: { title: { en: 'Reference', fr: 'Référence' }, text: 'text-section-reference', bg: 'bg-section-reference', border: 'border-section-reference' },
 };
 
@@ -34,7 +35,9 @@ export const PLUGIN_GROUPS: Record<PluginGroup, Record<Language, string>> = {
     recipes: { en: 'Recipes', fr: 'Recipes' },
     resourcePack: { en: 'Resource pack', fr: 'Resource pack' },
     text: { en: 'Text and translations', fr: 'Textes et traductions' },
-    build: { en: 'Build and publishing', fr: 'Build et publication' },
+    functions: { en: 'Functions', fr: 'Fonctions' },
+    output: { en: 'Zips and copies', fr: 'Zips et copies' },
+    development: { en: 'Development', fr: 'Développement' },
     compatibility: { en: 'Compatibility', fr: 'Compatibilité' },
 };
 
@@ -86,21 +89,23 @@ export const DOC_PAGES: DocPage[] = [
     plugin('check_unused_textures', 'resourcePack', 'Unused textures', 'Textures inutilisées'),
     plugin('auto.lang_file', 'text', 'Lang file', 'Fichier lang'),
     plugin('auto.text_renders', 'text', 'Item images in text', 'Images d\'items dans le texte'),
-    plugin('initialize', 'build', 'Initialize', 'Initialisation'),
-    plugin('datapack.loading', 'build', 'Load functions', 'Fonctions de chargement'),
-    plugin('finalyze.basic_datapack_structure', 'build', 'Tick, second and minute functions', 'Fonctions tick, second et minute'),
-    plugin('auto.headers', 'build', 'Function headers', 'En-têtes de fonctions'),
-    plugin('auto.scoreboard_constants', 'build', 'Scoreboard constants', 'Constantes de scoreboard'),
-    plugin('datapack.sorters', 'build', 'List sorting', 'Tri de listes'),
-    plugin('archive', 'build', 'Zip archives', 'Archives zip'),
-    plugin('merge_smithed_weld', 'build', 'Smithed Weld merge', 'Fusion Smithed Weld'),
-    plugin('copy_to_destination', 'build', 'Copy to destination', 'Copie vers la destination'),
-    plugin('livereload', 'build', 'Live reload', 'Rechargement en direct'),
-    plugin('source_maps', 'build', 'Source maps', 'Source maps'),
-    plugin('compute_sha1', 'build', 'SHA-1 hashes', 'Empreintes SHA-1'),
+    plugin('datapack.loading', 'functions', 'Load functions', 'Fonctions de chargement'),
+    plugin('finalyze.basic_datapack_structure', 'functions', 'Tick, second and minute functions', 'Fonctions tick, second et minute'),
+    plugin('auto.scoreboard_constants', 'functions', 'Scoreboard constants', 'Constantes de scoreboard'),
+    plugin('datapack.sorters', 'functions', 'List sorting', 'Tri de listes'),
+    plugin('auto.headers', 'functions', 'Function headers', 'En-têtes de fonctions'),
+    plugin('archive', 'output', 'Zip archives', 'Archives zip'),
+    plugin('merge_smithed_weld', 'output', 'Smithed Weld merge', 'Fusion Smithed Weld'),
+    plugin('compute_sha1', 'output', 'SHA-1 hashes', 'Empreintes SHA-1'),
+    plugin('copy_to_destination', 'output', 'Copy to destination', 'Copie vers la destination'),
+    plugin('initialize', 'development', 'Project setup', 'Mise en place du projet'),
+    plugin('livereload', 'development', 'Live reload', 'Rechargement en direct'),
+    plugin('source_maps', 'development', 'Source maps', 'Source maps'),
     plugin('finalyze.dependencies', 'compatibility', 'Library version checks', 'Vérification des bibliothèques'),
     plugin('compatibilities.simpledrawer', 'compatibility', 'SimpleDrawer', 'SimpleDrawer'),
     plugin('compatibilities.neo_enchant', 'compatibility', 'NeoEnchant', 'NeoEnchant'),
+
+    { slug: 'contrib/simplenergy', src: { en: 'contrib/simplenergy.md' }, title: { en: 'SimplEnergy', fr: 'SimplEnergy' }, section: 'contrib' },
 
     guide('1_definitions_setup', 'definitions', 'reference', 'Definitions', 'Définitions'),
     guide('2_writing_to_files/reference', 'reference/helpers', 'reference', 'Helpers', 'Helpers'),

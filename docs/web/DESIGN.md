@@ -34,6 +34,8 @@ colors:
   section-guides-dark: "#7c9cff"
   section-plugins: "#8a5a00"
   section-plugins-dark: "#f0b23c"
+  section-contrib: "#cb1b98"
+  section-contrib-dark: "#fe5acc"
   section-reference: "#8b2fa3"
   section-reference-dark: "#d98cf0"
   section-understand: "#0b6f7a"
@@ -117,7 +119,7 @@ The signature is a 16 px pixel grid visible in the page margins, behind a conten
 
 The light page is pure white and the dark page a neutral near-black: no cream, no brown tint, grey neutrals only. Beet red is the only accent, kept for the one primary button of a screen and for links; white on `primary` is 5.9:1, and a pressed or hovered button darkens to `primary-hover`. Leaf green marks generated output and success. Code follows the page: a white panel framed by its border in the light theme, a raised near-black one in the dark theme, highlighted with VS Code's Light+ and Dark+. A light page with dark code blocks makes the eye adapt at every block, and dark text on a light background reads better.
 
-Each docs section has a color taken from Minecraft's text colors and darkened for the light theme, all at 4.5:1 or more: Start here green, Guides blue, Plugins gold, Reference purple, Understand cyan. A section's color appears wherever the section does: its sidebar label with an 8 px square, the current page marker, the breadcrumb, the docs home and the search results.
+Each docs section has a color taken from Minecraft's text colors and darkened for the light theme, all at 4.5:1 or more: Start here green, Guides blue, Plugins gold, Contrib magenta, Reference purple, Understand cyan. A section's color appears wherever the section does: its sidebar label with an 8 px square, the current page marker, the breadcrumb, the docs home and the search results.
 
 The `mc-` colors are the game's and only paint Minecraft elements.
 
@@ -129,7 +131,7 @@ Archivo carries headings and text at its normal width. Headings are weight 700 w
 
 The page column is 1200 px at most. On a phone the grid shows in 16 px strips on both sides of the column.
 
-Navigation holds Docs, Showcase and Tools. Docs on desktop have three columns: every page grouped in a 264 px sidebar, the page, and "On this page" in 216 px. On a phone the header hides while scrolling down a doc page, and one 48 px bar keeps "Pages" (a full-screen list of every page, grouped by section) and "On this page". The breadcrumb sits above the H1 and there is no Back button.
+Navigation holds Docs, Showcase and Tools. Docs on desktop have three columns: every page grouped in a 264 px sidebar, the page, and "On this page" in 216 px, which lists the H2s and unfolds the H3s and H4s of the section being read. On a phone the header hides while scrolling down a doc page, and one 48 px bar keeps "Pages" (a full-screen list of every page, grouped by section) and "On this page". The breadcrumb sits above the H1 and there is no Back button.
 
 Steps are numbered only when they are a real sequence, in framed "01" markers: instruction left and terminal right on desktop, stacked on a phone. Every code block has a copy button and wraps on a phone.
 
@@ -145,9 +147,9 @@ Corners are square everywhere. Avatars are circles. Minecraft elements keep the 
 
 ## Motion
 
-Three moments move and nothing else does. On the home page the build plays: the definition's lines light up, their files drop, and the last frame is a real in-game capture. The 8 hand-written files crack like a mined block and drop one definition. The Showcase strip fills chest slots the way `_give_all` does. Smaller details: the inventory hover overlay on cards, manual pages turned with a swipe, the stack diagram building itself when its page opens, and a view transition between doc pages. In that transition the page column slides towards the side the next page sits on in the page list, and the current-page marker glides to its row. A language change fades the screen in place and keeps the reader in the same section.
+Three moments move and nothing else does. On the home page the build plays: the definition's lines light up, their files drop, and the last frame is a real in-game capture. The 8 hand-written files crack like a mined block and drop one definition. The Showcase strip fills chest slots the way `_give_all` does. Smaller details: the inventory hover overlay on cards, manual pages turned with a swipe, the stack diagram building itself when its page opens, and a view transition between doc pages. In that transition the page column clears in 16 px cells, the size of the margin grid, in a random order, then the next page fills in the same way, while the current-page marker glides to its row. A language change fades the screen in place and keeps the reader in the same section.
 
-Nothing makes the visitor wait. Text is readable before and during every animation. The build plays once in about 2 seconds and replays on a tap, and a page entrance lasts 0.6 seconds at most. Only `transform` and `opacity` animate, and reduced motion shows the final frame. A press takes 150 ms on `cubic-bezier(0.4, 0, 0.2, 1)`, an entrance 400 ms on `cubic-bezier(0.16, 1, 0.3, 1)`.
+Nothing makes the visitor wait. Text is readable before and during every animation. The build plays once in about 2 seconds and replays on a tap, and a page entrance lasts 0.6 seconds at most. Only `transform` and `opacity` animate, plus the cell masks of the doc page transition, and reduced motion shows the final frame. A press takes 150 ms on `cubic-bezier(0.4, 0, 0.2, 1)`, an entrance 400 ms on `cubic-bezier(0.16, 1, 0.3, 1)`.
 
 ## Voice
 

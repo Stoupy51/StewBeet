@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Hero } from './Hero';
 import { Testimonial } from './Testimonial';
+import { ControlProof } from './ControlProof';
 import { Gains } from './Gains';
 import { Spotlights } from './Spotlights';
 import { BuiltWith } from './BuiltWith';
@@ -37,7 +38,7 @@ function HomePage() {
     }
   }, [location, navigate]);
 
-  // The hero and the quote are the redesigned top of the page; the sections below keep a flat
+  // The hero, the quote and the control proof are the redesigned top of the page; the sections below keep a flat
   // page colour over the grid until their turn comes.
   return (
     <div className={`min-h-screen ${SELECTION_BRAND}`}>
@@ -46,6 +47,7 @@ function HomePage() {
       <main>
         <Hero />
         <Testimonial />
+        <ControlProof />
         <div className="bg-surface text-ink-200">
           <Spotlights />
           <Gains />

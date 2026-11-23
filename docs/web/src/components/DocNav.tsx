@@ -10,6 +10,8 @@ import {
 export interface TocHeading {
     id: string;
     text: string;
+    /** 2 to 4, for an H2 to an H4. */
+    level: number;
 }
 
 const REPO_DOCS = 'https://github.com/Stoupy51/StewBeet/edit/main/docs/web/public/docs';
@@ -229,15 +231,14 @@ export const DocBar = ({ headings, onOpenPages, onJump }: {
     );
 };
 
-/** Which heading the reader is in: the last one whose top has gone under the pinned header. */
-function useActiveHeading(headings: TocHeading[]): string | undefined {
-    const [active, setActive] = useState<string>();
+/** The index of the heading the reader is in: the last one whose top has gone under the pinned header, -1 above the first. */
+function useActiveHeading(headings: TocHeading[]): number {
+    const [active, setActive] = useState(-1);
     useEffect(() => {
         let frame = 0;
         const update = () => {
             frame = 0;
-            const passed = headings.filter(({ id }) => (document.getElementById(id)?.getBoundingClientRect().top ?? Infinity) < 120);
-            setActive(passed.at(-1)?.id);
+            setActive(headings.filter(({ id }) => (document.getElementById(id)?.getBoundingClientRect().top ?? Infinity) < 120).length - 1);
         };
         const onScroll = () => {
             if (!frame) frame = requestAnimationFrame(update);
@@ -252,7 +253,18 @@ function useActiveHeading(headings: TocHeading[]): string | undefined {
     return active;
 }
 
-/** The desktop's right column: this page's headings, then where to edit or read its source. */
+const HEADING_INDENTS: Record<number, string> = { 2: 'pl-3', 3: 'pl-6', 4: 'pl-9' };
+
+/** The closest heading above this one with a higher level, -1 for an H2. */
+function parentHeading(headings: TocHeading[], index: number): number {
+    for (let above = index - 1; above >= 0; above--) if (headings[above].level < headings[index].level) return above;
+    return -1;
+}
+
+/**
+ * The desktop's right column: this page's H2s, then where to edit or read its source. The H2 the
+ * reader is in also lists its H3s, and the H3 they are in its H4s, so a long guide's list stays one screen.
+ */
 export const PageAside = ({ headings, src, accent, onJump }: {
     headings: TocHeading[];
     src: string;
@@ -260,7 +272,10 @@ export const PageAside = ({ headings, src, accent, onJump }: {
     onJump: (id: string) => (event: React.MouseEvent) => void;
 }) => {
     const { t } = useTranslation();
-    const active = useActiveHeading(headings);
+    const activeIndex = useActiveHeading(headings);
+    const readerPath = new Set<number>();
+    for (let index = activeIndex; index >= 0; index = parentHeading(headings, index)) readerPath.add(index);
+    const isShown = (heading: TocHeading, index: number) => heading.level === 2 || readerPath.has(parentHeading(headings, index));
 
     return (
         <>
@@ -268,13 +283,13 @@ export const PageAside = ({ headings, src, accent, onJump }: {
                 <>
                     <p className="label mb-2.5">{t('markdown.onThisPage')}</p>
                     <nav aria-label={t('markdown.onThisPage')} className="flex flex-col">
-                        {headings.map((heading) => (
+                        {headings.map((heading, index) => isShown(heading, index) && (
                             <a
-                                key={heading.id}
+                                key={index}
                                 href={`#${heading.id}`}
                                 onClick={onJump(heading.id)}
-                                className={`py-1.5 pl-3 text-[0.8125rem] leading-snug border-l transition-colors ${
-                                    heading.id === active ? `border-l-2 ${accent} text-text` : 'border-border text-text-muted hover:text-text'
+                                className={`py-1.5 ${HEADING_INDENTS[heading.level]} text-[0.8125rem] leading-snug border-l transition-colors ${
+                                    index === activeIndex ? `border-l-2 ${accent} text-text` : 'border-border text-text-muted hover:text-text'
                                 }`}
                             >
                                 {heading.text}

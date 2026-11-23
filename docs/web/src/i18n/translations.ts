@@ -47,6 +47,17 @@ export const translations = {
             translated: '',
         },
 
+        // The proof that the generated files stay readable, beside the user who feared they would not
+        control: {
+            title: 'You keep control of every file',
+            text: 'The build writes plain datapack and resource pack files, and heads each function with where it is called from. Here are the {n} files of the block above, as the build wrote them.',
+            sourceMaps: 'Source maps link each line to the Python that wrote it.',
+            files: 'Files written from the block',
+            racoonQuote: 'Before trying it, I was pretty wary of pre-compilers: I thought all that abstraction would turn into spaghetti code. But StewBeet fits right into the creative process. It takes care of lots of tasks that add up to lost time and mental fatigue, while keeping absolute control over the code you produce.',
+            racoonCaption: 'author of',
+            translated: 'translated from French',
+        },
+
         // Copy buttons
         copy: {
             action: 'Copy',
@@ -652,6 +663,17 @@ export const translations = {
             casperQuote: "Je ne connaissais pas du tout Python, mais à force d'essais et d'erreurs j'ai fini par comprendre, et c'est génial.",
             casperCaption: 'a fait ses premiers blocks custom avec StewBeet',
             translated: "traduit de l'anglais",
+        },
+
+        // The proof that the generated files stay readable, beside the user who feared they would not
+        control: {
+            title: 'Vous gardez la main sur chaque fichier',
+            text: "Le build écrit des fichiers de datapack et de resource pack ordinaires, et note en tête de chaque fonction d'où elle est appelée. Voici les {n} fichiers du block ci-dessus, tels que le build les a écrits.",
+            sourceMaps: "Les source maps relient chaque ligne au Python qui l'a écrite.",
+            files: 'Fichiers écrits à partir du block',
+            racoonQuote: "Avant de l'essayer, j'étais pas mal réfractaire aux précompilateurs, je pensais que toute cette abstraction allait créer du code spaghetti. Mais StewBeet s'intègre tout à fait dans le process de création : il simplifie beaucoup de tâches qui, accumulées, prennent du temps et de la fatigue mentale, tout en gardant un contrôle absolu sur le code qu'on produit.",
+            racoonCaption: 'auteur de',
+            translated: '',
         },
 
         // Copy buttons
