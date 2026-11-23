@@ -116,7 +116,13 @@ tag @s add {ns}.cable
 
 
 def energy_cable_elements(i: int) -> list[JsonDict]:
-	""" The model elements of an energy cable connected on the sides the bits of `i` set: its centre, and one arm per connection. """
+	""" The model elements of an energy cable connected on the sides the bits of `i` set: one arm per connection, and its centre.
+
+	Six arms hide every face of the centre, and Minecraft rejects a model holding a faceless element, so it is left out.
+
+	>>> len(energy_cable_elements(0)), len(energy_cable_elements(63))
+	(1, 6)
+	"""
 	connected: list[EnergyCableSide] = [side for side in ENERGY_CABLE_SIDES if i & side.bit]
 	letters: str = "".join(side.letter for side in connected)
 	centre_faces: JsonDict = {
@@ -133,7 +139,8 @@ def energy_cable_elements(i: int) -> list[JsonDict]:
 		}}
 		for arm in connected
 	]
-	return [{"from": [4, 4, 4], "to": [12, 12, 12], "faces": centre_faces}, *arms]
+	centre: list[JsonDict] = [{"from": [4, 4, 4], "to": [12, 12, 12], "faces": centre_faces}] if centre_faces else []
+	return [*centre, *arms]
 
 
 def energy_cable_centre_face(edges: str) -> JsonDict:
