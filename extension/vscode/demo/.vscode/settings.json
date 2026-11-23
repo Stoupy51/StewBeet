@@ -4,7 +4,6 @@
 	"editor.wordBasedSuggestions": "off",
 	"editor.minimap.enabled": false,
 	"breadcrumbs.enabled": false,
-	"workbench.editor.showTabs": "single",
 	"explorer.compactFolders": false,
 	"python.analysis.typeCheckingMode": "off"
 }
