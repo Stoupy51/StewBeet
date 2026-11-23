@@ -3,7 +3,7 @@
  * extension. Loaded only when a block was not highlighted at build time: the grammars live in
  * extension/vscode, outside docs/web, so the server image does not have them.
  */
-import { getSingletonHighlighter } from 'shiki';
+import { getSingletonHighlighter, type ShikiTransformer } from 'shiki';
 import type { LanguageRegistration } from '@shikijs/types';
 import { MCFUNCTION_LANGUAGE, PYTHON_WITH_MCFUNCTION } from '../langs/mcfunction';
 import { pythonSemantics } from './pythonSemantics';
@@ -26,7 +26,7 @@ function languageName(language: string | LanguageRegistration): string {
 }
 
 /** Loads the language and the themes, then highlights. A language Shiki does not know comes out as plain text. */
-export async function highlightCode(code: string, language: string | LanguageRegistration, theme: CodeTheme): Promise<string> {
+export async function highlightCode(code: string, language: string | LanguageRegistration, theme: CodeTheme, transformers: ShikiTransformer[] = []): Promise<string> {
     const themes = typeof theme === 'string' ? [theme] : [theme.dark, theme.light];
     const name = languageName(language);
     const langs = name === 'python' ? PYTHON_WITH_MCFUNCTION : [name === 'mcfunction' ? MCFUNCTION_LANGUAGE : language];
@@ -43,6 +43,6 @@ export async function highlightCode(code: string, language: string | LanguageReg
         ...(typeof theme === 'string' ? { theme } : { themes: theme, defaultColor: 'dark' as const }),
         // Python strings holding commands are highlighted like the VS Code extension does.
         includeExplanation: known && name === 'python' ? 'scopeName' : false,
-        transformers: [mcfunctionBlocks, pythonSemantics],
+        transformers: [mcfunctionBlocks, pythonSemantics, ...transformers],
     });
 }

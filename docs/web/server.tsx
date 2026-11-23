@@ -122,7 +122,7 @@ Bun.serve({
             );
             const body = extractBody(await new Response(prelude).text());
             // `<` escaped so a `</script>` written in a guide cannot close the tag early
-            const embedded = doc ? `<script id="prerendered-doc" type="application/json">${JSON.stringify(doc).replace(/</g, '\\u003c')}</script>` : '';
+            const embedded = doc ? `<script id="prerendered-doc" type="application/json">${JSON.stringify({ src: doc.src, content: doc.content }).replace(/</g, '\\u003c')}</script>` : '';
 
             // Without this the document would ship index.html's head: same title and same
             // link preview for every page of the documentation.

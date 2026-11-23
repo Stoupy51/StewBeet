@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { HiCheck, HiOutlineClipboard } from 'react-icons/hi';
-import { PAGE_THEMES, useShiki } from '../hooks/useShiki';
+import { PAGE_THEMES, PrehighlightedCode, codeKey, useShiki } from '../hooks/useShiki';
 import { useClipboard } from '../hooks/useClipboard';
 import { useTranslation } from '../i18n/useTranslation';
 import { metaValue } from '../utils/docMarkdown';
@@ -32,9 +32,12 @@ const CopyButton = ({ text }: { text: string }) => {
     );
 };
 
+/** A block highlighted at build time carries its key, which main.tsx reads its markup back by when it hydrates a server-rendered page. */
 const Highlighted = ({ code, language, hidden, className = '' }: CodeSample & { hidden?: boolean; className?: string }) => {
     const html = useShiki(code, language, PAGE_THEMES);
-    return <div hidden={hidden} className={`${PROMPTS[language] ?? ''} ${className}`} dangerouslySetInnerHTML={{ __html: html }} />;
+    const key = codeKey(language, code);
+    const isPrebuilt = key in useContext(PrehighlightedCode);
+    return <div hidden={hidden} data-code-key={isPrebuilt ? key : undefined} className={`${PROMPTS[language] ?? ''} ${className}`} dangerouslySetInnerHTML={{ __html: html }} />;
 };
 
 /**
