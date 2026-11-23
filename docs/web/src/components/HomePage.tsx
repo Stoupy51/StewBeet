@@ -8,17 +8,13 @@ import { Gains } from './Gains';
 import { Spotlights } from './Spotlights';
 import { BuiltWith } from './BuiltWith';
 import { StandingOnGiants } from './StandingOnGiants';
-import { Installation } from './Installation';
-import { StackSection } from './StackSection';
-import { FinalCTA } from './FinalCTA';
+import { GetStarted } from './GetStarted';
 import { Footer } from './Footer';
-import { useReveal } from '../hooks/useReveal';
 import { SELECTION_BRAND } from '../theme';
 
 function HomePage() {
   const location = useLocation();
   const navigate = useNavigate();
-  useReveal();
 
   useEffect(() => {
     if (!location.hash) return;
@@ -38,8 +34,6 @@ function HomePage() {
     }
   }, [location, navigate]);
 
-  // The hero, the quote and the control proof are the redesigned top of the page; the sections below keep a flat
-  // page colour over the grid until their turn comes.
   return (
     <div className={`min-h-screen ${SELECTION_BRAND}`}>
       <Navbar />
@@ -48,15 +42,11 @@ function HomePage() {
         <Hero />
         <Testimonial />
         <ControlProof />
-        <div className="bg-surface text-ink-200">
-          <Spotlights />
-          <Gains />
-          <BuiltWith />
-          <StandingOnGiants />
-          <Installation />
-          <StackSection />
-          <FinalCTA />
-        </div>
+        <Gains />
+        <Spotlights />
+        <BuiltWith />
+        <StandingOnGiants />
+        <GetStarted />
       </main>
 
       <Footer />

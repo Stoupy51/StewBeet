@@ -12,7 +12,7 @@ import { Footer } from './Footer';
 import { ZoomableImage } from './ZoomableImage';
 import { CodeBlock, CodeTabs } from './DocCode';
 import { Breadcrumb, DocBar, PageAside, PageList, PagesPanel, PreviousNext, SourceLinks, type TocHeading } from './DocNav';
-import { STACK_PALETTES, stackDiagramSvg } from './stackDiagram';
+import { STACK_TEXT } from './stackDiagram';
 import { savedLanguage, useLanguage, type Language } from '../context/LanguageContext';
 import { useTranslation } from '../i18n/useTranslation';
 import { useMarkdownContent } from '../context/MarkdownContentContext';
@@ -214,11 +214,47 @@ const DocLink = ({ href, children }: React.AnchorHTMLAttributes<HTMLAnchorElemen
     );
 };
 
-/** beet, bolt, mecha and StewBeet in the page's colours, building itself up when it appears. A span, since markdown puts it in a paragraph. */
+/** One box of the stack figure: a project's name and what it does, in the colour of who makes it. */
+const StackBox = ({ name, lines, team, delay }: { name: string; lines: string[]; team: boolean; delay: number }) => (
+    <span className={`stk-a block p-4 border ${team ? 'border-generated bg-generated/[0.06]' : 'border-link bg-link/[0.08]'}`} style={{ '--d': `${delay}s` } as React.CSSProperties}>
+        <span className="block text-lg font-bold text-text">{name}</span>
+        <span className="block mt-1 text-[0.9375rem] leading-normal text-text-muted">{lines.join(' ')}</span>
+    </span>
+);
+
+/**
+ * beet, bolt, mecha and StewBeet, building itself up when the page opens. HTML rather than the shareable SVG,
+ * so the text wraps at a phone's width. Spans, since markdown puts the picture in a paragraph.
+ */
 const StackDiagram = () => {
     const { language } = useTranslation();
-    const svg = useMemo(() => stackDiagramSvg({ language, palette: STACK_PALETTES.page, autoplay: true }), [language]);
-    return <span className="stack-diagram block border border-border [&>svg]:block [&>svg]:w-full [&>svg]:h-auto" dangerouslySetInnerHTML={{ __html: svg }} />;
+    const text = STACK_TEXT[language];
+    const code = (line: string) => line.split('`').map((part, index) => index % 2 ? <code key={index}>{part}</code> : part);
+
+    return (
+        <span className="stack-figure block my-6">
+            <span className="block">
+                <StackBox name="StewBeet" lines={text.stewbeet} team={false} delay={0.2} />
+                <span className="stk-a stk-fade block py-2 pl-4 text-sm text-text-muted" style={{ '--d': '0.5s' } as React.CSSProperties}>{text.plugsInto}</span>
+            </span>
+            <span className="stk-a stk-fade relative block mt-3 px-3 pt-6 pb-3 sm:px-4 border border-dashed border-generated" style={{ '--d': '0.7s' } as React.CSSProperties}>
+                <span className="absolute -top-3 left-3 px-2 bg-surface text-sm font-semibold text-generated">{text.team}</span>
+                <span className="grid gap-3 sm:grid-cols-2">
+                    <StackBox name="bolt" lines={text.bolt} team delay={0.9} />
+                    <StackBox name="mecha" lines={text.mecha} team delay={1.05} />
+                </span>
+                <span className="block mt-3"><StackBox name="beet" lines={text.beet} team delay={1.2} /></span>
+            </span>
+            <span className="stk-a stk-fade block mt-2 text-center text-sm text-text-muted" style={{ '--d': '1.5s' } as React.CSSProperties}>{text.output}</span>
+            <span className="grid gap-3 mt-5 pt-4 border-t border-border sm:grid-cols-3">
+                {text.facts.map((lines, index) => (
+                    <span key={index} className={`stk-a stk-fade block pl-3 border-l-[3px] text-[0.9375rem] leading-normal ${index === 1 ? 'border-link' : 'border-generated'}`} style={{ '--d': `${1.8 + index * 0.2}s` } as React.CSSProperties}>
+                        {code(lines.join(' '))}
+                    </span>
+                ))}
+            </span>
+        </span>
+    );
 };
 
 /** Images keep the size of their box from the first frame, read by scripts/build-media-sizes.ts. */

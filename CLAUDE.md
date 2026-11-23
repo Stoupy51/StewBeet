@@ -11,4 +11,5 @@ Python package in `python_package`, docs in `docs`, project templates in `templa
 ## Verify
 
 - Builds are deterministic. After `stewbeet rebuild` only zip entry timestamps change, so compare name to CRC maps of the zips, not raw bytes. Test on `templates/extensive`, `SimplEnergy` and `StardustFragment`.
+- Website (`docs/web`): a push to main deploys it in about 3 minutes. Then fetch a live doc page and check that its `#root` holds the page, not `<!--$!-->`: a module the Docker image lacks makes the server render every doc page empty, and nothing else reports it.
 - Docs: `py -m sphinx -b html docs/source <tmp> -q` from the repo root. A module whose annotations use an `if TYPE_CHECKING:` import starts with `from __future__ import annotations`. No `Attributes:` section in a class docstring, document each field under it (`__slots__` as a dict). Docstrings are reST: `.. code-block:: python`, a blank line before `Args:`.

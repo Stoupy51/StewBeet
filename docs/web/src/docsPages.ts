@@ -6,7 +6,7 @@
  */
 import type { Language } from './context/LanguageContext';
 
-export type Section = 'start' | 'guides' | 'plugins' | 'contrib' | 'reference';
+export type Section = 'start' | 'guides' | 'plugins' | 'contrib' | 'reference' | 'understand';
 
 export type PluginGroup = 'items' | 'recipes' | 'resourcePack' | 'text' | 'functions' | 'output' | 'development' | 'compatibility';
 
@@ -28,6 +28,7 @@ export const SECTIONS: Record<Section, { title: Record<Language, string>; text: 
     plugins: { title: { en: 'Plugins', fr: 'Plugins' }, text: 'text-section-plugins', bg: 'bg-section-plugins', border: 'border-section-plugins' },
     contrib: { title: { en: 'Contrib', fr: 'Contrib' }, text: 'text-section-contrib', bg: 'bg-section-contrib', border: 'border-section-contrib' },
     reference: { title: { en: 'Reference', fr: 'Référence' }, text: 'text-section-reference', bg: 'bg-section-reference', border: 'border-section-reference' },
+    understand: { title: { en: 'Understand', fr: 'Comprendre' }, text: 'text-section-understand', bg: 'bg-section-understand', border: 'border-section-understand' },
 };
 
 export const PLUGIN_GROUPS: Record<PluginGroup, Record<Language, string>> = {
@@ -111,6 +112,8 @@ export const DOC_PAGES: DocPage[] = [
     guide('2_writing_to_files/reference', 'reference/helpers', 'reference', 'Helpers', 'Helpers'),
     guide('3_beet_config', 'reference/beet_yml', 'reference', 'beet.yml', 'beet.yml'),
     guide('4_equations', 'reference/equations', 'reference', 'Equations', 'Équations'),
+
+    guide('how_it_fits', 'how_it_fits', 'understand', 'How StewBeet fits with beet', "Comment StewBeet s'intègre à beet"),
 ];
 
 /** The index of every plugin, the landing page of their section, kept out of the page list. */

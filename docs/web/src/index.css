@@ -148,7 +148,15 @@
 
 .markdown-body :is(p, ul, ol, blockquote, dl, details, .markdown-alert) { max-width: 40rem; }
 /* The stack diagram is drawn at 1200 px: it takes the whole column, or its text gets too small to read. */
-.markdown-body p:has(> .stack-diagram) { max-width: none; }
+.markdown-body p:has(> .stack-figure) { max-width: none; }
+
+/* The stack figure of the how_it_fits page builds itself up once, from beet to the facts. */
+@keyframes stk-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes stk-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: no-preference) {
+  .stack-figure .stk-a { animation: stk-rise 500ms cubic-bezier(0.16, 1, 0.3, 1) var(--d) both; }
+  .stack-figure .stk-fade { animation-name: stk-fade; }
+}
 
 .markdown-body :is(h1, h2, h3, h4, h5, h6) {
   margin: 2.5rem 0 0.75rem;
@@ -423,20 +431,6 @@ html[data-transition='panel']::view-transition-new(doc-main) { animation: none; 
 }
 
 /*
- * Section reveal. useReveal marks what is already on screen as risen, then sets data-motion, so
- * nothing visible ever blinks and a page without JavaScript never hides anything.
- */
-@media (prefers-reduced-motion: no-preference) {
-  html[data-motion='on'] [data-rise] {
-    transition: opacity 400ms cubic-bezier(0.16, 1, 0.3, 1), transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  html[data-motion='on'] [data-rise]:not([data-risen]) {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-}
-
-/*
  * The build plays on the home page: the definition's lines light up one after the other, the items
  * drop into their slots and the tooltip lists what the build wrote. About two seconds, transform and
  * opacity only, and the code stays readable from the first frame.
@@ -458,7 +452,41 @@ html[data-transition='panel']::view-transition-new(doc-main) { animation: none; 
   to   { opacity: 1; transform: none; }
 }
 
+/*
+ * The gains comparison: the eight hand-written files crack in three stages like a mined block, then
+ * the definition replacing them drops in. Without data-armed, or with reduced motion, the cracks
+ * show at their last stage. The crack is a pixel pattern masking the text colour, kept faint enough
+ * to read the paths through.
+ */
+.crack-row { position: relative; }
+.crack-row::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: currentColor;
+  opacity: 0.14;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cpath d='M2 3h2v1h1v2h2v1h2V6h2v2h1v1h1v2h-1v-1h-2V9h-1v2H8v1H6v-2H5V8H4V6H3V5H2z M10 2h1v2h1v1h-1V4h-1z M1 12h2v1h1v1H2v-1H1z'/%3E%3C/svg%3E") 0 0 / 32px 16px space;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cpath d='M2 3h2v1h1v2h2v1h2V6h2v2h1v1h1v2h-1v-1h-2V9h-1v2H8v1H6v-2H5V8H4V6H3V5H2z M10 2h1v2h1v1h-1V4h-1z M1 12h2v1h1v1H2v-1H1z'/%3E%3C/svg%3E") 0 0 / 32px 16px space;
+}
+@keyframes crack {
+  from { opacity: 0; }
+  to   { opacity: 0.14; }
+}
+.gains-wrap pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.gains-scroll pre { white-space: pre; overflow-x: auto; }
+
 @media (prefers-reduced-motion: no-preference) {
+  [data-armed]:not([data-play]) .crack-row::after { opacity: 0; }
+  [data-armed]:not([data-play]) .crack-drop { opacity: 0; }
+  [data-play] .crack-row::after {
+    animation: crack 600ms steps(3, end) both;
+    animation-delay: calc(var(--row, 0) * 80ms);
+  }
+  [data-play] .crack-drop {
+    animation: build-drop 400ms cubic-bezier(0.16, 1, 0.3, 1) 1100ms both;
+  }
+
   [data-intro='play'] .hero-code .line {
     animation: build-line 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-delay: calc(var(--line, 0) * 60ms);

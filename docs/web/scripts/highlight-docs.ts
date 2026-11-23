@@ -3,7 +3,8 @@
  * and writes each page's markup by block to public/highlighted/<page>.json, which MarkdownPage
  * fetches beside the markdown and server.tsx renders from. A reader of the docs never loads a
  * highlighter, and a page shows coloured from its first frame. The files the hero's block builds
- * into go to src/generated/heroFiles.json, for the file browser of the home page.
+ * into go to src/generated/heroFiles.json, for the file browser of the home page, and the code of
+ * its gains examples to src/generated/gainsCode.json.
  *
  * A token's colours go in a class of src/generated/codeColors.css rather than inline: the docs use
  * about 20 distinct styles over thousands of tokens. A block written the same in English and in
@@ -16,6 +17,7 @@ import type { Code, Nodes } from 'mdast';
 import type { ShikiTransformer } from 'shiki';
 import { PAGE_THEMES, codeKey } from '../src/hooks/useShiki';
 import { highlightCode } from '../src/utils/highlightCode';
+import { GAIN_SNIPPETS } from '../src/components/gainsData';
 
 const DOCS = join(import.meta.dir, '..', 'public', 'docs');
 const OUTPUT = join(import.meta.dir, '..', 'public', 'highlighted');
@@ -64,6 +66,12 @@ for (const [path, text] of Object.entries(heroContents)) {
     heroFiles[path] = await highlightCode(text, path.endsWith('.mcfunction') ? 'mcfunction' : 'json', PAGE_THEMES, [STYLE_TO_CLASS]);
 }
 writeFileSync(join(GENERATED, 'heroFiles.json'), JSON.stringify(heroFiles));
+
+const gainsCode: Record<string, string> = {};
+for (const [key, { lang, code }] of Object.entries(GAIN_SNIPPETS)) {
+    gainsCode[key] = await highlightCode(code, lang, PAGE_THEMES, [STYLE_TO_CLASS]);
+}
+writeFileSync(join(GENERATED, 'gainsCode.json'), JSON.stringify(gainsCode));
 
 writeFileSync(STYLESHEET, [...styleClasses].map(([name, style]) => `.${name}{${style}}\n`).join(''));
 

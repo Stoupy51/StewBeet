@@ -3,9 +3,7 @@
 
 Every option of the beet configuration file, and what StewBeet does with it. The file is read at the start of every build and decides how the whole project is processed.
 
-If beet, bolt and mecha are new names to you, this is who makes what:
-
-![beet runs the build and bolt and mecha plug into it, all three made by the beet team. StewBeet is a separate project that runs inside beet as plugins.](../../img/stack/stewbeet-stack.en.dark.png)
+If beet, bolt and mecha are new names to you, [How StewBeet fits with beet](../how_it_fits/en.md) says who makes what.
 
 The examples use YAML (`beet.yml`). Every option works the same in `beet.yaml`, `beet.json` or `pyproject.toml`. The file lives at the project root.
 

@@ -1,149 +1,78 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useInView } from 'framer-motion';
 import { useTranslation } from '../i18n/useTranslation';
-import { useShiki } from '../hooks/useShiki';
-import { FileTree } from './FileTree';
-import { ZoomableImage } from './ZoomableImage';
-import { BY_HAND, GAIN_TILES, type GainTile, type GainVisual, type Snippet } from './gainsData';
-import { CARD, PAGE, SECTION_LEAD, SECTION_TITLE } from '../theme';
+import { BY_HAND } from './gainsData';
+import gainsCode from '../generated/gainsCode.json';
 
-/**
- * "What you gain": the countable gain first (eight hand-synced files against one definition), then
- * one tile per thing StewBeet writes for you, each showing the real artefact rather than an icon.
- */
+const CODE: Record<string, string> = gainsCode;
 
-const SPAN: Record<GainTile['span'], string> = {
-    narrow: 'lg:col-span-5',
-    half: 'lg:col-span-6',
-    wide: 'lg:col-span-7',
-};
-
-const CODE_CLASS = 'font-mono text-[0.75rem] leading-[1.6] [&>pre]:!bg-transparent [&>pre]:!m-0 [&>pre]:!px-4 [&>pre]:!pb-4 [&>pre]:!pt-1';
-
-const HighlightedCode = ({ code, lang }: { code: string; lang: string }) => (
-    <div dangerouslySetInnerHTML={{ __html: useShiki(code, lang) }} className={CODE_CLASS} />
+const CodePanel = ({ title, code, wrap = false }: { title: string; code: string; wrap?: boolean }) => (
+    <div className="min-w-0 bg-code-surface border border-code-border text-code-text">
+        <p className="flex items-center min-h-9 py-1.5 px-3.5 border-b border-code-border font-mono text-xs text-code-text-muted">{title}</p>
+        <div className={`hero-code ${wrap ? 'gains-wrap' : 'gains-scroll'}`} dangerouslySetInnerHTML={{ __html: CODE[code] }} />
+    </div>
 );
 
-/** Plain text until the tile scrolls near, so the highlighter only loads for a reader who gets here. */
-const SnippetBlock = ({ snippet, highlight }: { snippet: Snippet; highlight: boolean }) => {
+/** The eight files of one hand-written block crack like a mined block, and the definition that replaces them drops in. */
+const Comparison = () => {
     const { t } = useTranslation();
-    const label = snippet.labelKey ? t(snippet.labelKey) : snippet.label;
+    const frame = useRef<HTMLDivElement>(null);
+    const inView = useInView(frame, { once: true, amount: 0.5 });
+    // Armed after hydration, so the prerendered page and a visitor without JavaScript see the last frame
+    useEffect(() => frame.current?.setAttribute('data-armed', ''), []);
+
     return (
-        <div className="code-dark bg-ink-950 border-t border-ink-800 first:border-t-0">
-            {label && <p className="px-4 pt-3 pb-1 font-mono text-[0.6875rem] text-ink-500 truncate">{label}</p>}
-            <div className="overflow-x-auto custom-scrollbar">
-                {highlight
-                    ? <HighlightedCode code={snippet.code} lang={snippet.lang} />
-                    : <pre className={`${CODE_CLASS} px-4 pb-4 pt-1 text-ink-300`}><code>{snippet.code}</code></pre>}
+        <div ref={frame} data-play={inView ? '' : undefined} className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-10 items-start">
+            <div>
+                <p className="font-pixel text-[0.8125rem] text-text-muted">{t('gains.byHand')}</p>
+                <ul className="mt-3 border-t border-border font-mono text-xs">
+                    {BY_HAND.map(({ path, role }, index) => (
+                        <li key={path} className="crack-row flex items-baseline justify-between gap-3 py-2 border-b border-border" style={{ '--row': index } as React.CSSProperties}>
+                            <span className="truncate">{path}</span>
+                            <span className="flex-shrink-0 text-text-muted">{role}</span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            <div className="crack-drop">
+                <p className="font-pixel text-[0.8125rem] text-generated">{t('gains.withStewbeet')}</p>
+                <p className="mt-3 flex items-baseline gap-3">
+                    <span className="font-pixel text-5xl leading-none text-generated">1</span>
+                    <span className="text-text-muted">{t('gains.withUnit')}</span>
+                </p>
+                <p className="mt-4 text-pretty">{t('gains.withNote')}</p>
             </div>
         </div>
     );
 };
 
-const Visual = ({ visual, highlight }: { visual: GainVisual; highlight: boolean }) => {
-    const { t } = useTranslation();
-    const snippets = visual.snippets ?? [];
-    return (
-        <div className="flex-1 flex flex-col border-t border-ink-800 bg-ink-950/60">
-            {visual.kind === 'image' && (
-                <div className={`flex-1 ${visual.pixelated ? 'flex items-center justify-center p-5' : 'relative min-h-52'} ${snippets.length ? 'border-b border-ink-800' : ''}`}>
-                    <ZoomableImage
-                        src={visual.src}
-                        alt={t(visual.altKey)}
-                        pixelated={visual.pixelated}
-                        loading="lazy"
-                        frameClassName={visual.pixelated ? 'max-w-full' : 'absolute inset-0'}
-                        className={visual.pixelated ? 'pixelated max-w-full' : 'w-full h-full object-cover object-top'}
-                    />
-                </div>
-            )}
-            {visual.kind === 'tree' && (
-                <div className="px-4 py-3 border-b border-ink-800">
-                    <FileTree nodes={visual.nodes} />
-                </div>
-            )}
-            {snippets.map((snippet) => (
-                <SnippetBlock key={snippet.code} snippet={snippet} highlight={highlight} />
-            ))}
-        </div>
-    );
-};
-
-const Tile = ({ tile }: { tile: GainTile }) => {
-    const { t } = useTranslation();
-    const node = useRef<HTMLElement>(null);
-    const near = useInView(node, { once: true, margin: '300px 0px' });
-
-    return (
-        <article ref={node} id={`gain-${tile.id}`} data-rise className={`${CARD} ${SPAN[tile.span]} flex flex-col overflow-hidden`}>
-            <div className="p-5 md:p-6">
-                <h3 className="text-base md:text-lg font-semibold tracking-tight text-ink-50">{t(tile.titleKey)}</h3>
-                <p className="mt-1.5 text-sm text-ink-400 leading-relaxed text-pretty">{t(tile.bodyKey)}</p>
-            </div>
-            <Visual visual={tile.visual} highlight={near} />
-        </article>
-    );
-};
-
-/** Copper tells the datapack files from the resource pack ones by hue, since fading it fails contrast. */
-const PACK_COLOR = { data: 'text-mc-copper', assets: 'text-ink-300' } as const;
-
-const ComparisonTile = () => {
-    const { t } = useTranslation();
-    return (
-        <article data-rise className={`${CARD} md:col-span-2 lg:col-span-12 p-6 md:p-8`}>
-            <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)] gap-8 md:gap-10">
-                <div>
-                    <p className="font-mono text-xs uppercase tracking-wider text-ink-400">{t('gains.byHandTitle')}</p>
-                    <p className="mt-3 flex items-baseline gap-3">
-                        <span className="font-mono text-5xl leading-none text-ink-400">8</span>
-                        <span className="text-sm text-ink-400">{t('gains.byHandUnit')}</span>
-                    </p>
-                    <ul className="mt-6 space-y-1.5 font-mono text-xs">
-                        {BY_HAND.map(({ path, role, pack }) => (
-                            <li key={path} className="flex items-baseline justify-between gap-3">
-                                <span className={`${PACK_COLOR[pack]} truncate`}>{path}</span>
-                                <span className="text-ink-500 flex-shrink-0">{role}</span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-
-                <div className="md:border-l md:border-ink-800 md:pl-10 flex flex-col">
-                    <p className="font-mono text-xs uppercase tracking-wider text-beet-400">{t('gains.withTitle')}</p>
-                    <p className="mt-3 flex items-baseline gap-3">
-                        <span className="font-mono text-5xl leading-none text-beet-400">1</span>
-                        <span className="text-sm text-ink-300">{t('gains.withUnit')}</span>
-                    </p>
-                    <p className="mt-6 inline-flex self-start rounded-control border border-beet-500/40 bg-beet-500/10 px-2.5 py-1 font-mono text-xs text-beet-300">
-                        {t('gains.withFile')}
-                    </p>
-                    <p className="mt-4 text-sm text-ink-300 leading-relaxed">{t('gains.withNote')}</p>
-                </div>
-
-                <div className="md:border-l md:border-ink-800 md:pl-10 flex items-end">
-                    <p className="text-sm text-ink-400 leading-relaxed">{t('gains.noPython')}</p>
-                </div>
-            </div>
-
-        </article>
-    );
-};
-
-export const Gains: React.FC = () => {
+/** What one definition saves: the eight files of a block, then two things a datapack rarely gets by hand. */
+export const Gains = () => {
     const { t } = useTranslation();
 
     return (
-        <section id="features" className="py-14 md:py-28 border-t border-ink-800 scroll-mt-14">
-            <div className={PAGE}>
-                <div data-rise className="max-w-3xl">
-                    <h2 className={SECTION_TITLE}>{t('gains.title')}</h2>
-                    <p className={`mt-4 ${SECTION_LEAD}`}>{t('gains.lead')}</p>
-                </div>
+        <section id="features" className="frame px-4 py-12 lg:px-12 lg:py-16 border-t border-border scroll-mt-14">
+            <h2 className="text-[1.75rem] lg:text-[2.25rem] leading-tight font-bold text-balance">{t('gains.title')}</h2>
+            <p className="mt-4 max-w-[40rem] text-text-muted text-pretty">{t('gains.lead')}</p>
+            <Comparison />
 
-                <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4">
-                    <ComparisonTile />
-                    {GAIN_TILES.map((tile) => <Tile key={tile.id} tile={tile} />)}
+            <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:gap-12">
+                <div className="min-w-0">
+                    <h3 className="text-xl font-bold">{t('gains.materialsTitle')}</h3>
+                    <p className="mt-2 text-text-muted text-pretty">{t('gains.materialsText')}</p>
+                    <div className="mt-4">
+                        <CodePanel title="definitions/additions/common.py" code="materials" />
+                    </div>
+                    <img src="/img/material_tier.png" alt={t('gains.materialsAlt')} width={928} height={120} loading="lazy" className="pixelated mt-3 w-full h-auto" />
+                </div>
+                <div className="min-w-0">
+                    <h3 className="text-xl font-bold">{t('gains.langTitle')}</h3>
+                    <p className="mt-2 text-text-muted text-pretty">{t('gains.langText')}</p>
+                    <div className="mt-4 flex flex-col gap-3">
+                        <CodePanel title={t('gains.langBefore')} code="langBefore" wrap />
+                        <CodePanel title={t('gains.langAfter')} code="langAfter" wrap />
+                        <CodePanel title="assets/minecraft/lang/en_us.json" code="langFile" wrap />
+                    </div>
                 </div>
             </div>
         </section>

@@ -1,21 +1,15 @@
 import { useEffect, useRef } from 'react';
 import { useReducedMotion } from 'framer-motion';
-import { HiArrowRight, HiCheck } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
-import { srcHref } from '../docsPages';
+import { DOC_PAGES, docHref } from '../docsPages';
 import { useTranslation } from '../i18n/useTranslation';
 import { VscodeMark } from './VscodeMark';
-import { BTN_SECONDARY, PAGE, SECTION_LEAD, SECTION_TITLE, TEXT_ACCENT_HOVER } from '../theme';
 
 const MARKETPLACE_URL = 'https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet';
-
-/**
- * The two things StewBeet does beyond writing files, each shown as a video beside its pitch.
- * They alternate sides so the page does not read as a column of identical blocks.
- */
+const docPage = (slug: string) => DOC_PAGES.find((page) => page.slug === slug)!;
 
 interface SpotlightProps {
-    /** Translation namespace holding title, description, point1 to point3 and videoFallback. */
+    /** Translation namespace holding title, description and videoFallback. */
     ns: 'manual' | 'editor';
     video: string;
     poster: string;
@@ -43,22 +37,13 @@ const Spotlight = ({ ns, video, poster, frame, videoFirst = false, children }: S
     }, [prefersReducedMotion]);
 
     return (
-        <div id={ns} data-rise className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center scroll-mt-20">
+        <div id={ns} className="frame px-4 py-12 lg:px-12 lg:py-16 border-t border-border scroll-mt-14 grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
             <div className={videoFirst ? 'lg:order-last' : ''}>
-                <h2 className={SECTION_TITLE}>{t(`${ns}.title`)}</h2>
-                <p className={`mt-4 ${SECTION_LEAD}`}>{t(`${ns}.description`)}</p>
-                <ul className="mt-6 space-y-2.5">
-                    {[1, 2, 3].map((index) => (
-                        <li key={index} className="flex items-start gap-3 text-ink-200">
-                            <HiCheck className="text-leaf-400 flex-shrink-0 mt-1" aria-hidden="true" />
-                            <span>{t(`${ns}.point${index}`)}</span>
-                        </li>
-                    ))}
-                </ul>
-                <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">{children}</div>
+                <h2 className="text-[1.75rem] lg:text-[2.25rem] leading-tight font-bold text-balance">{t(`${ns}.title`)}</h2>
+                <p className="mt-4 text-text-muted text-pretty">{t(`${ns}.description`)}</p>
+                <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">{children}</div>
             </div>
-
-            <div className={`${frame} rounded-panel border border-ink-800 bg-ink-900 overflow-hidden`}>
+            <div className={`${frame} border border-border overflow-hidden`}>
                 <video
                     ref={videoRef}
                     className="w-full h-full object-contain"
@@ -78,32 +63,24 @@ const Spotlight = ({ ns, video, poster, frame, videoFirst = false, children }: S
     );
 };
 
-export const Spotlights: React.FC = () => {
+/** The two things StewBeet does beyond writing files, each shown as a video beside its pitch. */
+export const Spotlights = () => {
     const { t, language } = useTranslation();
-    const doc = (path: string) => srcHref(`${path}/${language === 'fr' ? 'fr' : 'en'}.md`);
+    const link = 'text-link underline underline-offset-2';
 
     return (
-        <section className="py-14 md:py-28 border-t border-ink-800">
-            <div className={`${PAGE} space-y-16 md:space-y-20`}>
-                {/* Portrait clip (574x686): capped in width so it does not tower over its text. */}
-                <Spotlight ns="manual" video="/ingame_manual.mp4" poster="/ingame_manual_poster.jpg" frame="w-full max-w-[26rem] mx-auto aspect-[574/686]">
-                    <Link to={doc('7_ingame_manual')} className={`inline-flex items-center gap-2 font-medium ${TEXT_ACCENT_HOVER}`}>
-                        {t('manual.readMore')}
-                        <HiArrowRight aria-hidden="true" />
-                    </Link>
-                </Spotlight>
-
-                <Spotlight ns="editor" video="/vscode_extension.mp4" poster="/vscode_extension_poster.jpg" frame="w-full aspect-[960/598]" videoFirst>
-                    <a href={MARKETPLACE_URL} target="_blank" rel="noopener noreferrer" className={`${BTN_SECONDARY} h-11 px-4`}>
-                        <VscodeMark className="w-5 h-5" aria-hidden="true" />
-                        {t('editor.install')}
-                    </a>
-                    <Link to={doc('8_editor')} className={`inline-flex items-center gap-2 font-medium ${TEXT_ACCENT_HOVER}`}>
-                        {t('editor.readMore')}
-                        <HiArrowRight aria-hidden="true" />
-                    </Link>
-                </Spotlight>
-            </div>
-        </section>
+        <>
+            {/* Portrait clip (574x686): capped in width so it does not tower over its text. */}
+            <Spotlight ns="manual" video="/ingame_manual.mp4" poster="/ingame_manual_poster.jpg" frame="w-full max-w-[26rem] mx-auto aspect-[574/686]">
+                <Link to={docHref(docPage('manual'), language)} className={link}>{t('manual.readMore')}</Link>
+            </Spotlight>
+            <Spotlight ns="editor" video="/vscode_extension.mp4" poster="/vscode_extension_poster.jpg" frame="w-full aspect-[960/598]" videoFirst>
+                <a href={MARKETPLACE_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 h-11 px-4 border border-border hover:border-ink-600 font-semibold transition-colors active:scale-[0.98]">
+                    <VscodeMark className="w-5 h-5" aria-hidden="true" />
+                    {t('editor.install')}
+                </a>
+                <Link to={docHref(docPage('editor'), language)} className={link}>{t('editor.readMore')}</Link>
+            </Spotlight>
+        </>
     );
 };
