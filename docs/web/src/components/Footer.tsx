@@ -12,7 +12,8 @@ interface FooterLink {
     internal?: boolean;
 }
 
-export const Footer = memo(() => {
+/** `wide` matches the docs' wider frame, so its borders run on from the page's. */
+export const Footer = memo(({ wide = false }: { wide?: boolean }) => {
     const { t } = useTranslation();
     const columns: { title: string; links: FooterLink[] }[] = [
         {
@@ -46,7 +47,7 @@ export const Footer = memo(() => {
     const linkClass = 'inline-flex items-center min-h-6 text-sm text-text-muted hover:text-text transition-colors';
 
     return (
-        <footer className="frame px-4 py-12 lg:px-12 border-t border-border">
+        <footer className={`frame ${wide ? 'frame-wide' : ''} px-4 py-12 lg:px-12 border-t border-border`}>
             <div>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
                     <div className="col-span-2">

@@ -544,7 +544,7 @@ export const MarkdownPage: React.FC = () => {
                 </div>
             </div>
 
-            <Footer />
+            <Footer wide />
         </div>
     );
 };
