@@ -31,7 +31,7 @@ TIMERS: tuple[Timer, ...] = (
 	Timer(name="tick_2", reset=1, threshold=3),
 	Timer(name="second", reset=0, threshold=20),
 	Timer(name="second_5", reset=-10, threshold=90),
-	Timer(name="minute", reset=1, threshold=1200),
+	Timer(name="minute", reset=1, threshold=1201),
 )
 """ Every timer, in the order the tick function counts and calls them. """
 

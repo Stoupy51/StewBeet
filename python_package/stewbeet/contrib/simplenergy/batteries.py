@@ -64,7 +64,7 @@ scoreboard players set #energy {ns}.data 0
 execute store result score #energy {ns}.data run data get storage energy:temp list[0].components."minecraft:custom_data".energy.storage
 scoreboard players operation #part_1 {ns}.data = #energy {ns}.data
 scoreboard players operation #part_2 {ns}.data = #energy {ns}.data
-data modify storage {ns}:temp macro set value {{part_1:0, part_2:0, scale:""}}
+data modify storage {ns}:temp macro set value {{part_1:0, part_2:0, pad:"", scale:""}}
 
 ## kJ, MJ, GJ, TJ cases
 execute if score #energy {ns}.data matches ..999 run data modify storage {ns}:temp macro.scale set value " kJ]"
@@ -85,6 +85,9 @@ execute if score #energy {ns}.data matches {mini}..{max} run scoreboard players 
 	# Apply lore
 	content += f"""
 
+# Two decimals, so 12050 kJ reads 12.05 MJ
+execute if score #energy {ns}.data matches 1000.. if score #part_2 {ns}.data matches ..9 run data modify storage {ns}:temp macro.pad set value "0"
+
 # Apply the new lore to the item
 execute store result storage {ns}:temp macro.part_1 int 1 run scoreboard players get #part_1 {ns}.data
 execute store result storage {ns}:temp macro.part_2 int 1 run scoreboard players get #part_2 {ns}.data
@@ -93,14 +96,14 @@ function {ns}:calls/update_energy_lore/macro with storage {ns}:temp macro
 # Indicate that the item lore was updated
 data modify storage energy:temp list[0].components."minecraft:custom_data".energy.has_storage_lore set value 1b
 #data remove storage {ns}:temp macro
-"""
+"""  # noqa: E501
 
 	# Write the function and add it to the energy function tag
 	write_function(f"{ns}:calls/update_energy_lore/main", content, tags=["energy:v1/update_energy_lore/main"])
 
 	# Write macro function
 	write_function(f"{ns}:calls/update_energy_lore/macro", """
-$execute unless data storage energy:temp list[0].components."minecraft:custom_data".energy.has_storage_lore run data modify storage energy:temp list[0].components."minecraft:lore" insert -2 value [{"text":"[Charge: ","color":"gray","italic":false},"$(part_1).$(part_2)$(scale)"]
-$execute if data storage energy:temp list[0].components."minecraft:custom_data".energy.has_storage_lore run data modify storage energy:temp list[0].components."minecraft:lore"[-2] set value [{"text":"[Charge: ","color":"gray","italic":false},"$(part_1).$(part_2)$(scale)"]
+$execute unless data storage energy:temp list[0].components."minecraft:custom_data".energy.has_storage_lore run data modify storage energy:temp list[0].components."minecraft:lore" insert -2 value [{"text":"[Charge: ","color":"gray","italic":false},"$(part_1).$(pad)$(part_2)$(scale)"]
+$execute if data storage energy:temp list[0].components."minecraft:custom_data".energy.has_storage_lore run data modify storage energy:temp list[0].components."minecraft:lore"[-2] set value [{"text":"[Charge: ","color":"gray","italic":false},"$(part_1).$(pad)$(part_2)$(scale)"]
 """)  # noqa: E501
 
