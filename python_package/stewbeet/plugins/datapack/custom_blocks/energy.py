@@ -79,12 +79,14 @@ function energy:v1/api/init_machine
 tag @s add {ns}.battery_switcher
 tag @s add energy.receive
 tag @s add energy.send
+data remove storage {ns}:temp energy
 data modify storage {ns}:temp energy set from entity @p[tag={ns}.placer] SelectedItem.components."minecraft:custom_data".energy
+execute unless data storage {ns}:temp energy run data modify storage {ns}:temp energy set from entity @p[tag={ns}.placer] equipment.offhand.components."minecraft:custom_data".energy
 execute store result score @s energy.max_storage run data get storage {ns}:temp energy.max_storage
 execute store result score @s energy.storage run data get storage {ns}:temp energy.storage
 scoreboard players operation @s energy.transfer_rate = @s energy.max_storage
 function energy:v1/api/init_machine
-""")
+""")  # noqa: E501
 
 
 def cable_refusals(tag: str, face: str) -> list[str]:
