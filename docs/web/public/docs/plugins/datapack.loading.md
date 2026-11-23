@@ -1,88 +1,55 @@
 
-# stewbeet.plugins.datapack.loading
+# Load functions
 
-The `datapack.loading` plugin sets up the versioned loading system for Minecraft datapacks.<br>
-It creates version checking functions, load management, and item storage systems following the LanternLoad convention.<br>
-The plugin ensures proper datapack initialization with dependency validation and prevents duplicate loading.<br>
-**(This plugin requires `stewbeet.plugins.finalyze.dependencies` later in the pipeline to complete the setup.)**
+Gives your pack the functions that load it once, check its version against other copies of itself, and put your items in storage.
 
-### <u>Some Features Showcase</u>
+It runs in the `basic` and `extensive` templates as `stewbeet.plugins.datapack.loading`, and needs `version` and `id` in `beet.yml`. The version must read `major.minor.patch`. [Source](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/datapack/loading/__init__.py)
 
-**Lantern Load Setup (#load, #enumerate, #resolve, etc.):**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/datapack.loading.lantern_load.jpg">
+The load is finished by `stewbeet.plugins.finalyze.dependencies`, which runs later in the same pipeline.
 
-**All item definitions stored into a storage:**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/datapack.loading.items_storage.jpg">
+## Read your items from storage
 
-**Confirm datapack load for players with `convention.debug` tag:**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/datapack.loading.load_messages.jpg">
+Every item of your definitions is in the `<id>:items` storage once the pack has loaded, under `all.<item id>`:
 
-**Source Code**: [`stewbeet/plugins/datapack/loading/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/datapack/loading/__init__.py)
-
-
-## What it does
-
-- Sets up versioned datapack loading system
-- Implements version checking and validation
-- Creates item storage systems for definitions
-- Prevents duplicate datapack loading
-- Follows LanternLoad convention standards
-- Manages load status tracking with scoreboards
-- Announces the pack to others with the Smithed "pack enabled tag" convention (`#ns:installed`, `#ns:major`, `#ns:minor`, `#ns:patch`), for packs supporting Minecraft 26.3 and newer
-
-## Dependencies
-- **✅ Required**: None (but works best with other StewBeet plugins)
-- **🔗 Requires Later**: `stewbeet.plugins.finalyze.dependencies` (to complete setup)
-- **📍 Position**: Should be placed after item definitions and before finalization plugins<br>
-(see [`basic/beet.yml`](https://github.com/Stoupy51/StewBeet/blob/main/templates/basic/beet.yml) for an example)
-
-## Configuration
-
-### Basic Example Configuration
-```yaml
-version: "1.0.0"  # Required: semantic version (major.minor.patch)
-id: "your_namespace"  # Required: project namespace
-name: "Your Project Name"  # Required: display name for load messages
-
-pipeline:
-  - ...
-  - stewbeet.plugins.datapack.loading  # Place this plugin in the pipeline
-  - ...  # Other plugins follow
-  - stewbeet.plugins.finalyze.dependencies  # Required later for completion
+```mcfunction
+data get storage simplenergy:items all.pulverizer
 ```
 
-### Configuration Options
+Components carry the `minecraft:` prefix and the item model comes first.
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `version` | string | **Required** | Semantic version in format "major.minor.patch" for version checking |
-| `id` | string | **Required** | Project namespace used for function and storage generation |
-| `name` | string | **Required** | Display name used in load confirmation messages |
-| `meta.stewbeet.items_storage` | bool | `true` | Write every item definition into `<id>:items all` on load. `datapack.custom_blocks` and `compatibilities.simpledrawer` read it; a project using neither can set `false` to skip the function and the storage it fills |
+## What this plugin writes
 
-## Features
+In `function/v<version>/load/`:
 
-### Versioned Loading System
-- 🔢 **Version Parsing** - Splits semantic version into major.minor.patch components
-- 📊 **Version Checking** - Creates enumerate function for version validation
-- 🎯 **Load Resolution** - Generates resolve function for proper version loading
-- 🏷️ **Function Tags** - Sets up enumerate and resolve function tags
+- `enumerate` raises the `#<id>.major`, `#<id>.minor` and `#<id>.patch` scores of `load.status` to this pack's version.
+- `resolve` runs `load/main` only when those scores equal this pack's version, so the newest copy of the pack is the one that loads.
+- `main` runs `secondary` unless `#<id>.loaded` is already 1.
+- `set_items_storage` fills the items storage.
 
-### Load Management
-- 🚫 **Duplicate Prevention** - Prevents multiple executions of load functions
-- 📋 **Status Tracking** - Uses scoreboards to track loading state
-- 💬 **Load Confirmation** - Displays load messages to players with `convention.debug` tag
-- ⚙️ **Secondary Function** - Manages actual load execution flow
+The tags `#<id>:enumerate` and `#<id>:resolve` call `enumerate` and `resolve`.
 
-### Item Storage System
-- 🗄️ **Storage Initialization** - Creates namespace:items storage system
-- 🔧 **Component Processing** - Handles item components and minecraft: namespace prefixing
-- 🎯 **Data Filtering** - Excludes non-component data from storage
-- 📝 **JSON Serialization** - Converts definitions to storage commands
+On load, players with the `convention.debug` tag get `[Loaded <name> v<version>]` in the chat.
+
+For a pack that supports Minecraft 26.3 or newer, the Smithed pack enabled convention: the predicate tag `#<id>:installed` and the context int provider tags `#<id>:major`, `#<id>:minor` and `#<id>:patch`, which other packs read whatever the load order.
+
+It also writes the hidden enchantment of each item with a `ranged_weapon`, and a check that gives back what a crossbow loaded instead of its ammunition.
+
+## Options
+
+| Option | Default | What it does |
+|---|---|---|
+| `version` | required | `major.minor.patch`, compared with other copies of the pack |
+| `id` | required | The namespace of every function and storage written |
+| `name` | the `id` | The name shown in the load message |
+| `meta.stewbeet.items_storage` | `true` | Fills `<id>:items` on load. `datapack.custom_blocks` and `compatibilities.simpledrawer` read it. Set `false` to skip the function and the storage |
+
+## Limits
+
+- A version that is not `major.minor.patch`, or a missing `id` or `version`, fails the build.
+- The items storage holds the definitions as declared at build time. It is not updated while the world runs.
+- A pack with many items runs one `data modify` per item on every load, which grows `set_items_storage`.
 
 ## Next steps
 
-- [Defining items and blocks](../1_definitions_setup/en.md): where the items this plugin reads are declared.
-- [All plugins](README.md): the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+- [Defining items and blocks](../1_definitions_setup/en.md): where the items stored here are declared.
 

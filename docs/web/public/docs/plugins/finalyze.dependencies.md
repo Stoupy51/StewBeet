@@ -1,135 +1,55 @@
 
-# stewbeet.plugins.finalyze.dependencies
+# Library version checks
 
-The `finalyze.dependencies` plugin manages datapack dependencies and load sequence.<br>
-It automatically detects official library usage by scanning all functions, downloads libraries<br>
-via beet's content-addressed cache, sets up Lantern Load integration, and generates<br>
-runtime version-checking mcfunctions with user-friendly clickable error messages.
+Makes your datapack refuse to load when a library or the Minecraft version is too old, and tells players in chat which library to download.
 
-**Required**: Project ID, version, name, and author in context  
-**Required**: `stewbeet.plugins.datapack.loading` must run before  
-**Optional**: Official libraries (auto-detected from function usage)  
-**Optional**: Custom `load_dependencies` in metadata (see configuration below)  
-**Position**: Must run **after** all user functions have been written (scans them for library usage)  
-**Related**: Integrates with Lantern Load system
+It runs in the `basic` and `extensive` templates as `stewbeet.plugins.finalyze.dependencies`, after your functions are written, and needs the project `id`, `name`, `version` and `author`. [Source](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/finalyze/dependencies/__init__.py)
 
-### <u>Some Features Showcase</u>
+## Declare a library
 
-**Creates a dependencies check function and later use it:**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.dependencies.check_function.jpg">
+Official libraries are found by scanning your functions, so they need no entry. Add the others under `meta.stewbeet.load_dependencies`, keyed by their namespace. The full format is in [`load_dependencies`](../3_beet_config/en.md#load_dependencies).
 
-**Errors in chat when loading if missing dependencies:**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.dependencies.ingame_errors.jpg">
-
-**Source Code**: [`stewbeet/plugins/finalyze/dependencies/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/finalyze/dependencies/__init__.py) <br>
-
-
-## What it does
-
-- Auto-detect and download official libraries used in functions: no manual config required (only optional)
-- Detect Bookshelf modules via `#bs.X:` tag patterns and modrinth/smithed libs via namespace
-- Generate runtime scoreboard version checks for all dependencies
-- Integrate with Lantern Load for correct dependency loading order
-- Validate Minecraft version compatibility using `DataVersion` from `mc_supports`
-- Provide clickable in-game error messages linking to each missing library
-- Wire `smart_ore_generation` signal function tags automatically
-
-📄 **Full Guide**: [docs/5_dependencies/](../5_dependencies/en.md) 🔗
-
-## Configuration
-
-### Basic Example Configuration
 ```yaml
-pipeline:
-  - ...
-  - stewbeet.plugins.finalyze.dependencies  # Must run after all functions are written
-  - ...
-
-# Official libraries are auto-detected: no manual config required (only optional).
-# Declare custom dependencies to auto-download and version-check at runtime:
 meta:
+  mc_supports: ["26.3", "infinite"]
   stewbeet:
-    mc_supports: ["1.21.4", "1.21.5"]  # Optional: minimum is used for DataVersion check
     load_dependencies:
-
-      # Smithed API: latest MC-compatible version auto-fetched
-      "smithed.crafter":
-        name: "Smithed Crafter"
-        url: "https://wiki.smithed.dev/libraries/crafter/"
-        source: "smithed"
-        smithed_id: "crafter"
-        has_resource_pack: true  # optional, default false
-
-      # Modrinth API: latest release for the current MC version auto-fetched
-      "itemio":
-        name: "ItemIO"
-        url: "https://github.com/edayot/ItemIO"
-        source: "modrinth"
-        modrinth_slug: "itemio"
-
-      # Static URL: version pinned, zip downloaded per MC version
-      "common_signals":
-        version: [0, 2, 0]
-        name: "Common Signals"
-        url: "https://github.com/Stoupy51/CommonSignals"
-        source: "static"
-        static_urls:
-          "((1, 21, 7), (0, 2, 0))": "https://github.com/Stoupy51/CommonSignals/releases/download/v0.2.0/CommonSignals_datapack.zip"
+      "energy":
+        version: [1, 8, 0]
+        name: "DatapackEnergy"
+        url: "https://github.com/ICY105/DatapackEnergy"
 ```
 
-### Configuration Options
+The lowest release in [`mc_supports`](../3_beet_config/en.md#mc_supports) is the Minecraft version the pack asks for.
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `load_dependencies` | object | `{}` | Custom dependencies to download and version-check at runtime |
-| `mc_supports` | list | `[]` | Supported MC versions; minimum determines the `DataVersion` compatibility check |
-| Official library detection | automatic | Enabled | Scans all functions for known library namespaces and `#bs.X:` Bookshelf tags |
-| Version checking | automatic | Enabled | Generates `check_dependencies` and `valid_dependencies` mcfunctions |
+## What this plugin writes
 
-### `load_dependencies` Entry Fields
+- `load/check_dependencies` compares each library's `load.status` scores with the version the build downloaded.
+- `load/valid_dependencies` waits for a player, reads the game's `DataVersion`, then prints the errors or calls `confirm_load`.
+- `load/secondary` calls both, or `confirm_load` alone when there is no dependency.
+- `#<namespace>:dependencies` lists the load tag of every library, so they load first. All Bookshelf modules share `#bs.load:load`.
+- `load/tick_verification` runs your `tick` function only once the pack has loaded.
+- `#smart_ore_generation:v1/signals/<name>` runs your `calls/smart_ore_generation/<name>` function, for `generate_ores`, `denied_dimensions` and `post_generation`.
 
-| Field | Required | Description |
-|-------|----------|-------------|
-| `name` | ✅ | Display name shown in runtime error messages |
-| `url` | ✅ | Clickable link shown when the dependency is missing |
-| `source` | ✅ | Download method: `"smithed"`, `"modrinth"`, or `"static"` |
-| `smithed_id` | Smithed only | Smithed pack ID used to query the API |
-| `has_resource_pack` | Smithed only | Also download the resource pack (default: `false`) |
-| `modrinth_slug` | Modrinth only | Modrinth project slug used to query the API |
-| `static_urls` | Static only | Maps `"((mc_ver), (dep_ver))"` keys to download URLs |
-| `version` | Static only | Resolved automatically from `static_urls` at build time |
+The `load:` tags of Lantern Load are written too, and `load.status` is reset at each `/reload`.
 
-## Features
+A missing or outdated library prints a gold clickable line with its name, the version needed and its `url`:
 
-### Automatic Library Detection
-Scans all datapack functions during build:
-- 📚 Detects Bookshelf module usage via `#bs.X:` tag call patterns
-- 📦 Identifies `furnace_nbt_recipes`, `common_signals`, `itemio`, `smithed.actionbar`, `realistic_explosion` by namespace
-- 🏷️ Marks detected libraries as `is_used = True` and triggers download via `get_lib_paths()`
-- 📢 Logs a debug summary of all newly found libraries
+<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.dependencies.ingame_errors.jpg" alt="Chat errors listing the libraries a datapack is missing" width="506" height="172">
 
-### Lantern Load Integration
-Sets up proper loading infrastructure:
-- 🏷️ Wires `minecraft:load` -> `#load:_private/load` -> init / pre_load / load / post_load phases
-- 📋 Resets `load.status` scoreboard in `load:_private/init`
-- ⚙️ Creates `#ns:load` -> `[#ns:enumerate, #ns:resolve]` chain
-- 🔗 Prepends `#ns:dependencies` tag listing `#dep:load` for every dependency (deduped)
+## Options
 
-### Runtime Version Validation
-Generates two mcfunctions that run at world load:
-- 🔢 `check_dependencies`: sets `#dependency_error ns.data` flag by checking `#dep.major/minor/patch load.status` scores; uses `$bs` prefix for Bookshelf modules
-- 🎮 `valid_dependencies`: waits for a player entity, reads `DataVersion` to detect Minecraft version, compares against minimum from `mc_supports`
-- 📢 On failure: `tellraw @a` gold clickable links to each missing library (name, version, URL)
-- ✅ `confirm_load` is only called when both `#mcload_error` and `#dependency_error` are 0
+| Option | Default | What it does |
+|---|---|---|
+| `meta.mc_supports` | the project's Minecraft version | Releases the pack supports, `"infinite"` ignored |
+| `load_dependencies.<ns>.no_lantern_load` | `false` | Leaves the library out of the load tag and the checks |
 
-### Smart Ore Generation Integration
-Special automatic wiring for `smart_ore_generation`:
-- 🔗 Connects `calls/smart_ore_generation/generate_ores`, `denied_dimensions`, and `post_generation` functions to the corresponding `smart_ore_generation:v1/signals/` function tags
-- 🎯 Only activates when `smart_ore_generation` is detected as used 
+## Limits
+
+- A library whose version could not be resolved, for example after a failed download, is left out of the checks with a warning.
+- With no player online, the pack waits for one before it loads.
 
 ## Next steps
 
-- [Configuring the build](../3_beet_config/en.md): where this plugin sits in the pipeline.
-- [All plugins](README.md): the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+- [Using datapack libraries](../5_dependencies/en.md): the official libraries and how they are downloaded.
 

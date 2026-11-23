@@ -1,177 +1,54 @@
 
-# stewbeet.plugins.auto.headers
+# Function headers
 
-The `auto.headers` plugin automatically generates documentation headers for mcfunction files.<br>
-It analyzes function calls, function tags, advancement rewards, and **macro function arguments**<br>
-to create `@within` documentation that shows which functions, tags, or advancements<br>
-call each function, providing clear dependency tracking and usage documentation.<br>
+Writes a comment header at the top of every function, saying what calls it, in which context, and which macro arguments it takes.
 
-**Context Analysis**: The plugin extracts and preserves execution contexts<br>
-from `execute` commands (such as `as @e`, `positioned`, `at`, `rotated`, `facing`, etc.)<br>
-and automatically determines the execution context for functions based on their callers.
+It runs last of the `auto` plugins in the `basic` and `extensive` templates, as `stewbeet.plugins.auto.headers`, with no configuration. [Source](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/auto/headers/__init__.py)
 
-**Macro Analysis**: For macro functions (using `$(variable)` syntax), the plugin automatically<br>
-detects macro variables, infers their types from function calls and storage NBT data, and generates<br>
-`@args` documentation with type information. It supports both direct NBT calls and storage-based calls,<br>
-with type inheritance from calling functions.
+## What a header looks like
 
-**Source Code**: [`stewbeet/plugins/auto/headers/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/auto/headers/__init__.py) <br>  
-**Source Code**: [`stewbeet/plugins/auto/headers/object.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/auto/headers/object.py) <br>  
-**Source Code**: [`stewbeet/plugins/auto/headers/context_analyzer.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/auto/headers/context_analyzer.py) <br>  
-**Source Code**: [`stewbeet/plugins/auto/headers/execution_parser.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/auto/headers/execution_parser.py) <br>  
-**Source Code**: [`stewbeet/plugins/auto/headers/function_analyzer.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/auto/headers/function_analyzer.py) <br>  
-**Source Code**: [`stewbeet/plugins/auto/headers/macro_analyzer.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/auto/headers/macro_analyzer.py) <br>  
-**Source Code**: [`stewbeet/plugins/auto/headers/macro_parser.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/auto/headers/macro_parser.py) <br>  
-**Source Code**: [`stewbeet/plugins/auto/headers/type_inference.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/auto/headers/type_inference.py) <br>
-
-
-## What it does
-
-- Automatically generates function documentation headers
-- Tracks function call relationships and dependencies
-- Analyzes function tag memberships and usage
-- Monitors advancement reward function calls
-- **Detects macro variables** and infers their types automatically
-- **Generates `@args` documentation** for macro functions with type information
-- **Type inference** from NBT data, direct calls, and storage operations
-- **Type inheritance** from calling functions via `$(variable)` references
-- **Preserves manual descriptions** in `@args` while auto-filling missing types
-- **Extracts execution contexts** from `execute` commands (`as`, `at`, `positioned`, `rotated`, `facing`, `in`, `anchored`, `align`)
-- **Determines function execution contexts** automatically based on caller analysis
-- Creates `@within` and `@args` documentation
-
-## Dependencies
-- **✅ Required**: Beet context with functions, function tags, and advancements
-- **📍 Position**: Should run after all content generation but before finalization
-- **🔧 Optional**: Existing function headers (will be parsed and updated)
-
-### <u>Some Features Showcase</u>
-
-**Example of a function being called by multiple functions with macro arguments:**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.headers.macro_example.jpg">
-
-**Example of a function being called by multiple functions with different contexts:**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.headers.context_example.jpg">
-
-**Example of a function being called by multiple macro arguments (with arguments types):**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.headers.macro_types_example.jpg">
-
-## Configuration
-
-### Basic Example Configuration
-```yaml
-pipeline:
-  - ...
-  - stewbeet.plugins.auto.headers
-  - ... # Some finalization plugins
-
-# No configuration required - plugin runs automatically
-# Processes all functions, function tags, and advancements by default
-```
-
-### Configuration Options
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| Header Generation | automatic | Enabled | Creates headers for all mcfunction files |
-| Dependency Tracking | automatic | Enabled | Analyzes function calls and references |
-| Tag Analysis | automatic | Enabled | Processes function tag memberships |
-| Advancement Rewards | automatic | Enabled | Tracks advancement reward functions |
-
-## Features
-
-### Macro Argument Analysis (NEW!)
-Automatically detects and types macro function arguments:
-- 🔍 **Auto-detection** - Scans function content for `$(variable)` patterns
-- 📊 **Type inference from NBT** - Analyzes direct calls like `function test {x:10,y:20.5f,id:"hello"}`
-- 💾 **Storage-based inference** - Parses `data modify storage` commands to extract types
-- 🔄 **Type inheritance** - When `$(var)` references another function's argument, inherits the type
-- 🧬 **Recursive analysis** - Follows function call chains to ensure all types are resolved
-- 📝 **Description preservation** - Keeps manually written descriptions while filling missing types
-- 🎯 **NBT type mapping** - Correctly identifies byte(b), short(s), int, long(l), float(f), double(d), string, compound, list
-- 📋 **Order preservation** - Arguments listed in order of first appearance in the file
-- 🔗 **Merge logic** - Combines inferred types with manual annotations (manual takes precedence)
-
-#### Supported Type Inference Patterns:
 ```mcfunction
-# Direct NBT call
-function namespace:target {x:10,y:20.5f,name:"Player"}
-# -> Infers: x (int), y (float), name (string)
-
-# Storage-based call
-data modify storage temp:data macro set value {dimension:"minecraft:overworld",x:0,y:64,z:0}
-function namespace:teleport with storage temp:data macro
-# -> Infers: dimension (string), x (int), y (int), z (int)
-
-# Type inheritance
-function caller {result:$(value)}
-# If caller has @args with value (int), target inherits: result (int)
+#> stardust:dimensions/teleport_to
+#
+# @executed	as the player & at current position
+#
+# @within	stardust:dimensions/teleport_home
+#
+# @args		dimension (string)
+#			x (int)
+#			y (int)
+#			z (int)
+#
+$execute in $(dimension) run tp @s $(x) $(y) $(z)
 ```
 
-### Execution Context Analysis
-Analyses and determines execution contexts:
-- 🔍 **Parses `execute` commands** to extract contexts like `as @e[type=zombie]`, `positioned ~ ~1 ~`, `at @s`, `rotated 45 0`
-- 🧠 **Smart selector simplification** for complex selectors with NBT data and multiple attributes
-- 🔄 **Context inheritance** - functions inherit execution contexts from their callers when appropriate
-- 📋 **Automatic context determination** for advancement reward functions (`as the player & at current position`)
-- ⚡ **Special handling** for tick/load tags and other built-in contexts
-- 📝 **Context preservation** in `@executed` header sections
+- `@within` lists the callers: a function, `#namespace:tag`, `advancement <id>`, `dialog <id>` or `enchantment <id>`. A function id written inside a string, such as a `suggest_command`, is listed as `string in <function>`.
+- `@executed` is the execution context the callers give it, such as `as the player & at current position` for an advancement reward.
+- `@args` is written for macro functions only. Types come from the NBT of each call (`10` is an `int`, `20.5f` a `float`, `"a"` a `string`), from `data modify storage` lines before a `with storage` call, and from the caller's own `@args` when it passes `$(name)` along.
+- An uncalled function shows `@within ???`. When the project has a `<namespace>:v<version>/` folder, an uncalled function of the namespace outside that folder shows `(public)` instead, since you run it by hand or another pack does.
 
-### Function Header Parsing
-Parses existing function headers:
-- 🔍 Detects `#> function_name` header format
-- 📋 Extracts existing `@within` information
-- 📝 Preserves custom documentation comments
-- 🔄 Separates header content from actual function code
+## Keep your own text
 
-### Function Tag Analysis
-Analyzes function tag memberships for documentation:
-- 📊 Processes all function tags in the datapack
-- 🔗 Creates `#namespace:tag_name` references for tagged functions
-- 📝 Handles both string and object-based tag entries
-- ✅ Supports conditional tag entries with IDs
+The plugin reads a header it finds, so the build is repeatable:
 
-### Advancement Reward Tracking
-Monitors advancement reward function calls:
-- 🎯 Scans advancement reward sections for function calls
-- 📋 Creates `advancement namespace:advancement_name` references
-- 🔗 Links reward functions to their triggering advancements
-- ✅ Ensures proper advancement-to-function relationship tracking
+- Lines under `@args` that you wrote, descriptions included, are kept. Only missing arguments are added, and the build warns `had incomplete @args` for each function that was missing some.
+- Any other comment line of the header (a description, an example) is kept below `@args`.
 
-### Function Call Analysis
-Analyzes direct function calls within mcfunction files:
-- 🔍 Scans each line for `function ` commands
-- 🎯 Extracts called function names with quote handling
-- 🔧 Captures macro parameters and scheduling information
-- 🧩 Resolves macro placeholders in the called path (`$function ns:types/$(type)`) against every function
-- 🏷️ Lists a quoted function id given as data (`{give_function:"ns:give/weapon"}`) as a `string in` reference
-- 🎮 **Analyzes execution contexts** from `execute` commands (`as @e`, `positioned`, `at`, `rotated`, `facing`, `in`, `anchored`, `align`)
-- 📋 Parses complex selectors with NBT data and multiple attributes
-- 🔄 Inherits execution contexts from calling functions when appropriate
-- 📊 Prevents duplicate entries in the `@within` list
+```mcfunction
+# @args		count (int): How many to give
+#			- at least 1
+```
 
-### Dialog and Enchantment Analysis
-Reads functions named in dialogs (`run_command` actions) and enchantments (`run_function` effects):
-- 📋 Creates `dialog namespace:path` and `enchantment namespace:path` references
+## What this plugin writes
 
-### Header Generation System
-Generates documentation headers:
-- 📝 Creates standardized `#> function_name` headers
-- 📋 Generates `@within` sections listing all callers
-- 🔓 Writes `(public)` instead of `???` on an uncalled function of the project outside its `ns:v<version>/` folder
-- 🔧 Preserves existing custom documentation
-- ✅ Uses proper formatting with tabs and spacing
+- The `#>` header of each function of the datapack, rewritten on every build.
 
-### File Writing and Updates
-Updates all mcfunction files with generated headers:
-- 📝 Writes updated headers to all processed functions
-- 🔄 Overwrites existing files with new documentation
-- 📊 Maintains clean formatting and structure
-- ✅ Ensures all functions have complete documentation headers 
+## Limits
+
+- The analysis is cached in `.beet_cache` and recomputed whole when any function, tag, advancement, dialog or enchantment changes.
+- Callers are found in the text of the files. A function id built at run time is not seen.
 
 ## Next steps
 
-- [Writing functions and files](../2_writing_to_files/en.md): the functions this plugin post-processes.
-- [All plugins](README.md): the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+- [Writing functions and files](../2_writing_to_files/en.md): where your functions come from.
 

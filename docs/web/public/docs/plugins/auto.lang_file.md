@@ -1,107 +1,42 @@
 
-# stewbeet.plugins.auto.lang_file
+# Lang file
 
-The `auto.lang_file` plugin automatically generates language files for datapacks.<br>
-It scans all functions and loot tables for hardcoded text strings, extracts them into<br>
-translation keys, replaces the original text with `translate` text component keys, and generates<br>
-an `en_us.json` language file for internationalization support.
+Moves the text of your commands and loot tables into `lang/en_us.json`, so a resource pack can translate it.
 
-**Required**: Beet context with functions, loot tables, advancements, recipes, etc.  
-**Required**: Project ID for translation key namespacing  
-**Position**: Should run after content generation but before finalization  
-**Optional**: Existing `en_us.json` language file (will be merged)  
-**Related**: Works with any plugins that generate text content
+It runs in the `basic` and `extensive` templates as `stewbeet.plugins.auto.lang_file`, with no configuration. [Source](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/auto/lang_file/__init__.py)
 
-### <u>Feature Showcase</u>
+## What it does to your text
 
-**Before and after lang plugin:**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.lang_file.conversion_example.jpg">
+You write plain text components. The plugin finds each `"text"` value in every file of the datapack and rewrites it as a `translate` component. The original text stays as the `fallback`, so the pack still reads right without a resource pack.
 
-**Generated `en_us.json` lang file:**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.lang_file.en_us_example.jpg">
+```mcfunction
+# You write
+tellraw @s {"text":"Not enough energy"}
 
-**Source Code**: [`stewbeet/plugins/auto/lang_file/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/auto/lang_file/__init__.py) <br>  
-**Source Code**: [`stewbeet/plugins/auto/lang_file/utils.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/auto/lang_file/utils.py) <br>
-
-
-## What it does
-
-- Automatically generates language files from hardcoded text
-- Converts `"text"` text component keys to `"translate"` keys
-- Extracts text strings from functions and loot tables
-- Creates standardized translation keys with project namespacing
-- Cleans and validates text content for language file inclusion
-- Enables internationalization support for datapacks
-
-## Configuration
-
-### Basic Example Configuration
-```yaml
-pipeline:
-  - ...
-  - stewbeet.plugins.auto.lang_file
-  - ...
-
-# No configuration required - plugin runs automatically
-# Processes all text files by default (functions, loot tables, advancements, etc.)
+# The build writes
+tellraw @s {"translate":"simplenergy.not_enough_energy",
+  "fallback":"Not enough energy"}
 ```
 
-### Configuration Options
+The key is the project id, a dot, then the text lowercased with other punctuation removed, and spaces, `.`, `/` and `:` turned into `_`. The text part is cut at 64 characters.
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| Text Extraction | automatic | Enabled | Scans all "text" fields in file content |
-| Key Generation | automatic | Project-based | Uses project ID for translation key prefixes |
-| Parallel Processing | automatic | 32 workers | Multi-threaded file processing for performance |
-| Language Target | constant | `en_us` | Generates English language file by default |
+A value is left alone when it:
 
-## Features
+- has fewer than 3 letters or digits once simplified,
+- holds a `$`, so macro lines keep working,
+- holds a `\u` escape.
 
-### Text Extraction Engine
-Scans content for hardcoded text using regex patterns:
-- 📝 Uses advanced regex to find `"text": "value"` patterns
-- 🔄 Handles escaped characters and various quote styles
-- 📍 Tracks text positions for accurate replacement
-- 🎯 Processes both single and double quoted strings
+Symbols and punctuation around the words stay as plain text next to the translated part. The text `" attacks | "` becomes a space, the key for `attacks`, then `" | "`. Two texts that differ only there share one key.
 
-### Translation Key Generation
-Creates standardized translation keys with project namespacing:
-- 🧹 Cleans text by removing special characters and normalizing case
-- 📏 Limits key length to 64 characters for compatibility
-- 🔧 Uses project ID prefix for unique namespacing
-- ✅ Validates keys to ensure they contain meaningful content
+Two different texts that give the same key get `_2`, `_3` and so on.
 
-### Content Replacement System
-Replaces hardcoded text with translate components:
-- 🔄 Converts `"text": "value"` to `"translate": "key"`
-- 📍 Processes matches in reverse order to maintain position accuracy
-- 🧹 Handles escape sequences and special characters properly
-- ✅ Preserves JSON structure and formatting during replacement
+## What this plugin writes
 
-### Parallel Processing System
-Efficiently processes multiple files using multi-threading:
-- ⚡ Uses up to 32 worker threads for fast processing
-- 📊 Processes both functions and loot tables simultaneously
-- 🎨 Provides colored progress indicators during execution
-- 🔧 Optimizes worker count based on file quantity
+- `lang/en_us.json` in the `minecraft` namespace of the resource pack: every key, sorted, merged with the file you already have there.
+- The text of every datapack file with a `text` key: functions, loot tables, advancements and the rest.
 
-### Language File Management
-Generates and updates the English language file:
-- 📝 Creates `minecraft:en_us` language resource
-- 🔄 Merges with existing language data if present
-- 💾 Uses proper JSON formatting for compatibility
-- 🌐 Sets up foundation for multi-language support
+## Limits
 
-### Content Validation System
-Ensures only meaningful text gets processed:
-- ✅ Skips text without alphanumeric characters
-- 🔍 Validates minimum key length requirements
-- 🚫 Excludes Unicode escapes and template variables
-- 🎯 Prevents duplicate keys with conflicting values 
-
-## Next steps
-
-- [Writing functions and files](../2_writing_to_files/en.md): the functions this plugin post-processes.
-- [All plugins](README.md): the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+- Only `en_us` is written. Other languages are yours to add.
+- A text split over several `"text"` values is translated piece by piece.
 

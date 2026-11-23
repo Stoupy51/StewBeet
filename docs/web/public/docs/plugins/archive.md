@@ -1,99 +1,33 @@
 
-# stewbeet.plugins.archive
+# Zip archives
 
-The `archive` plugin creates zip archives of generated datapacks and resource packs.<br>
-It replaces the legacy archive system with beet-native functionality, providing<br>
-deterministic compression, consistent timestamps, and parallel processing while<br>
-preserving original pack directories and integrating with beet's output system.
+Zips your datapack and your resource pack into the build folder, with the same bytes on every machine for the same sources.
 
-### <u>Some Features Showcase</u>
+It runs in the `basic` and `extensive` templates as `stewbeet.plugins.archive`, and needs `output` in `beet.yml`. [Source](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/archive/__init__.py)
 
-**Output directory will get both datapack and resource pack zipped**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/archive.output_directory.jpg">
+## What this plugin writes
 
-**We can see deterministic `Date modified` based of the last commit of the beet config (no year 1900)**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/archive.inside_datapack.jpg">
+In the `output` folder, for a project named `Stardust Fragment`:
 
-**Required**: Beet context with at least one type of pack (datapacks/resource packs)  
-**Required**: Configured output directory in project settings  
-**Position**: Should run after all pack generation is complete  
-**Optional**: Beet config committed to git, for the same timestamp in every clone  
-**Related**: Works with any plugins that generate pack content  
-**Source Code**: [`stewbeet/plugins/archive/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/archive/__init__.py)
+- `StardustFragment_datapack.zip`: the datapack. The name is the project name with its spaces removed.
+- `StardustFragment_resource_pack.zip`: the resource pack.
 
+Both zips are written in parallel, and each entry follows the same rules:
 
-## What it does
+- Its date is the date of the last git commit of `beet.yml`, in UTC, so every clone dates it the same. Outside a git repository the date is the one of the beet cache folder, and when that is missing, 2025-01-01.
+- A text file (`.json`, `.mcfunction`, `.mcmeta`, `.properties`, `.lang`, `.md` and a few more) is stored with Unix line endings, even when you build on Windows.
+- An entry whose content is unchanged since the previous build is copied still compressed, which keeps a rebuild fast.
+- `pack.png` is replaced by the project icon, when your project has one.
 
-- Creates zip archives of generated datapacks and resource packs
-- Provides consistent timestamps for reproducible builds
-- Uses parallel processing for efficient archive creation
-- Integrates with beet's native pack management system
-- Preserves original pack directory structure
-- Replaces legacy archive systems with modern beet-compatible approach
+When source maps are on, their files are added to the packs before they are zipped, so the plugin needs no `source_maps.emit` entry before it.
 
-## Configuration
+## Limits
 
-### Basic Example Configuration
-```yaml
-# No direct configuration required - uses project settings
-# Requires output to be configured in beet.yml:
-output: "build"
-
-pipeline:
-  - ...
-  - stewbeet.plugins.archive
-  - ... # Other finalization plugins that may depend on archives (e.g. compute_sha1, copy_to_destination, etc.)
-```
-
-### Configuration Options
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `output` | string | **Required** | Directory where zip archives will be saved |
-| Archive Naming | automatic | `{project_name}_{pack_type}.zip` | Naming convention for generated archives |
-| Compression Level | constant | `6` | ZIP_DEFLATED compression level for optimal size/speed balance |
-| Timestamp Source | automatic | Beet cache | Uses beet cache modification time for consistency |
-
-## Features
-
-### Consistent Timestamp System
-Ensures reproducible builds with deterministic timestamps:
-- 📅 Uses the date of the last commit of the beet config, in UTC, so every clone builds the same bytes
-- 📂 Falls back to the beet cache directory modification time outside a git repository
-- 🔄 Applies consistent timestamps to all zip entries
-- 📦 Enables reproducible archive builds across environments
-- ⏰ Falls back to default time (2025-01-01) if cache unavailable
-
-### Pack Detection and Processing
-Automatically detects and processes all generated packs:
-- 🔍 Identifies both datapacks and resource packs from context
-- 🏷️ Determines pack types automatically using isinstance checks
-- 📝 Generates descriptive archive names based on project and pack type
-- ✅ Validates pack availability before processing
-
-### Advanced Compression System
-Implements two-pass compression for optimal results:
-- 🔧 Uses ZIP_DEFLATED compression with level 6 for size/speed balance
-- 🔄 Two-pass system: first creates archive, then recreates with timestamps
-- 📊 Handles beet's dump() system that bypasses standard writestr()
-- ✅ Ensures all entries have consistent compression and timestamps
-
-### Parallel Archive Creation
-Processes multiple packs simultaneously for efficiency:
-- 🚀 Uses multithreading for simultaneous pack processing
-- 📊 Optimizes worker count based on number of packs
-- 🛡️ Includes error handling for archive creation
-- ⚡ Significantly improves build times for multiple packs
-
-### Beet Integration System
-Integrates with beet's pack management:
-- 📦 Uses pack.dump() to avoid interfering with existing directories
-- 🎯 Leverages beet's native Context and pack system
-- 📁 Preserves original pack structure and organization
-- 🔗 Integrates with beet's output directory management
+- Everything that reads the zips (the [Smithed Weld merge](merge_smithed_weld.md), the [copy to destination](copy_to_destination.md), the [SHA-1 hashes](compute_sha1.md)) must come after it in the `pipeline`.
+- A zip locked by another program, such as a game reading the file, is retried 10 times, 0.5 seconds apart. After that the build reports the error.
+- `stewbeet.plugins.archive.silent` runs the same plugin and hides its log output.
 
 ## Next steps
 
-- [All plugins](README.md): the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+- [Configuring the build](../3_beet_config/en.md#pipeline): where a plugin sits in the `pipeline`.
 

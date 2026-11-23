@@ -1,139 +1,62 @@
 
-# stewbeet.plugins.livereload
+# Live reload
 
-The `livereload` plugin is a thin wrapper around beet's built-in `beet.contrib.livereload` that adds
-support for StewBeet's `build_copy_destinations.datapack` folders.<br>
-With vanilla beet, live reloading only works when the project is associated to a world through
-`beet link`. Most StewBeet users instead deploy their datapack to one or more folders via
-`build_copy_destinations`. This plugin bridges the two, so a simple `stewbeet watch` triggers an
-automatic in-game `/reload` after every rebuild: **no `beet link` required**.
+Reloads your datapack in the game after each build, with no `beet link` and no manual `/reload`.
 
-Both mechanisms coexist: if the project is *also* linked with `beet link`, the linked folder keeps
-working alongside the configured copy destinations.
+It runs in the `basic` and `extensive` templates as `stewbeet.plugins.livereload`, in `require`, and reads the datapack folders of `build_copy_destinations`. [Source](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/livereload/__init__.py)
 
-**Source Code**: [`stewbeet/plugins/livereload/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/livereload/__init__.py)
+## Use it
 
-
-**Required**: [`beet.contrib.livereload`](https://github.com/mcbeet/beet) (bundled with beet, required automatically)  
-**Optional**: `build_copy_destinations.datapack` in project metadata (from [copy_to_destination](./copy_to_destination.md))  
-**Optional**: A `beet link` association (classic beet workflow)  
-**Position**: Only needs to be *required*; it hooks into beet's autosave/watch system on its own
-
-## What it does
-
-- Automatic in-game `/reload` after each rebuild while running `stewbeet watch`
-- Targets the folders from `build_copy_destinations.datapack` (no `beet link` needed)
-- Stays compatible with the classic `beet link` workflow (all methods can be used at once)
-- Works with remote `sftp://` datapack destinations too (deploy to a remote server and reload)
-- Zero extra wiring: require this single plugin instead of `beet.contrib.livereload` + `beet link`
-
-## Configuration
-
-### Basic Example Configuration
 ```yaml
 require:
-  - stewbeet.plugins.livereload   # requires beet.contrib.livereload for you
+  - "stewbeet.plugins.livereload"
 
 meta:
   stewbeet:
     build_copy_destinations:
       datapack:
-        - "path/to/minecraft/saves/world/datapacks"
-        - "path/to/server/world/datapacks"
+        - "C:/mc/saves/world/datapacks"
 ```
 
-Then run:
 ```bash
-uv run stewbeet watch
+stewbeet watch
 ```
-Every time a source file changes, the datapack is rebuilt, copied to the destinations, and the game
-reloads it automatically. A `livereload - Reloaded` message appears in the in-game chat.
 
-### Configuration Options
-It reuses the datapack destinations already configured for
-[copy_to_destination](./copy_to_destination.md), plus one optional override:
+Each rebuild copies the datapack, and the game runs `/reload` by itself. The chat shows `livereload - Reloaded`. A project also linked with `beet link` reloads that folder too.
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `build_copy_destinations.datapack` | array | `[]` | Datapack folders to live-reload: local paths **or** `sftp://` URLs |
-| `livereload.minecraft` | string | *(auto)* | Directory containing `logs/` for the **client** you play on. Required for `sftp://`-only setups, and whenever auto-detection fails |
+## What this plugin writes
 
-### Remote server over SFTP
+- `livereload`: a small helper datapack dropped into every local datapack destination and the `beet link` folder. It makes the game reload when it appears.
+- `livereload.zip`: the same helper, uploaded to each `sftp://` destination.
+
+The previous build's helper is removed first, since the game only reloads when one appears. It is removed again once the reload shows in the client's `logs/latest.log`.
+
+## Options
+
+| Option | Default | What it does |
+|---|---|---|
+| `build_copy_destinations.datapack` | `[]` | The datapack folders to reload, local paths or `sftp://` URLs |
+| `livereload.minecraft` | detected | The folder holding `logs/latest.log` of the client you play on |
+
+The log folder is looked up in this order: `livereload.minecraft`, the `beet link` Minecraft folder, each `resource_pack` destination and its parents, then the first datapack destination and its parents.
+
+For a remote server, point `livereload.minecraft` at your own client, since only your client logs the reload:
+
 ```yaml
 meta:
   stewbeet:
     livereload:
-      minecraft: "C:/Users/you/AppData/Roaming/.minecraft"   # YOUR client, not the server
+      minecraft: "C:/Users/you/AppData/Roaming/.minecraft"
     build_copy_destinations:
       datapack:
-        - "sftp://user@host/home/mc/server/world/datapacks"
-```
-The helper datapack is uploaded (as `livereload.zip`) and removed over SFTP, while the reload
-confirmation is read from your **local client's** log: because the remote server broadcasts the
-`livereload - Reloaded` chat to you, and your client is what logs the `[CHAT]` line. This is why
-`livereload.minecraft` must point at your client when the datapack lives on a remote server. SFTP
-credentials are resolved exactly like [copy_to_destination](./copy_to_destination.md) (inline in the
-URL or `~/stewbeet/credentials.yml`).
-
-### Explicit game folder (when auto-detection fails)
-```yaml
-meta:
-  stewbeet:
-    livereload:
-      minecraft: "D:/my_server"   # the folder that contains logs/latest.log
-    build_copy_destinations:
-      datapack:
-        - "D:/my_server/world/datapacks"
+        - "sftp://user@host/mc/datapacks"
 ```
 
-## How It Works
-1. On each build, a tiny helper datapack named `livereload` is written into every configured datapack
-   destination (and the `beet link` folder, if any). Local destinations get it as a folder; remote
-   `sftp://` destinations get it uploaded as `livereload.zip`.
-2. That helper datapack polls `datapack list available` in-game; when it detects the change it runs
-   `/reload` by itself.
-3. A single background worker tails the **client's** `logs/latest.log`; once it sees the reload
-   confirmation it removes every helper datapack: deleting local folders and `rm`-ing remote zips
-   over SFTP. So the next build can trigger the cycle again.
-4. The client folder holding `logs/latest.log` is auto-detected. Because live reload watches the
-   **client** `[CHAT]` log, detection walks up from the **resource pack** destination first (which
-   usually sits inside `.minecraft`), then from the local datapack destination. This means it still
-   works when your datapack is deployed to a separate server/world tree: even a remote one over
-   SFTP: while you play on a client whose logs live elsewhere. For remote/`sftp://`-only setups,
-   set `livereload.minecraft` to your client folder explicitly.
+SFTP credentials are read as for [Copy to destination](copy_to_destination.md).
 
-> ℹ️ Under the hood this monkey-patches `beet.contrib.livereload.livereload` so it understands copy
-> destinations. The patch is idempotent and is also applied by
-> [`stewbeet.plugins.initialize`](./initialize.md), which means live reload works even if you only
-> require `beet.contrib.livereload` directly (as long as `build_copy_destinations.datapack` is set).
+## Limits
 
-## Troubleshooting
-
-### `WARN | livereload  Not linked to any Minecraft installation. Reloading disabled.`
-The plugin could not find the game's `logs/latest.log`, so the reload cycle can't run (the helper
-datapack is copied but the game never reloads). Fix one of the following:
-- ▶️ **Run `stewbeet watch`, not `stewbeet`.** A one-shot build has nothing to live-reload.
-- 🎮 **Make sure the game/server is running** when you build: the log file only exists then.
-- 🎨 **Configure a `resource_pack` destination.** Detection walks up from the resource pack folder
-  (which normally lives inside the client `.minecraft`) to find `logs/latest.log`, which is often the
-  only place the log can be reached when the datapack goes to a separate server/world tree.
-- 📁 **Set `meta.stewbeet.livereload.minecraft`** to the folder containing `logs/` as a last resort
-  (e.g. a custom log path, or when neither destination is inside the client directory).
-
-## Notes & Limitations
-- Live reload only runs under `stewbeet watch` / beet's autosave (not on a one-shot `stewbeet build`).
-- The reload is driven by removing and re-adding the helper datapack, which requires reading the game
-  log: that's why the `logs/latest.log` folder must be correctly detected or configured.
-- The first time, you may need one manual `/reload` (or to re-enter the world) so the helper datapack
-  gets enabled and starts polling; subsequent builds then reload automatically.
-- The helper datapack is dropped into **all** configured destinations (local and remote), and a
-  single worker cleans them all up on each confirmed reload.
-- For remote `sftp://` destinations you must connect to that server with your local client and set
-  `livereload.minecraft` to your client folder: the reload confirmation is only ever logged by the
-  client that receives the chat, never by the remote server itself.
-
-## Next steps
-
-- [All plugins](README.md): the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+- No log folder found: the helper is still copied, but a warning says the cleanup is off, and it stays in the destination.
+- A missing remote `datapacks` folder warns, and that destination is skipped. A failed upload warns too.
+- Every destination gets the helper, local and remote.
 

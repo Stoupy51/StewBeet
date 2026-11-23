@@ -1,121 +1,68 @@
 
-# stewbeet.plugins.custom_recipes
+# Recipes
 
-The `custom_recipes` plugin generates custom recipes for datapacks based on item definitions.<br>
-It supports multiple recipe types including vanilla crafting, smelting, Smithed Crafter recipes,<br>
-and specialized recipes for SimplEnergy's pulverizer and furnaces with components, as well as Stardust Fragment's awakened forge.<br>
-**(This plugin requires valid item definitions in memory to function properly.)**
+Turns the `recipes` of each item of your definitions into recipe files and functions, so players can craft, smelt, cut or smith your items.
 
-### <u>Some Features Showcase</u>
+It runs in the `basic` and `extensive` templates as `stewbeet.plugins.custom_recipes`, and reads the item definitions with no configuration. [Source](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/custom_recipes/__init__.py)
 
-**Item definition example ([source](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/src/setup_definitions.py)):**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/custom_recipes.item_definition.jpg">
+## Declare a recipe
 
-**Generated vanilla crafting recipe ([source](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/build/datapack/data/_your_namespace/recipe/super_stone.json)):**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/custom_recipes.vanilla_recipe.jpg" style="width: min(480px, 100%)">
-
-**Generated Smithed Crafter recipe ([source](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/build/datapack/data/_your_namespace/function/calls/smithed_crafter/shapeless_recipes.mcfunction)):**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/custom_recipes.smithed_recipe.jpg">
-
-**Generated furnace recipe with NBT data ([source](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/build/datapack/data/_your_namespace/function/calls/furnace_nbt_recipes/smelting_recipes.mcfunction)):**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/custom_recipes.furnace_recipe.jpg">
-
-**Source Code**: [`stewbeet/plugins/custom_recipes/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/custom_recipes/__init__.py) <br>  
-**Source Code**: [`stewbeet/plugins/custom_recipes/vanilla.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/custom_recipes/vanilla.py) <br>  
-**Source Code**: [`stewbeet/plugins/custom_recipes/smithed.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/custom_recipes/smithed.py) <br>  
-**Source Code**: [`stewbeet/plugins/custom_recipes/furnace.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/custom_recipes/furnace.py) <br>  
-**Source Code**: [`stewbeet/plugins/custom_recipes/pulverizer.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/custom_recipes/pulverizer.py) <br>  
-**Source Code**: [`stewbeet/plugins/custom_recipes/awakened_forge.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/custom_recipes/awakened_forge.py) <br>
-
-
-## What it does
-
-- Generates vanilla crafting recipes (shapeless, shaped, smelting, blasting, smoking)
-- Creates Smithed Crafter custom recipes for advanced crafting systems
-- Handles furnace recipes with NBT data support
-- Generates pulverizer recipes for SimplEnergy integration
-- Creates recipe unlocking systems with advancement triggers
-- Manages ingredient detection and recipe discovery
-
-## Dependencies
-- **✅ Required**: StewBeet framework initialization
-- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../1_definitions_setup/en.md) for details)
-- **📍 Position**: Should run after item model generation and before datapack finalization<br>
-(see [`basic/beet.yml`](https://github.com/Stoupy51/StewBeet/blob/main/templates/basic/beet.yml) for an example)
-
-## Configuration
-
-### Basic Example Configuration
-```yaml
-pipeline:
-  - ...
-  - src.setup_definitions  # Load item definitions into memory
-  - ...
-  - stewbeet.plugins.custom_recipes  # Check your item definitions
-  - ...
-
-# No direct configuration required - recipes are defined in item definitions (see feature showcase)
+```python
+Item(
+  id="super_stone",
+  base_item="minecraft:stone",
+  recipes=[
+    CraftingShapedRecipe(
+      category="building",
+      shape=["XXX", "XXX", "XXX"],
+      ingredients={
+        "X": Ingr("minecraft:stone"),
+      },
+    ),
+  ],
+)
 ```
 
-### Configuration Options
+The item is the result, unless the recipe sets `result`. `Ingr("minecraft:stone")` is a vanilla item, `Ingr("steel_ingot")` an item of your project.
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| *Recipes in definitions* | list | `[]` | Recipe definitions are specified in individual item definitions under the `RESULT_OF_CRAFTING` and `USED_FOR_CRAFTING` keys |
+## What this plugin writes
 
-## Features
+An ingredient that is a plain vanilla item gives a vanilla recipe file. An ingredient that is one of your items cannot be in a recipe file, so the recipe goes to a library instead.
 
-### Vanilla Recipe Generation
-**Supported Types:**
-- 🔲 **Shapeless Crafting** - Any arrangement of ingredients
-- 📐 **Shaped Crafting** - Specific pattern-based recipes
-- 🔥 **Smelting** - Furnace, blast furnace, and smoker recipes
-- 🍖 **Cooking** - Campfire and other cooking methods
+- `recipe/<item>.json`: one for each crafting, smelting, blasting, smoking, campfire, stonecutting and smithing recipe whose ingredients are all vanilla items. A second recipe of the item is `<item>_2`.
+- `function/utils/get_all_recipes`: gives the player every recipe above.
+- `advancement/unlock_recipes`: gives a recipe when the player holds one of its ingredients or its result. It calls `function/advancements/unlock_recipes`.
+- `function/calls/smithed_crafter/shapeless_recipes` and `shaped_recipes`: every crafting recipe, tagged for [Smithed Crafter](https://wiki.smithed.dev/libraries/crafter/), which gives the result from the item's loot table. A custom ingredient adds the library to the pack.
+- `function/calls/furnace_nbt_recipes/<type>_recipes`: every smelting, blasting and smoking recipe, for [Furnace NBT Recipes](https://github.com/Stoupy51/FurnaceNbtRecipes), with its experience in `recipes_used`. This is how a furnace takes a custom ingredient.
+- `function/calls/simplenergy/pulverizer_recipes`: the `PulverizingRecipe` of SimplEnergy's pulverizer.
+- `function/calls/stardust/awakened_forge_recipes`: the `AwakenedForgeRecipe` of Stardust Fragment's forge, with a `timer` and a `craft` function for each result.
 
-**Features:**
-- ✅ Automatic ingredient validation and conversion
-- 🎁 Recipe **unlocking** system with advancement triggers
-- 📋 Inventory-based recipe discovery
-- 🔄 Custom item result support
+An item with `remainder` also gets the `use_remainder` component, holding that container.
 
-### Smithed Crafter Integration
-- 🛠️ **Shapeless Recipes** - Custom crafting without patterns
-- 📐 **Shaped Recipes** - Pattern-based custom crafting
-- 🎯 **Loot Table Results** - Advanced result generation
-- 📦 **Command Integration** - Custom command execution support
-- 🔧 **Unique Ingredient Handling** - Optimized ingredient processing
+## Options
 
-### Furnace NBT Recipes
-- 🔍 **NBT Data Support** - Custom data preservation during smelting
-- ⚡ **Performance Optimization** - Efficient NBT handling
-- 🎯 **Custom Result Generation** - Loot table integration
-- 🔄 **Multi-type Support** - Furnace, blast furnace, smoker compatibility
+Every recipe takes:
 
-### Pulverizer Recipes
-- 🏭 **SimplEnergy Integration** - Automatic pulverizer recipe generation
-- 💎 **Ore Processing** - Dust and fragment generation
-- 🔧 **Custom Results** - Flexible output configuration
-- 📊 **Yield Control** - Configurable output quantities
+| Option | Default | What it does |
+|---|---|---|
+| `result` | the item | What the recipe gives, as an `Ingr` |
+| `result_count` | `1` | How many it gives |
+| `category` | `None` | The recipe book tab |
+| `group` | `None` | The recipe book group |
+| `smithed_crafter_command` | `None` | The command run instead of giving the loot table, for crafting recipes |
 
-### Awakened Forge Recipes
-- 🌟 **Stardust Fragment Integration** - Automatic awakened forge recipe generation
-- 🔮 **Multi-block Structure Crafting** - High-tier item processing
-- 🎯 **Custom Results** - Flexible output configuration
+Cooking recipes add `experience` (`0.0`) and `cookingtime` in ticks: `200` for smelting, `100` for blasting and smoking. `CampfireCookingRecipe` needs both. On 26.3 and later, blasting and smoking recipe files store twice your `cookingtime`, which the block halves.
 
-### Recipe Unlocking System
-- 🏆 **Advancement Triggers** - Automatic recipe discovery
-- 📦 **Inventory Detection** - Ingredient-based unlocking
-- 🔄 **Dynamic Updates** - Real-time recipe availability
-- 🎯 **Custom Item Support** - NBT-based custom item detection
+## Limits
 
-### Recipe Management
-- 🔍 **Ingredient Processing** - Smart ingredient parsing and validation
-- 🏷️ **Category Organization** - Recipe categorization support
-- 🎯 **Result Handling** - Flexible output configuration
-- 📊 **Performance Optimization** - Cached recipe generation
+- A recipe type the plugin does not know raises `Invalid recipe type` when the definition is built.
+- A shaped recipe holds at most 3 rows of 3 columns, all rows the same width.
+- A stonecutting or smithing recipe with a custom ingredient is skipped, no file and no function.
+- A campfire recipe with a custom ingredient is skipped too.
+- A furnace recipe adds the Furnace NBT Recipes library to the pack.
+- The first ingredient of an awakened forge recipe holds at most 64 items.
 
 ## Next steps
 
-- [All plugins](README.md): the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+- [Definitions](../1_definitions_setup/en.md#recipe-system): every recipe class with its fields.
 

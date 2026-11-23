@@ -1,98 +1,35 @@
 
-# stewbeet.plugins.compatibilities.simpledrawer
+# SimpleDrawer
 
-The `compatibilities.simpledrawer` plugin provides integration with the SimpleDrawer datapack's<br>
-compacting drawer functionality. It automatically detects material blocks and their variants<br>
-(ingots, nuggets) from your definitions and generates the necessary functions and data<br>
-to enable automatic compacting/decompacting in SimpleDrawer's compacting drawers.
+Lets SimpleDrawer's compacting drawers store your ingots, nuggets and storage blocks, and convert between them.
 
-**Required**: `Your definition plugin` (see [`definitions_setup.md`](../1_definitions_setup/en.md) for details)  
-**Optional**: SimpleDrawer datapack (external dependency)  
-**Material Structure**: Items must follow naming conventions (material_block, material_ingot, material_nugget)
+It runs in the `basic` and `extensive` templates as `stewbeet.plugins.compatibilities.simpledrawer`, with no configuration. [Source](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/compatibilities/simpledrawer/__init__.py)
 
-### <u>Some Features Showcase</u>
+## What it reads
 
-**Automatic compatibility with SimpleDrawer's compating drawer:**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/compatibilities.simpledrawer.complete_file_tree.jpg">
+An item named `<material>_block` counts as a storage block when its `custom_data` holds a `smithed.dict`, which the material helpers of the definitions write for you. The plugin then looks for the other forms by name:
 
-**Source Code**: [`stewbeet/plugins/compatibilities/simpledrawer/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/compatibilities/simpledrawer/__init__.py)
+| Form | Found as |
+|---|---|
+| Ingot | `<material>_ingot`, else `<material>`, else `<material>_fragment` |
+| Nugget | `<material>_nugget` |
 
+A block starting with `raw_` uses `raw_<material>` as its ingot and has no nugget. A block with neither ingot nor nugget is skipped.
 
-## What it does
+It also reads your recipes. A crafting recipe with the block as its only ingredient gives how many ingots a block decompresses into. The same with the ingot gives nuggets per ingot. Without such a recipe, both counts are 9.
 
-- Integrates custom materials with SimpleDrawer's compacting drawer system
-- Automatically detects material blocks and their variants (ingots, nuggets)
-- Generates conversion ratio calculations for proper compacting
-- Creates material data structures for SimpleDrawer compatibility
-- Handles both regular and raw material variants
-- Sets up proper NBT data and storage for material identification
+## What this plugin writes
 
-## Configuration
+- `#simpledrawer:material` calls `calls/simpledrawer/material`, which checks the item in the drawer against each form of each material.
+- `calls/simpledrawer/<material>/block`, `ingot` and `nugget` set the type of the form (0, 1 or 2) and call `main`.
+- `calls/simpledrawer/<material>/main` sets the counts and the material name, and copies your items from `<namespace>:items`.
 
-### Basic Example Configuration
-```yaml
-pipeline:
-  - ...
-  - stewbeet.plugins.compatibilities.simpledrawer
-  - ...
+## Limits
 
-# No specific configuration required - automatically detects materials
-# Works with existing material definitions that follow naming conventions
-# Materials must have proper smithed.dict structure in custom_data (automatic if you used definitions helper functions)
-```
-
-### Configuration Options for item definitions
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `material_block` | string | Auto-detected | Material blocks ending with `_block` (e.g., `steel_block`) |
-| `material_ingot` | string | Auto-detected | Material ingots (e.g., `steel_ingot`, `steel_fragment`) |
-| `material_nugget` | string | Auto-detected | Material nuggets (e.g., `steel_nugget`) |
-| `smithed.dict` | object | **Required** | Smithed convention structure in custom_data for material identification |
-
-## Features
-
-### Material Detection and Variant Discovery
-Automatically scans definitions for material blocks and identifies their variants:
-- 🧱 Detects blocks ending with `_block` suffix
-- 🏷️ Extracts material base from smithed.dict structure
-- 🔄 Handles both regular materials and raw material variants
-- 💎 Identifies ingot variants (base, _ingot, _fragment suffixes)
-- ✨ Discovers nugget forms when available
-
-### Conversion Ratio Calculation
-Calculates conversion ratios between material variants:
-- 📊 Analyzes crafting recipes to determine conversion rates
-- 🔢 Supports both shaped and shapeless recipe patterns
-- 🧱 Calculates ingots per block ratio (default: 9)
-- ✨ Determines nuggets per ingot ratio (default: 9)
-- 📋 Handles single-ingredient recipe detection
-
-### SimpleDrawer Integration
-Creates the necessary function tags and data structures for mod integration:
-- 🏷️ Links to SimpleDrawer's material function tag system
-- 📦 Creates material detection functions with NBT checking
-- 🎯 Sets up proper namespace and item identification
-- ⚡ Optimizes with success flags to prevent redundant processing
-
-### Material Data Structure Generation
-Generates material data for each detected material:
-- 🏷️ Creates material identification with proper naming
-- 🔢 Sets conversion ratios for ingots and nuggets
-- 📦 Links item data from project storage
-- 🎯 Organizes data by material type (block=0, ingot=1, nugget=2)
-- ✅ Sets success flags for proper mod interaction
-
-### Variant-Specific Function Generation
-Creates individual functions for each material variant:
-- 📁 Organizes functions by material base name
-- 🎯 Creates variant-specific entry points (block, ingot, nugget)
-- 🔗 Links to main material processing function
-- ⚙️ Sets appropriate type identifiers for SimpleDrawer 
+- Nothing is written when no block matches, and the build does not warn.
+- The name shown for a material is its id with spaces and capitals, such as `Steel Alloy` for `steel_alloy`. It is not translated.
 
 ## Next steps
 
-- [Using datapack libraries](../5_dependencies/en.md): the integrations this plugin targets.
-- [All plugins](README.md): the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+- [Using datapack libraries](../5_dependencies/en.md): SimpleDrawer is installed like any other library.
 

@@ -1,120 +1,66 @@
 
-# stewbeet.plugins.resource_pack.item_models
+# Item models
 
-The `item_models` plugin automatically generates item and block models for custom items defined in the StewBeet framework.<br>
-It processes textures, handles powered states, generates specialized models for different block types,<br>
-and creates the necessary item model files for Minecraft resource packs.<br>
-**(This plugin requires item definitions in memory and the `textures_folder` configuration.)**
+Writes the model and the `items/` definition of each item and block of your definitions from the textures of your textures folder, so a texture named after an item is enough to draw it.
 
-### <u>Some Features Showcase (example from [SimplEnergy](https://github.com/Stoupy51/SimplEnergy/tree/main/assets/textures/))</u>
+It runs in the `basic` and `extensive` templates as `stewbeet.plugins.resource_pack.item_models`. It needs `textures_folder` in the `stewbeet` section of `beet.yml`. [Source](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/resource_pack/item_models/__init__.py)
 
-**Automatically detects texture patterns:**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/resource_pack.item_models.pattern_detection.jpg">
+## Name your textures
 
-**Both models are automatically created and ready to use (`models/item/*` and `items/*`):**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/resource_pack.item_models.result.jpg">
+The plugin scans `textures_folder` for `.png` files and finds an item's textures by file name, whatever the subfolder. The textures that start with the item's id are its variants.
 
-**Source Code**: [`stewbeet/plugins/resource_pack/item_models/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/resource_pack/item_models/__init__.py) <br>  
-**Source Code**: [`stewbeet/plugins/resource_pack/item_models/object.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/resource_pack/item_models/object.py) <br>
-
-
-## What it does
-
-- Generates block models with automatic pattern detection (cube, cake, orientable, etc.)
-- Creates item models with proper texture layering and parent inheritance
-- Handles powered states for blocks (_on variants)
-- Supports specialized models (bow pulling animations, leather armor overlays)
-- Automatically processes and copies textures from source folders
-- Generates both `items/*.json` files and `models/[item|block]/*.json` files
-- Tracks rendered models to prevent duplicates
-
-## Dependencies
-- **✅ Required**: `Your definition plugin` (see [`definitions_setup.md`](../1_definitions_setup/en.md) for details)
-- **✅ Required**: `textures_folder` configuration in meta.stewbeet
-- **📍 Position**: Should run after verification plugins and before finalization<br>
-(see [`basic/beet.yml`](https://github.com/Stoupy51/StewBeet/blob/main/templates/basic/beet.yml) for an example)
-
-## Configuration
-
-### Basic Example Configuration
-```yaml
-pipeline:
-  - ...
-  - src.setup_definitions  # Load item definitions into memory
-  - ...
-  - stewbeet.plugins.resource_pack.item_models  # Check both item definitions and your textures to generate models
-  - ...
-
-meta:
-  stewbeet:
-    textures_folder: "assets/textures"  # Path to textures directory
+```text
+steel_ingot.png
+simplunium_block.png
+super_furnace_front.png
+super_furnace_side.png
+super_furnace_top.png
+super_furnace_on.png
 ```
 
-### Configuration Options
+- A block with one texture shows it on every face.
+- A block with several textures takes the first of these shapes whose sides all exist, as `<id>_<side>.png`:
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `textures_folder` | string | `"assets/textures"` | Path to the directory containing texture files. Must be set in `meta.stewbeet.textures_folder` |
+| Shape | Sides |
+|---|---|
+| `cake` | `bottom`, `side`, `top`, `inner` |
+| `orientable_with_bottom` | `front`, `bottom`, `side`, `top` |
+| `cube_bottom_top` | `bottom`, `side`, `top` |
+| `orientable` | `front`, `side`, `top` |
+| `cube_column` | `end`, `side` |
 
-## Features
+- A texture ending in `_on` is the lit state. The plugin writes a second model from it, which a burning furnace host shows.
+- A bow takes `<id>_pulling_0`, `<id>_pulling_1` and so on. A crossbow also takes `<id>_arrow` and `<id>_firework` for its loaded states.
+- A leather item takes `<id>_overlay` as its second layer.
+- A spear takes `<id>_in_hand` for the model it shows outside the GUI.
 
-### Block Model Generation
-Automatically detects texture patterns and generates appropriate block models:
+## What this plugin writes
 
-**🍰 Cake Model** (requires: bottom, side, top, inner textures)
-- Creates main cake model with proper texture mapping
-- Generates 6 slice models for each cake state
-- Maps `inner` texture to `inside` in model
+- `models/item/<id>.json`: the model, with a copy per state the item has (`_on`, a bow's `_pulling_<n>`).
+- `items/<id>.json`: the item model definition.
+- `textures/item/<texture>.png`, with its `.mcmeta` when the source has one.
+- Entries in the `minecraft` atlases for the vanilla block textures a model uses: `items` from pack format 73, `blocks` before.
+- One model, item model and texture per growth stage of a growing seed, from `<texture_basename>_stage_<n>.png`.
+- Extra model copies for a block with `uvlock` or `half`, and for a stairs host, which the display picks by state.
 
-**🔲 Cube Bottom Top, e.g. barrel** (requires: bottom, side, top textures)
-- Uses `minecraft:block/cube_bottom_top` parent
-- Perfect for blocks with different top/bottom faces
+Only the items whose `item_model` is in your namespace are written.
 
-**⬆️ Orientable Model** (requires: front, side, top textures)
-- Uses `minecraft:block/orientable` parent
-- Ideal for directional blocks like furnaces
+## Options
 
-**📦 Cube Column** (requires: end, side textures)
-- Uses `minecraft:block/cube_column` parent
-- Great for pillar-like blocks
+| Option | Default | What it does |
+|---|---|---|
+| `meta.stewbeet.textures_folder` | required | The folder scanned for `.png` files |
+| `Item.override_model` | `None` | Merged over the generated model. `{"textures": None}` drops its textures, `{}` writes no model |
+| `Item.hand_model` | `None` | The model shown in hand, in the GUI and on the ground |
+| `Item.override_model_contexts` | `["none", "fixed"]` | The display contexts that keep the regular model when `hand_model` is set |
 
-### Item Model Generation
-- 📋 Uses appropriate parent models based on item type
-- 🛡️ Handles leather armor with layer1 overlays
-- 🏹 Creates bow pulling animations with range dispatch, and for a crossbow its charge and loaded states
-- ⚡ Supports powered state variants
+## Limits
 
-### Powered State Support
-- 🔍 Automatically detects `_on` texture variants
-- 🔄 Generates separate models for powered/unpowered states, the plain one selecting the `_on` one while a furnace host burns
-- 🪜 Writes the inner and outer corner copies of a stairs block's model, selected from the display's `custom_model_data` string
-
-### Texture Processing
-- 📁 Recursively scans textures folder for .png files
-- 📋 Creates texture mappings for model generation
-- 🔄 Copies textures to resource pack assets
-- 📝 Supports .mcmeta animation files
-- 🚫 Handles missing texture validation
-
-### Specialized Model Types
-**Bow Models:**
-- 🎯 Detects pulling texture variants (`_pulling_0`, `_pulling_1`, etc.)
-- 📊 Creates range dispatch system for use duration
-- 🔄 Generates conditional models for bow states
-
-**Leather Armor:**
-- 🎨 Automatically adds layer1 texture for color overlays
-- 🛡️ Maintains compatibility with vanilla dyeing system
-
-### Item Component Files
-- 🆔 Generates items/{item_name}.json files
-- 🎯 Creates model references for item components
-- 🔧 Uses custom JSON encoder for proper formatting
-- 🏹 Handles special cases like bow animations
+- A texture the model needs and the folder lacks logs an error naming `<name>.png`, and the item gets no model.
+- A block whose textures fill no shape logs an error listing the shapes, unless its `override_model` sets textures.
+- Two textures of the same file name in different subfolders collide, and only one is read.
 
 ## Next steps
 
-- [Defining items and blocks](../1_definitions_setup/en.md): the textures and models this plugin consumes.
-- [All plugins](README.md): the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
+- [Definitions](../1_definitions_setup/en.md#block-class): the `VanillaBlock` options that add model copies.
 

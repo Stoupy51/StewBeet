@@ -1,133 +1,64 @@
 
-# stewbeet.plugins.source_maps
+# Source maps
 
-The `source_maps` plugin records where every generated line came from, and writes a<br>
-[Source Map v3](https://tc39.es/ecma426/) `.mcfunction.map` sidecar next to each generated function.<br>
-An editor or a debugger reading one of those maps can jump from a command in the built datapack<br>
-straight to the `write_function` call in your Python that produced it.
+Writes a `.mcfunction.map` file beside each generated function, so an editor or [Sniffer](https://github.com/mcbookshelf/sniffer) can jump from a command to the Python line that wrote it.
 
-The format is the same one JavaScript tooling has used for a decade, so it is readable by anything<br>
-that already speaks source maps, including the Minecraft debugger [Sniffer](https://github.com/mcbookshelf/sniffer).
+It runs in the `basic` and `extensive` templates as `stewbeet.plugins.source_maps`, with `stewbeet.plugins.source_maps.emit` in the pipeline. [Source](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/source_maps/__init__.py)
 
-### <u>What it looks like</u>
+## Use it
 
-**The Python that wrote the command, the command, and the sidecar that links them**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/source_maps.sidecar.jpg">
-
-**Required**: Nothing. It is off unless you ask for it.<br>
-**Position**: One entry in `require`. See below.<br>
-**Source Code**: [`stewbeet/plugins/source_maps/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/source_maps/__init__.py) <br>
-**Source Code**: [`stewbeet/plugins/source_maps/emit/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/source_maps/emit/__init__.py) <br>
-**Source Code**: [`stewbeet/plugins/source_maps/mecha/__init__.py`](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/source_maps/mecha/__init__.py) <br>
-
-
-## What it does
-
-- Records every `write_function`, `write_versioned_function`, `.obj.append(...)` and friends, in call order
-- Resolves each write back to the line and column of the Python that made it
-- Follows a variable back to every literal it was assigned and grown with, so a command built in a loop maps to the literal line that spells it
-- Follows a parameter annotated `McFunction` back to the call that passed it, so a function wrapping `write_function` maps to the literal its caller wrote
-- Realigns the recorded lines against the final text, so post-processing like `auto.headers` does not shift the mapping
-- Writes one `<name>.mcfunction.map` per function, beside the function and named after it. The function itself is untouched
-- Maps content a plugin generated from one of your declarations back to that `Block(...)` or `Item(...)` call
-- Maps what **mecha** compiled as well, so a `.bolt` module and a `.mcfunction` holding bolt lead back to their own lines
-- Maps each line of a function both wrote to, like a load function a plugin prepends to, back to its own origin
-- Never names a file inside StewBeet, beet, bolt, mecha or stouputils: a mapping points at your own source or at nothing
-
-## Configuration
-
-There is nothing to configure, and one entry to add:
+Both go in `beet.yml`:
 
 ```yaml
 require:
-    - "stewbeet"
-    - "stewbeet.plugins.source_maps"
+  - "stewbeet"
+  - "stewbeet.plugins.source_maps"
+
+pipeline:
+  # after the plugins writing functions
+  - "stewbeet.plugins.source_maps.emit"
+  - "stewbeet.plugins.archive"
 ```
 
-`stewbeet.plugins.source_maps` goes in `require`, next to `stewbeet` itself. Everything in `require` runs
-before the pack is even loaded, so nothing can write a function before recording starts. Its position
-within `require` does not matter. Recording the pack's own hand-written `.mcfunction` files as they
-load costs nothing: they have no Python behind them, so they get no map.
+`source_maps` records the writes, so it comes in `require` before anything writes a function. `emit` writes the maps, after the last plugin that rewrites functions and before the one that zips the pack.
 
-To try it without editing `beet.yml`, or in a project whose snapshot tests compare the whole pack, ask for it on the command line:
-`beet -s "require[]=stewbeet.plugins.source_maps" build`.
+For one build without editing `beet.yml`: `beet -s "require[]=stewbeet.plugins.source_maps" build`.
 
-That is the whole configuration, `mecha` included: beet unwinds `require` last, so by the time this
-plugin finishes, mecha has compiled and its compilation units are still there to be read.
-`stewbeet.plugins.archive` writes the maps itself before it zips, so both the build directory and the zip that ends up in `saves/<world>/datapacks` carry the same thing.
+A bolt or mecha project with no StewBeet call in it needs `source_maps` alone, in `require`.
 
-If you package the pack some other way, add `stewbeet.plugins.source_maps.emit` to your pipeline, **after** every plugin that writes or rewrites functions and **before** whichever plugin packages it.
-Forget it and the maps are still written at the very end of the build, with a warning naming the count whenever a packaging plugin already ran.
+## What this plugin writes
 
-### <u>A project with no StewBeet writes in it</u>
-
-A pure bolt or mecha project needs the same single line. Nothing calls the helpers, so nothing is recorded,
-and every function mecha compiled is mapped from its AST:
-
-```yaml
-require:
-    - "bolt"
-    - "stewbeet.plugins.source_maps"
-```
-
-## What you get
-
-A generated function is exactly what it always was:
-
-```mcfunction
-say Starting root
-function tns:helper/do_work
-```
-
-And the sidecar beside it, `root.mcfunction.map`, names your own source relative to the project root:
+For each function with a known origin, `<name>.mcfunction.map`, a Source Map v3 file next to the function. The function is not changed.
 
 ```json
 {
-	"version": 3,
-	"file": "root.mcfunction",
-	"sources": ["src/link.py"],
-	"names": [],
-	"mappings": "AAKA;AACA;AACA"
+  "version": 3,
+  "file": "root.mcfunction",
+  "sources": ["src/link.py"],
+  "names": [],
+  "mappings": "AAKA;AACA;AACA"
 }
 ```
 
-`sourcesContent` is deliberately absent. Consumers read your sources from disk, and inlining a whole project into every map would cost tens of megabytes.
-There is no `sourceRoot` either: Sniffer resolves it itself, so `sources` are plain paths from the project root and a consumer looks for the first folder above the map that holds them.
+`sources` are paths from the project root. There is no `sourcesContent` and no `sourceRoot`, so the editor reads your files from disk.
 
-What mecha compiled carries more, for an editor showing your source to a vanilla parser:
+Functions mecha compiled also carry `x_stewbeet_bolt` and `x_stewbeet_opaque`, fields that other consumers ignore.
 
-- **A segment for each end of each AST node**, after the one at column 0, so a value bolt computed or a `~/child` path mecha resolved is found in the generated line column for column.
-- **`x_stewbeet_bolt`**: the indices of the `sources` no vanilla parser reads, because bolt generated Python for them, mecha nested a function in them, one of their commands spans several lines, or one comes from a plugin.
-- **`x_stewbeet_opaque`**: `[source, line, column]` where syntax a plugin added to mecha's command tree begins, read against the tree mecha ships for your Minecraft version.
+## What is mapped
 
-Fields starting with `x_` are the standard's own room for vendors, so every other consumer ignores them.
+- Your own `write_function` calls and the lines they build, including a command built in a loop.
+- What mecha compiled: a `.bolt` module, or a `.mcfunction` holding bolt.
+- What a plugin generates from one of your declarations, mapped to that `Block(...)` or `Item(...)` call. This covers `datapack.custom_blocks` and the recipe functions of `custom_recipes` (smithed, furnace, pulverizer, awakened forge).
 
-## What is mapped, and what is not
+Everything else a plugin generates stays unmapped, as do functions written once for the whole pack (`custom_blocks/get_rotation`) and definitions loaded from JSON or `external_definitions`. A map never points inside StewBeet, beet, bolt, mecha or stouputils.
 
-A command you wrote yourself maps to the line you wrote it on. A command a plugin generated from one
-of your declarations maps to the declaration, not to the plugin: ctrl+clicking inside a custom
-block's `place_main` leads to your `Block(...)` call.
+## Limits
 
-Scoped so far: `datapack.custom_blocks`, and the parts of `custom_recipes` that write a function per
-item (smithed, furnace, pulverizer, awakened forge). Everything else a plugin generates on its own
-account stays unmapped, which is the designed behaviour rather than a failure: an unmapped line costs
-you nothing, a line pointing at the wrong place costs you a wasted search.
-
-Two more things stay unmapped by design:
-
-- **Pack-level scaffolding.** `custom_blocks/get_rotation` and friends are written once for the whole
-  pack and belong to no declaration, so they are attributed to none.
-- **Definitions with no Python declaration**, loaded from JSON or coming from `external_definitions`.
-  There is no call to point at.
-
-## Shipping a release
-
-The maps are only in your build because you asked for them.
-A release build that does not ask for them produces exactly the same datapack it always did, byte for byte, with no maps beside the functions.
+- Without `source_maps` in `require`, no map is written. A build that captured nothing warns.
+- Without `emit` in the pipeline, the maps are written at the very end of the build. When a plugin that packages the pack already ran (`archive`, `merge_smithed_weld`, `copy_to_destination`, `compute_sha1`), a warning says it did not see them.
+- `archive` writes the maps itself before zipping, so the zip and the build folder carry the same files.
 
 ## Next steps
 
 - [Writing functions and files](../2_writing_to_files/en.md): the calls this plugin records.
-- [All plugins](README.md): the rest of the pipeline, in the order it runs.
-- [Configuring the build](../3_beet_config/en.md): enabling, ordering and configuring plugins.
 
