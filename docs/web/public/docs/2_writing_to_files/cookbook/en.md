@@ -1,10 +1,7 @@
 
 # Cookbook
 
-Complete, working examples of writing datapack files with StewBeet. Each one is a whole file
-you can read top to bottom, not a fragment.
-
-**See also** [the helper reference](../reference/en.md) for what each function accepts.
+Worked examples of writing datapack files with StewBeet. Each function runs from a plugin of your own, such as `src/link.py`, and assumes `from beet import Context` and `from stewbeet import *`. The [helper reference](../reference/en.md) lists what each function accepts.
 
 ## Real-World Examples
 
@@ -13,7 +10,8 @@ you can read top to bottom, not a fragment.
 Generate tick functions for custom blocks with different behaviors.
 
 ```python
-from stewbeet import write_function, write_versioned_function, Mem
+from beet import Context
+from stewbeet import write_function, write_versioned_function
 
 def setup_custom_blocks(ctx: Context):
     ns = ctx.project_id
@@ -39,7 +37,7 @@ execute if score @s energy.storage matches 20.. if data block ~ ~ ~ Items[{{Slot
 scoreboard players remove @s energy.storage 20
 
 # Cook item (will complete on next check)
-data modify block ~ ~ ~ CookTime set value 199s
+data modify block ~ ~ ~ cooking_time_spent set value 199s
 """)
 ```
 
@@ -84,7 +82,7 @@ particle smoke ~ ~0.5 ~ 0.1 0.1 0.1 0.01 1
 item replace block ~ ~ ~ container.0 with air
 
 # Give output
-loot spawn ~ ~ ~ loot {ns}:items/processed_material
+loot spawn ~ ~ ~ loot {ns}:i/steel_ingot
 """)
 ```
 
@@ -336,37 +334,24 @@ Organize functions and entities with tags.
 def setup_tags(ctx: Context):
     ns = ctx.project_id
     
-    # Add to minecraft:load
-    write_function_tag("minecraft:load", [
-        f"{ns}:v{ctx.project_version}/load/main"
-    ])
-    
-    # Add to minecraft:tick
-    write_function_tag("minecraft:tick", [
-        f"{ns}:v{ctx.project_version}/load/tick_verification"
-    ])
-    
     # Custom function tags for organization
-    write_function_tag(f"{ns}:custom_blocks/tick", [
+    write_tag(f"{ns}:custom_blocks/tick", Mem.ctx.data.function_tags, [
         f"{ns}:custom_blocks/solar_panel/tick",
         f"{ns}:custom_blocks/electric_furnace/tick",
         f"{ns}:custom_blocks/battery/tick"
     ])
-    
-    write_function_tag(f"{ns}:machines/process", [
-        f"{ns}:machines/crusher/process",
-        f"{ns}:machines/smelter/process",
-        f"{ns}:machines/assembler/process"
-    ])
-    
+
+    # The same tag can be filled while writing the function, with the tags argument
+    write_function(f"{ns}:machines/crusher/process", "say Crushing", tags=[f"{ns}:machines/process"])
+
     # Entity type tags
-    write_tag("mob_grinder_blacklist", Mem.ctx.data.entity_type_tags, [
+    write_tag(f"{ns}:mob_grinder_blacklist", Mem.ctx.data.entity_type_tags, [
         "minecraft:warden",
         "minecraft:ender_dragon",
         "minecraft:wither"
     ])
-    
-    write_tag("machines", Mem.ctx.data.entity_type_tags, [
+
+    write_tag(f"{ns}:machines", Mem.ctx.data.entity_type_tags, [
         "minecraft:item_display",
         "minecraft:interaction"
     ])
@@ -382,7 +367,7 @@ def setup_tags(ctx: Context):
 ---
 ## Complete Example
 
-Here's a complete example combining all approaches (example from [Stardust Fragment](https://github.com/Stoupy51/StardustFragment/blob/main/src/utils/remaining.py)):
+A complete file that combines the helpers and the beet API, adapted from [Stardust Fragment](https://github.com/Stoupy51/StardustFragment/blob/main/src/utils/remaining.py):
 
 ```python
 # Imports
@@ -531,7 +516,7 @@ execute if score @s {ns}.life_crystal matches 20 run advancement grant @s only {
 	Mem.ctx.data[ns].predicates["random/0.05"] = set_json_encoder(Predicate({"condition":"minecraft:random_chance","chance": 0.05}))
 	write_versioned_function("minute", f"""
 # Dog Excrement production (about 1 every 20 minutes per wolf)
-execute at @e[type=minecraft:wolf,{Conventions.AVOID_ENTITY_TAGS},predicate={ns}:random/0.05] run loot spawn ~ ~ ~ loot {ns}:i/dog_excrement
+execute at @e[type=minecraft:wolf,{Conventions.ENTITY_TAGS.avoid},predicate={ns}:random/0.05] run loot spawn ~ ~ ~ loot {Item.from_id("dog_excrement").loot_table}
 """)
 
 	# Travel Staff
@@ -857,7 +842,5 @@ clear @s *[custom_data~{{{ns}:{{lucky_artifact_bag:true}}}}] 1
 ## Next steps
 
 - [Helper function reference](../reference/en.md): the arguments each helper takes.
-- [Defining items and blocks](../../1_definitions_setup/en.md): where the content these files
-  operate on is declared.
-- [Configuring the build](../../3_beet_config/en.md): control when your code runs.
+- [Defining items and blocks](../../1_definitions_setup/en.md): where the content these files operate on is declared.
 

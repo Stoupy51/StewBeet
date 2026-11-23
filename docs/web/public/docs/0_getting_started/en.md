@@ -13,15 +13,11 @@ You do not install Python yourself. StewBeet needs 3.14, every template says so 
 
 ## 1. Install uv
 
-Run the line for your system:
-
-```powershell
-# Windows
+```powershell tab="Windows"
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-```bash
-# macOS and Linux
+```bash tab="macOS and Linux"
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
@@ -54,7 +50,7 @@ StewBeet ships three templates. This tutorial uses **Basic**: every plugin is co
    uvx stewbeet init basic
    ```
 
-`uvx` downloads StewBeet, runs it once and discards the copy, so nothing is installed globally. The folder now looks like this:
+`uvx` downloads StewBeet, runs it once and discards the copy, so nothing is installed globally. The folder looks like this:
 
 ```bash
 AwesomeOres/
@@ -62,6 +58,7 @@ AwesomeOres/
 ├── build/                    # Output folder (generated)
 ├── .venv/                    # Project environment (created by uv on the first build)
 ├── assets/                   # Your textures and sounds
+│   └── pack.png              # The icon of both packs
 ├── src/                      # Your source code
 │   ├── data/                 # Datapack functions and data
 │   │   └── basic_template/   # Your namespace (rename this)
@@ -95,8 +92,6 @@ package = false
 
 `requires-python` tells uv which interpreter to fetch.
 
-The `[tool.uv.sources]` section is temporary: the `smithed` release on PyPI mixes Pydantic V1 and V2 models, which makes Smithed Weld merging fail on recent Python. Drop that section and the `smithed` dependency once it is fixed upstream.
-
 To use another library in your definitions (`requests`, `pillow`), run `uv add requests`. It lands in this file, in your `.venv`, and in the lock file your collaborators reuse.
 
 ## 3. Name your pack
@@ -104,25 +99,25 @@ To use another library in your definitions (`requests`, `pillow`), run `uv add r
 Open `beet.yml`. These fields identify the pack and are reused in `pack.mcmeta`, item lore, archive names and the manual:
 
 ```yaml
-# Project identifier - MUST match your namespace in src/data/
+# Project identifier used for namespacing functions and tags. Should align with the namespace in the source folder.
 id: "awesome_ores"
 
-# Project name for display
+# Project name that will be used in messages, item lore, etc.
 name: "Awesome Ores"
 
-# Your name (shows up in pack.mcmeta and item lore)
+# Author(s) name(s) displayed in pack.mcmeta
 author: "YourName"
 
-# Version using semantic versioning
+# Project version in semantic versioning format
 version: "1.0.0"
 
-# Brief description
-description: "My first StewBeet datapack with custom ores!"
+# Pack description for pack.mcmeta. Defaults to "{name} [{version}] by {author}" if empty.
+description: ""
 ```
 
 | Field | Rule | Example |
 |-------|------|---------|
-| `id` | Lowercase and underscores, no spaces. Must match the folder in `src/data/` | `awesome_ores` |
+| `id` | Lowercase and underscores, no spaces. Should match the folder in `src/data/` | `awesome_ores` |
 | `name` | Free text | `"Awesome Ores & Gems"` |
 | `version` | [Semantic versioning](https://semver.org/), major.minor.patch | `1.0.0` |
 
@@ -132,47 +127,11 @@ Rename `src/data/basic_template/` to `src/data/awesome_ores/` so it matches `id`
 
 In the terminal, run `uv run stewbeet` (or `uv run stewbeet build`, which is the same).
 
-The first run does the setup: uv reads `pyproject.toml`, downloads Python 3.14 if it is missing, creates `.venv/` and installs StewBeet. It takes about a minute. Later runs start building immediately.
+The first run does the setup: uv reads `pyproject.toml`, downloads Python 3.14 if it is missing, creates `.venv/` and installs StewBeet. Later runs start building immediately.
 
-The output looks like this. The warnings are expected on an empty project:
+The build prints the time each plugin took. An empty project also prints a few warnings, such as one saying the manual has nothing to list yet.
 
-```bash
-Building project...
-
-[WARNING 19:05:57] Error during generate_custom_records(): (FileNotFoundError) [WinError 3] The system cannot find the path specified: 'assets/records' 
-[DEBUG 19:05:58] Mem.definitions exported to 'definitions_debug.json' 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.resource_pack.sounds': 0.070ms (69900ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.resource_pack.item_models': 0.246ms (245700ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.resource_pack.check_power_of_2': 0.250ms (249700ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.custom_recipes': 0.021ms (20700ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.custom_paintings': 0.007ms (7400ns) 
-[WARNING 19:05:58] Database is empty, skipping manual generation. 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.ingame_manual': 0.075ms (74600ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.datapack.loading': 0.150ms (150300ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.datapack.custom_blocks': 0.108ms (108200ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.datapack.loot_tables': 0.187ms (187300ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.datapack.sorters': 0.031ms (31300ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.compatibilities.simpledrawer': 0.003ms (2700ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.compatibilities.neo_enchant': 0.003ms (2800ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.finalyze.custom_blocks_ticking': 0.045ms (45100ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.finalyze.basic_datapack_structure': 0.062ms (61600ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.finalyze.dependencies': 0.875ms (874900ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.finalyze.last_final': 0.154ms (154500ns) 
-Generating lang file: 100%|████████████████████████████████████████████████| 21/21 [4481.78it/s, 00:00<00:00]
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.auto.lang_file': 73.613ms (73613100ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.auto.headers': 0.561ms (561000ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.check_unused_textures': 0.125ms (124800ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.archive': 23.592ms (23592200ns) 
-[WARNING 19:05:58] No datapacks or libs to merge for build\AwesomeOres_datapack_with_libs.zip. Skipping weld. 
-[WARNING 19:05:58] No resource packs or libs to merge for build\AwesomeOres_resource_pack_with_libs.zip. Skipping weld. 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.merge_smithed_weld': 0.593ms (593100ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.copy_to_destination': 0.007ms (7300ns) 
-[PROGRESS 19:05:58] Execution time of 'stewbeet.plugins.compute_sha1': 25.546ms (25546400ns) 
-[DEBUG 19:05:58] Total execution time: 0.56934s 
-Done!
-```
-
-`build/` now contains:
+`build/` contains:
 
 | Path | What it is |
 |------|------------|
@@ -184,17 +143,15 @@ Done!
 
 ## 5. Load it in Minecraft
 
-The fastest loop is to let every build copy the packs into your game. Add this to `beet.yml`, with your own paths:
+The fastest loop is to let every build copy the packs into your game. Add this under `meta.stewbeet` in `beet.yml`, with your own paths:
 
 ```yaml
-meta:
-  stewbeet:
-    build_copy_destinations:
-      datapack: ["C:/Users/YourName/AppData/Roaming/.minecraft/saves/YourWorldName/datapacks"]
-      resource_pack: ["C:/Users/YourName/AppData/Roaming/.minecraft/resourcepacks"]
+build_copy_destinations:
+  datapack: ["C:/Users/YourName/AppData/Roaming/.minecraft/saves/YourWorldName/datapacks"]
+  resource_pack: ["C:/Users/YourName/AppData/Roaming/.minecraft/resourcepacks"]
 ```
 
-From now on, `uv run stewbeet` copies both packs after each build.
+With this set, `uv run stewbeet` copies both packs after each build.
 
 To copy them by hand instead:
 
@@ -207,9 +164,9 @@ To copy them by hand instead:
 
 Then, in game:
 
-1. Run `/reload`.
+1. Run `/reload`. The load message written by `src/link.py` appears in the chat.
 2. Enable the resource pack in Options, Resource Packs.
-3. If you kept the example function in `src/data/awesome_ores/function/`, run it with `/function awesome_ores:path/to/a/random/function/i/guess`.
+3. Run `/function awesome_ores:path/to/a/random/function/i/guess`. It prints "Hello world!", from the function `src/link.py` writes.
 
 ## 6. Add a custom item
 
@@ -218,28 +175,26 @@ Then, in game:
 
 ```python
 # Imports
-from stewbeet import *
+from stewbeet import *  # type: ignore
 
 
 # Main entry point
 def main():
 
-    # Add items to the definitions
-    Mem.definitions["ruby"] = Item(
-        id="ruby",
-        components={
-            "lore": [{"text":"A precious red gemstone","color":"gray","italic":False}]
-        }
-    )
-
-    # See extensive_template/src/definitions/additions.py for examples
-    pass
+	# Add items to the definitions
+	Item(
+		id="ruby",
+		manual_category="material",
+		components={
+			"lore": [{"text":"A precious red gemstone","color":"gray","italic":False}]
+		}
+	)
 ```
 
-3. Run `uv run stewbeet`. The first build that renders item models takes a little longer.
+3. Run `uv run stewbeet`.
 4. In game, run `/reload`, then `/loot give @s loot awesome_ores:i/ruby` or `/function awesome_ores:_give_all`.
 
-From that one declaration, StewBeet wrote the item model and its reference, added the texture to the resource pack, built the item components, and added a manual page.
+From that one declaration, StewBeet wrote the item model, added the texture to the resource pack, built the item components, and listed the item in the manual under its `manual_category`.
 
 ## 7. Add a whole ore tier
 
@@ -251,121 +206,78 @@ Put these textures in `assets/textures/`:
 | [`ruby_sword.png`](./ruby_sword.png) | The sword |
 | [`ruby_chestplate.png`](./ruby_chestplate.png) | The chestplate item |
 | [`ruby_layer_1.png`](./ruby_layer_1.png) | Worn armour, top layer (how Minecraft draws custom armour) |
-| [`ruby_layer_2.png`](./ruby_layer_2.png) | Worn armour, bottom layer |
+| [`ruby_layer_2.png`](./ruby_layer_2.png) | Worn armour, bottom layer, drawn on leggings (read only when a `ruby_leggings.png` exists) |
 
 Open `src/definitions/ores.py` and describe the material. Everything StewBeet finds in the textures folder under the `ruby` prefix is registered from this entry:
 
 ```python
 # Imports
-from stewbeet import *
+from stewbeet import *  # type: ignore
 
 
 # Main entry point
 def main():
 
-    # Configuration to generate everything about a material
-    ORES_CONFIGS: dict[str, EquipmentsConfig|None] = {
-        "ruby": EquipmentsConfig(
-            # This ruby is equivalent to diamond,
-            equivalent_to = DefaultOre.DIAMOND,
+	# Configuration to generate everything about a material
+	ORES_CONFIGS: dict[str, EquipmentsConfig|None] = {
+		"ruby": EquipmentsConfig(
+			# This ruby is equivalent to diamond,
+			equivalent_to = DefaultOre.DIAMOND,
 
-            # But, has more durability (1.2 times more)
-            pickaxe_durability = 1.2 * VanillaEquipments.PICKAXE.value[DefaultOre.DIAMOND]["durability"],
+			# But, has more durability (1.2 times more)
+			pickaxe_durability = 1.2 * VanillaEquipments.PICKAXE.value[DefaultOre.DIAMOND]["durability"],
 
-            # And, does 1 more damage per hit (mainhand), and has 0.5 more armor, and mines 20% faster (pickaxe)
-            attributes = {"attack_damage": 1, "armor": 0.5, "mining_efficiency": 0.2}
-        ),
-    }
+			# And, does 1 more damage per hit (mainhand), has 0.5 more armor, and adds 0.2 to the mining efficiency attribute of tools
+			attributes = {"attack_damage": 1, "armor": 0.5, "mining_efficiency": 0.2}
+		),
+	}
 
-    # Generate ores in definitions (add every stuff (found in the textures folder) related to the given materials, to the definitions)
-    generate_everything_about_these_materials(ORES_CONFIGS)
-    return
+	# Generate ores in definitions (add every stuff (found in the textures folder) related to the given materials, to the definitions)
+	generate_everything_about_these_materials(ORES_CONFIGS)
 ```
 
-Build, `/reload`, then run `/loot give @s loot awesome_ores:i/ruby_ore` and place the block. It is a working custom block: StewBeet wrote its model, its placement and breaking logic, its drops and mining requirements, its Fortune and Silk Touch behaviour, and wired it to the Smithed Custom Blocks library.
+`src/setup_definitions.py` runs `ores.py` before `additions.py`. With a `ruby.png` in the textures folder, the `ruby` item comes from the material, so an `Item(id="ruby", ...)` in `additions.py` is ignored: an item already in the definitions is not replaced. Set the lore on the existing item instead:
+
+```python
+Item.from_id("ruby").components["lore"] = [{"text":"A precious red gemstone","color":"gray","italic":False}]
+```
+
+Build, `/reload`, then run `/loot give @s loot awesome_ores:i/ruby_ore` and place the block. It is a working custom block: StewBeet wrote its model, its placement and breaking logic and its drops, and wired it to the Smithed Custom Block library. Without Silk Touch it drops a ruby, with Silk Touch the ore itself. The sword and the chestplate get crafting recipes made from rubies.
 
 ## 8. Open the in-game manual
 
 The manual uses Minecraft's dialog system, which only picks up new dialogs on a server restart, so leave and rejoin the world first. Then press G (the quick action keybind), or run `/loot give @s loot awesome_ores:i/manual` if you started from the Extensive template.
 
-The manual lists your items with their recipes, drawn from the definitions you just wrote.
+The manual lists your items with their recipes, drawn from your definitions.
 
 ## What is in `beet.yml`
 
-You have now used the whole loop. Two more parts of `beet.yml` are worth knowing before you go further.
+Two parts of `beet.yml` are worth knowing before you go further.
 
-The folders StewBeet reads from, and where it copies the result:
-
-```yaml
-meta:
-  stewbeet:
-    # Directory containing all project textures
-    textures_folder: "assets/textures"
-
-    # Directory containing all custom sounds
-    sounds_folder: "assets/sounds"
-
-    # Directory containing all jukebox records
-    records_folder: "assets/records"
-
-    # Directory containing libraries that will be copied to the build destination, and merged using Smithed Weld if enabled.
-    libs_folder: "libs"
-
-    # Optional: glob patterns (relative to libs_folder) of library archives to leave out of the build
-    libs_exclude_patterns: []
-
-    # Optional list of destination paths where generated files will be copied
-    build_copy_destinations:
-      datapack: ["C:/Users/YourName/AppData/Roaming/.minecraft/saves/YourWorldName/datapacks"]
-      resource_pack: ["C:/Users/YourName/AppData/Roaming/.minecraft/resourcepacks"]
-```
-
-The pipeline, which lists every step of the build in order. Remove a line to turn a feature off:
+The folders StewBeet reads from, under `meta.stewbeet`:
 
 ```yaml
-# Plugins to run first
-require:
-    - "stewbeet"  # Equivalent to "stewbeet.plugins.initialize"
-    - "bolt"      # Initialize bolt
-
-# A list of strings representing "plugins".
-# - These plugins will execute after the pack is loaded (all src/data and src/assets contents are loaded first)
-pipeline:
-    - "src.setup_definitions"                           # Your User code for defining items/blocks
-    - "stewbeet.plugins.resource_pack.sounds"           # Generate sound files
-    - "stewbeet.plugins.resource_pack.item_models"      # Generate item models
-    - "stewbeet.plugins.resource_pack.check_power_of_2" # Verify texture dimensions
-    - "stewbeet.plugins.custom_recipes"                 # Generate custom recipes
-    - "stewbeet.plugins.custom_paintings"               # Generate custom paintings
-    - "stewbeet.plugins.ingame_manual"                  # Generate in-game manual
-    - "stewbeet.plugins.datapack.loading"               # Set up load/tick functions
-    - "stewbeet.plugins.datapack.custom_blocks"         # Set up block mechanics
-    - "stewbeet.plugins.datapack.loot_tables"           # Generate loot tables
-    - "stewbeet.plugins.datapack.sorters"               # Set up item sorters
-    - "stewbeet.plugins.compatibilities.simpledrawer"   # SimpleDrawer compatibility
-    - "stewbeet.plugins.compatibilities.neo_enchant"    # NeoEnchant compatibility
-    - "src.link"                                        # User code for linking features
-    - "mecha"                                           # Bolt/Mecha compilation
-    - "stewbeet.plugins.finalyze.custom_blocks_ticking" # Finalize block ticking
-    - "stewbeet.plugins.finalyze.basic_datapack_structure" # Structure finalization
-    - "stewbeet.plugins.finalyze.dependencies"          # Dependency checks
-    - "stewbeet.plugins.finalyze.last_final"            # Final cleanup
-    - "stewbeet.plugins.auto.lang_file"                 # Generate language files
-    - "stewbeet.plugins.auto.headers"                   # Generate function headers
-    - "stewbeet.plugins.check_unused_textures"          # Find unused textures
-    - "stewbeet.plugins.archive"                        # Create zip files
-    - "stewbeet.plugins.merge_smithed_weld"             # Merge with Smithed Weld
-    - "stewbeet.plugins.copy_to_destination"            # Copy to configured paths
-    - "stewbeet.plugins.compute_sha1"                   # Compute file hashes
+# Directory containing all project textures
+textures_folder: "assets/textures"
+# Directory containing all custom sounds
+sounds:
+    folder: "assets/sounds"
+    # Optional: glob patterns to exclude from processing
+    exclude_patterns: ["some_sub_folder/*"]
+# Directory containing all jukebox records
+records_folder: "assets/records"
+# Directory containing libraries that will be copied to the build destination, and merged using Smithed Weld if enabled.
+libs_folder: "libs"
+# Optional: glob patterns (relative to libs_folder) of library archives to leave out of the build
+libs_exclude_patterns: []
 ```
 
-Every option is described in [Configuring the build](../3_beet_config/en.md).
+The `pipeline` lists every step of the build in order. Each `stewbeet.plugins` line is one plugin, and removing a line turns its feature off. [How StewBeet fits with beet](../how_it_fits/en.md) explains how `require` and `pipeline` work together, and every option is described in [Configuring the build](../3_beet_config/en.md).
 
 ## Next steps
 
+- [Items and blocks](../items_and_blocks/en.md): add recipes and a placeable block to an item.
 - [Defining items and blocks](../1_definitions_setup/en.md): every field an `Item` or a `Block` accepts, recipes included.
-- [Writing functions and files](../2_writing_to_files/en.md): add your own commands to the pack.
-- [Using datapack libraries](../5_dependencies/en.md): Smithed, Bookshelf and the version checks StewBeet writes for you.
 - The [Extensive template](https://github.com/Stoupy51/StewBeet/tree/main/templates/extensive/src) is a complete project to read.
 
 Stuck? Ask on [Discord](https://discord.gg/anxzu6rA9F) or open a [GitHub issue](https://github.com/Stoupy51/StewBeet/issues).

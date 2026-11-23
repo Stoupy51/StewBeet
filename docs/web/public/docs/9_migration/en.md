@@ -1,11 +1,11 @@
 
 # Migrate an existing pack
 
-`stewbeet migrate` turns a datapack or resource pack you already have into a StewBeet project. Your files move into `src/`, a template adds `beet.yml` and the rest of a project around them, and `stewbeet build` gives you your pack back. Nothing you wrote is edited, only moved.
+`stewbeet migrate` turns a datapack or resource pack you already have into a StewBeet project. Your files move into `src/`, a template adds `beet.yml` and the rest of a project around them, and `stewbeet build` gives you your pack back. Your `data/` and `assets/` folders move as they are, without a line edited.
 
 It is meant for packs made by hand or with other tools. A folder that already has a beet configuration is refused, since it is a beet project already.
 
-New to beet? The diagram at the top of the [beet configuration page](../3_beet_config/en.md) shows who makes beet, bolt, mecha and StewBeet.
+New to beet? [How StewBeet fits with beet](../how_it_fits/en.md) shows who makes beet, bolt, mecha and StewBeet.
 
 ## Before you start
 
@@ -63,7 +63,7 @@ Dry run: nothing was changed. Run the same command without --dry-run to apply th
 | `minimal` | beet with a single StewBeet plugin. The closest to the pack you had. |
 | `basic` | Every StewBeet plugin configured and commented. The template the [tutorial](../0_getting_started/en.md) uses. |
 
-Without a name, the command asks, and pressing Enter picks `minimal`. `extensive` is not offered, because its example items would mix with yours.
+Without a name, the command asks, and pressing Enter picks `minimal`. With `--yes` and no name, it picks `minimal` without asking. `extensive` is not offered, because its example items would mix with yours.
 
 ## 2. Migrate
 
@@ -71,11 +71,11 @@ Without a name, the command asks, and pressing Enter picks `minimal`. `extensive
 uvx stewbeet migrate basic
 ```
 
-It prints the same plan, then asks `Apply this plan? (y/n)`. Add `--yes` to skip the question, in a script for instance.
+It prints the same plan, then asks `Apply this plan? (y/n)`. Add `--yes` (or `-y`) to skip the question, in a script for instance.
 
 ## 3. Check `beet.yml`, then build
 
-The warnings under the plan list what is left to do by hand:
+`name` is set to the name of your pack's folder. The warnings under the plan list what is left to do by hand, for the templates whose `beet.yml` has these keys (`basic` does, `minimal` does not):
 
 - **`author`** still holds the template's author. Put your name there.
 - **`id`** is set from your namespace, the folder under `data/` other than `minecraft`. With several namespaces it is not set, so choose the one StewBeet should generate its functions under.
@@ -86,7 +86,7 @@ Then build:
 uv run stewbeet build
 ```
 
-`build/` now holds your datapack and resource pack, with a `pack.mcmeta` written for the `minecraft` version set in `beet.yml`. If you kept a `pyproject.toml` of your own, the template's was skipped: add `stewbeet` to its dependencies, or build with `uvx stewbeet build`.
+`build/` holds your datapack and resource pack, with a `pack.mcmeta` written for the `minecraft` version set in `beet.yml`. If you kept a `pyproject.toml` of your own, the template's was skipped: add `stewbeet` to its dependencies, or build with `uvx stewbeet build`.
 
 ## Before and after
 
@@ -110,7 +110,7 @@ Before                                  After
 ## What happens to each file
 
 - **`data/` and `assets/`** move to `src/data/` and `src/assets/`, content untouched.
-- **`pack.mcmeta`** holding only a description and a pack format is deleted: its description goes into `beet.yml`, and StewBeet writes a new `pack.mcmeta` on every build. One holding more, such as `overlays` or `filter`, moves to `src/pack.mcmeta`. StewBeet keeps its extra keys but still sets `pack_format` and `description`, so check the formats it lists against the versions you target.
+- **`pack.mcmeta`** holding only a description and a pack format is deleted: its description goes into `beet.yml`, and StewBeet writes a new `pack.mcmeta` on every build. One holding more, such as `overlays` or `filter`, moves to `src/pack.mcmeta`. StewBeet keeps its extra keys but still sets `pack_format` and `description`.
 - **`pack.png`** moves to where the template keeps its icon: `src/` for `minimal`, `assets/` for `basic`. When the datapack and the resource pack each have one, the datapack's is used and the other stays where it is.
 - **Files the template ships that you already have**, like `.gitignore` or `pyproject.toml`, are kept. The template's copy is skipped.
 - **A resource pack migrated onto `minimal`** gets a `resource_pack` section added to `beet.yml`, since that template only builds a datapack.
@@ -130,6 +130,6 @@ Every check runs before the first file moves, so a refusal leaves the folder as 
 
 ## Next steps
 
-- [Definitions](../1_definitions_setup/en.md): turn the items you give with hand-written loot tables into definitions, one at a time. StewBeet then writes their loot tables, models and manual pages.
-- [beet configuration](../3_beet_config/en.md): every option of the `beet.yml` you just got.
+- [Items and blocks](../items_and_blocks/en.md): turn the items you give with hand-written loot tables into definitions, one at a time. StewBeet then writes their loot tables, models and manual pages.
+- [Configuring the build](../3_beet_config/en.md): every option of your `beet.yml`.
 

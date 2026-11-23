@@ -5,7 +5,7 @@ Four ways to put your own functions, advancements and tags into the pack: static
 
 Your code runs in a user plugin, after the definitions are set up and before finalisation.
 
-> **Write all of this with the commands checked as you type.** Every approach below ends with commands inside a Python string, inside a `.bolt` module, or both. The [StewBeet extension for VSCode](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) reads them as what they are: completion, errors, ctrl+click, and a link from each block to the function your build wrote from it. See [Editor support](../8_editor/en.md).
+> Every approach below ends with commands inside a Python string, inside a `.bolt` module, or both. The [StewBeet extension for VSCode](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) reads them as what they are: completion, errors, ctrl+click, and a link from each block to the function your build wrote from it. See [VS Code editor](../8_editor/en.md).
 
 <video src="/vscode_extension.mp4" controls loop muted playsinline preload="auto">
 </video>
@@ -20,14 +20,14 @@ Complete files to read alongside this page:
 
 | Approach | Best for | Effort |
 |----------|----------|--------|
-| **Static files** (`beet.yml`) | Hand-written functions and JSON that never change | Lowest |
-| **Native beet API** | Unusual file types, full control over every object | Highest |
-| **StewBeet helpers** (recommended) | Logic generated from your definitions, load and clock functions | Low |
-| **Bolt** | Command-heavy logic, loops and arithmetic around commands | Medium, a second language |
+| Static files (`beet.yml`) | Hand-written functions and JSON that never change | Lowest |
+| Native beet API | Unusual file types, full control over every object | Highest |
+| StewBeet helpers (recommended) | Logic generated from your definitions, load and clock functions | Low |
+| Bolt | Command-heavy logic, loops and arithmetic around commands | Medium, a second language |
 
 ### Approach 1: Static File Loading (beet.yml)
 
-Beet loads hand-written files from a folder **before any plugin runs**.
+Beet loads hand-written files from a folder before any plugin runs.
 
 ```yaml
 # In beet.yml
@@ -40,29 +40,31 @@ resource_pack:
     load: ["src"]  # Loads all texture, model, and sound files from src/
 ```
 
-**How it works:**
-- Place `.mcfunction` files in `src/data/<namespace>/function/`
-- Place `.json` files in `src/data/<namespace>/advancement/`, `src/data/<namespace>/recipe/`, etc.
-- Beet automatically loads them into the correct pack locations
-- Files are loaded **before** any plugin code runs
+How it works:
 
-**Example structure:**
-```
+- Place `.mcfunction` files in `src/data/<namespace>/function/`.
+- Place `.json` files in `src/data/<namespace>/advancement/`, `src/data/<namespace>/recipe/`, and so on.
+- Beet loads them into the matching pack locations.
+- Files are loaded before any plugin code runs.
+
+An example structure:
+
+```text
 src/
 ├── data/
-│   └── my_namespace/
+│   └── simplenergy/
 │       ├── function/
 │       │   ├── load.mcfunction
 │       │   └── tick.mcfunction
 │       ├── advancement/
-│       │   └── my_advancement.json
+│       │   └── first_machine.json
 │       └── recipe/
-│           └── my_recipe.json
+│           └── wrench.json
 └── assets/
-    └── my_namespace/
+    └── simplenergy/
         └── textures/
             └── item/
-                └── my_item.png
+                └── wrench.png
 ```
 
 | Folder | Holds |
@@ -74,15 +76,16 @@ src/
 | `assets/` | All resource pack content: textures, models, sounds |
 | `textures/` | PNG images for items, blocks and the rest |
 
-**Use it when:**
-- You have static files that don't need dynamic generation
-- You're organizing pre-written commands and data
-- You want simple, straightforward file structure
+Use it when:
 
-**Avoid it when:**
-- You need to generate content based on definitions
-- You need to combine multiple sources of data
-- You need conditional file generation
+- You have static files that do not need generation.
+- You are organizing pre-written commands and data.
+
+Avoid it when:
+
+- You need to generate content from your definitions.
+- You need to combine several sources of data.
+- You need conditional file generation.
 
 ---
 
@@ -96,12 +99,12 @@ from stouputils.typing import JsonDict
 
 def beet_default(ctx: Context):
     # Writing a function
-    ctx.data["my_namespace"].functions["my_folder/my_function"] = Function("""
-# This is my function
-say Hello World!
-scoreboard players add @a points 1
+    ctx.data["simplenergy"].functions["machines/charge"] = Function("""
+# Charge every machine
+say Charging machines
+scoreboard players add @a energy 1
 """)
-    
+
     # Writing an advancement
     advancement_data: JsonDict = {
         "criteria": {
@@ -110,30 +113,31 @@ scoreboard players add @a points 1
             }
         },
         "rewards": {
-            "function": "my_namespace:rewards/give_item"
+            "function": "simplenergy:rewards/first_machine"
         }
     }
-    ctx.data["my_namespace"].advancements["my_advancement"] = Advancement(advancement_data)
-    
+    ctx.data["simplenergy"].advancements["first_machine"] = Advancement(advancement_data)
+
     # Writing a function tag
     tag_data: JsonDict = {
         "values": [
-            "my_namespace:my_folder/my_function",
-            "my_namespace:another_function"
+            "simplenergy:machines/charge",
+            "simplenergy:machines/discharge"
         ]
     }
-    ctx.data["my_namespace"].function_tags["minecraft:load"] = FunctionTag(tag_data)
+    ctx.data.function_tags["minecraft:load"] = FunctionTag(tag_data)
 ```
 
-**Use it when:**
-- You need full control over file objects
-- You're working with complex nested structures
-- You want type safety with beet's object model
+Use it when:
 
-**Avoid it when:**
-- You want simple, quick file writes
-- You're dealing with many small functions
-- You need automatic path handling
+- You need full control over file objects.
+- You are working with complex nested structures.
+
+Avoid it when:
+
+- You want quick file writes.
+- You are writing many small functions.
+- You need automatic path handling.
 
 ---
 
@@ -142,52 +146,56 @@ scoreboard players add @a points 1
 StewBeet helpers take a path and a string, create the file or add to it, and know where the load, tick and clock functions live.
 
 ```python
-from stewbeet import write_function, write_load_file, write_tick_file, Mem
+from beet import Context
+from stewbeet import write_function, write_load_file, write_tick_file, write_versioned_function
 
 def beet_default(ctx: Context):
     ns = ctx.project_id
-    
+
     # Write a simple function
-    write_function(f"{ns}:my_folder/my_function", """
-# This is my function
-say Hello World!
-scoreboard players add @a points 1
+    write_function(f"{ns}:machines/charge", """
+# Charge every machine
+say Charging machines
+scoreboard players add @a energy 1
 """)
-    
-    # Append to load file (runs when datapack loads: "your_namespace:v{version}/load/confirm_load")
+
+    # Append to the load file (runs when the datapack loads: "your_namespace:v{version}/load/confirm_load")
     write_load_file("""
 # Initialize scoreboards
-scoreboard objectives add points dummy
+scoreboard objectives add energy dummy
 scoreboard objectives add data dummy
 """)
-    
-    # Append to tick file (runs every game tick: "your_namespace:v{version}/tick")
-    write_tick_file("""
-# Check for players with high scores
-execute as @a[scores={points=100..}] run function my_namespace:rewards/high_score
+
+    # Append to the tick file (runs every game tick: "your_namespace:v{version}/tick")
+    write_tick_file(f"""
+# Check for players with a full battery
+execute as @a[scores={{energy=100..}}] run function {ns}:machines/discharge
 """)
-    
-    # Write versioned functions (automatic clock: "your_namespace:v{version}/second", etc.)
+
+    # Write a clock function ("your_namespace:v{version}/second")
     write_versioned_function("second", """
 # Runs every second (20 ticks)
-execute as @a run title @s actionbar {"score":{"name":"@s","objective":"points"}}
+execute as @a run title @s actionbar {"score":{"name":"@s","objective":"energy"}}
 """)
-    
+
     write_versioned_function("minute", """
 # Runs every minute (1200 ticks)
 say One minute has passed!
 """)
 ```
 
-**Use it when:**
-- You want simple, readable code
-- You need automatic path management
-- You're using StewBeet's conventions (versioned functions, load/tick files)
-- You want to append/prepend content easily
+The tick function calls the clock functions `tick_2`, `second`, `second_5` and `minute` when you write them, so a file written with `write_versioned_function` under one of those names runs at that interval.
 
-**Avoid it when:**
-- You need non-standard file organization
-- You're not using StewBeet framework
+Use it when:
+
+- You want readable code with automatic path management.
+- You follow StewBeet's conventions (versioned functions, load and tick files).
+- You want to append or prepend content.
+
+Avoid it when:
+
+- You need a non-standard file organization.
+- The project does not use StewBeet.
 
 ---
 
@@ -197,6 +205,8 @@ say One minute has passed!
 Instead of Python writing a string that happens to hold commands, the commands are the syntax: in a `.bolt` file, `item = 3` is Python and `item modify entity @s weapon.mainhand set value ...` is a command, at the same indentation, in the same scope.
 
 All of it runs at build time. Nothing Python reaches the datapack.
+
+The Basic template already lists `bolt` in `require` and `mecha` in `pipeline`. The `entrypoint` is the part to add:
 
 ```yaml
 # In beet.yml
@@ -355,81 +365,90 @@ It is the same job as [Equations](../4_equations/en.md) on the StewBeet side, ex
 Nothing forces a choice. A pack can declare its items with `Item(...)`, let the plugins generate recipes and the manual, write most of its logic with `write_function`, and keep one `.bolt` module for the part where the commands are the hard bit.
 The [demo pack](https://github.com/Stoupy51/StewBeet/tree/main/extension/vscode/demo) the extension records its showcases from is exactly that: one small pack written three ways.
 
-**Use it when:**
-- The commands are the complicated part, not the data behind them
-- You want loops, conditions and classes around commands without an f-string between you and them
-- You are doing scoreboard or storage arithmetic and want to read it as arithmetic
-- You want nesting (`execute ...:`) instead of hand-splitting functions
+Use it when:
 
-**Avoid it when:**
-- The work is generating many near-identical functions from your definitions. `write_function` in a plugin sees `Mem.definitions` and is the shorter road
-- You need a StewBeet plugin to see what you wrote. Plugins run on the pack, and mecha compiles after them
-- Your collaborators do not want a second language in the project
+- The commands are the complicated part, not the data behind them.
+- You want loops, conditions and classes around commands without an f-string between you and them.
+- You are doing scoreboard or storage arithmetic and want to read it as arithmetic.
+- You want nesting (`execute ...:`) instead of hand-splitting functions.
+
+Avoid it when:
+
+- The work is generating many near-identical functions from your definitions. `write_function` in a plugin sees `Mem.definitions` and is the shorter road.
+- A StewBeet plugin listed before `mecha` in the pipeline has to see what you wrote. Those plugins run before mecha compiles the bolt.
+- Your collaborators do not want a second language in the project.
 
 #### In the editor
 
 The [StewBeet extension](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) gives `.bolt` its own language, with completion and ctrl+click on the commands and a lens per function the module writes.
-It also keeps Spyglass from underlining a `.mcfunction` holding bolt, which Spyglass reads as vanilla mcfunction. See [Editor support](../8_editor/en.md).
+It also keeps Spyglass from underlining a `.mcfunction` holding bolt, which Spyglass reads as vanilla mcfunction. See [VS Code editor](../8_editor/en.md).
 
 ## Best practices
 
 ### Do's
 
-**File Organization:**
-- Use meaningful folder structures (e.g., `machines/`, `items/`, `utils/`)
-- Group related functions together
-- Separate logic into small, reusable functions
+File organization:
 
-**Code Quality:**
-- Use f-strings for dynamic paths: `f"{ns}:folder/{item}"`
-- Use multi-line strings (triple quotes) for command content
-- Add descriptive comments in generated functions
-- Use `prepend=True` for initialization code in files that must run first
+- Use meaningful folder structures (`machines/`, `items/`, `utils/`).
+- Group related functions together.
+- Separate logic into small, reusable functions.
 
-**Performance:**
-- Use versioned functions (second, second_5, minute) instead of tick when possible
-- Batch operations together in single functions
-- Use predicates instead of complex execute conditions
-- Avoid unnecessary function calls in tick
+Code quality:
 
-**StewBeet Conventions:**
-- Always use `Mem.ctx.project_id` for namespace
-- Use `write_load_file()` for initialization
-- Use `write_versioned_function()` for clock functions
-- Call StewBeet helpers instead of direct beet API when available
+- Use f-strings for dynamic paths: `f"{ns}:folder/{item}"`.
+- Use triple-quoted strings for command content.
+- Add descriptive comments in generated functions.
+- Use `prepend=True` for initialization code in files that must run first.
+
+Performance:
+
+- Use clock functions (`second`, `second_5`, `minute`) instead of tick when possible.
+- Batch operations together in single functions.
+- Use predicates instead of complex execute conditions.
+- Avoid unnecessary function calls in tick.
+
+StewBeet conventions:
+
+- Take the namespace from `Mem.ctx.project_id`.
+- Use `write_load_file()` for initialization.
+- Use `write_versioned_function()` for clock functions.
+- Call StewBeet helpers instead of the beet API when one exists.
 
 ### Don'ts
 
-**File Management:**
-- Don't hardcode namespace strings (use `ctx.project_id` or `ns` variable)
-- Don't mix static files with dynamic generation for the same path
-- Don't overwrite files unless intentional
-- Don't create circular function calls (infinite loops)
+File management:
 
-**Code Quality:**
-- Don't use `ctx.data["namespace"].functions["path"]` when StewBeet helpers exist
-- Don't forget to handle edge cases (empty checks, score limits)
-- Don't write monolithic functions (break into smaller pieces)
-- Don't duplicate code across multiple functions
+- Do not hardcode the namespace (use `ctx.project_id` or an `ns` variable).
+- Do not mix static files with generation for the same path.
+- Do not overwrite files unless you mean to.
+- Do not create circular function calls.
 
-**Performance:**
-- Don't run expensive operations in tick file
-- Don't create functions that call themselves recursively without limits
-- Don't use many small functions when one would suffice
-- Don't check complex conditions every tick
+Code quality:
 
-**Organization:**
-- Don't mix different concerns in same function
-- Don't use generic names like `temp`, `test`, `function`
-- Don't nest folders too deeply
-- Don't create files that are never called
+- Do not use `ctx.data["namespace"].functions["path"]` when a StewBeet helper exists.
+- Do not forget edge cases (empty checks, score limits).
+- Do not write monolithic functions.
+- Do not duplicate code across functions.
+
+Performance:
+
+- Do not run expensive operations in the tick file.
+- Do not create functions that call themselves recursively without a limit.
+- Do not check complex conditions every tick.
+
+Organization:
+
+- Do not mix different concerns in one function.
+- Do not use generic names like `temp`, `test` or `function`.
+- Do not nest folders too deeply.
+- Do not create files that are never called.
 
 ## Which one to pick, in short
 
-- **Static files** for configuration, fixed recipes and small functions that never change.
-- **StewBeet helpers** for most datapack logic, and anything generated from your definitions.
-- **The native beet API** only when no helper covers the file you need.
-- **Bolt** where the commands, not the data, are the hard part.
+- Static files for configuration, fixed recipes and small functions that never change.
+- StewBeet helpers for most datapack logic, and anything generated from your definitions.
+- The native beet API only when no helper covers the file you need.
+- Bolt where the commands, not the data, are the hard part.
 
 Whichever you use, group functions in folders by feature, and put periodic work in versioned clock functions rather than in tick.
 
@@ -437,18 +456,16 @@ Whichever you use, group functions in folders by feature, and put periodic work 
 
 | Term | Meaning |
 |------|---------|
-| **Static file loading** | Pre-plugin loading of files declared in `beet.yml` (`data_pack.load` and `resource_pack.load`). |
-| **Native Beet API writing** | Creating files through `ctx.data`/`ctx.assets` objects in plugin code. |
-| **StewBeet helper writing** | Utility functions like `write_function`, `write_tag`, and related helpers for faster generation. |
-| **Bolt** | Mecha's scripting layer. Python and commands share one syntax, compiled at build time. |
-| **Module** | A `.bolt` file under `data/<namespace>/module/`, imported by others and writing functions only where it asks to. |
-| **Nesting** | An `execute` or `if` ending in a colon, which mecha turns into its own function and the call reaching it. |
+| Static file loading | Pre-plugin loading of files declared in `beet.yml` (`data_pack.load` and `resource_pack.load`). |
+| Native Beet API writing | Creating files through `ctx.data`/`ctx.assets` objects in plugin code. |
+| StewBeet helper writing | Utility functions like `write_function`, `write_tag`, and related helpers for faster generation. |
+| Bolt | Mecha's scripting layer. Python and commands share one syntax, compiled at build time. |
+| Module | A `.bolt` file under `data/<namespace>/module/`, imported by others and writing functions only where it asks to. |
+| Nesting | An `execute` or `if` ending in a colon, which mecha turns into its own function and the call reaching it. |
 
 ## Next steps
 
 - [Helper function reference](reference/en.md): every helper and the arguments it takes.
-- [Editor support](../8_editor/en.md): the extension that checks every block on this page.
-- [Cookbook](cookbook/en.md): complete worked examples.
 - [Equations](../4_equations/en.md): build scoreboard arithmetic instead of hand-writing it.
-- [Configuring the build](../3_beet_config/en.md): control when your code runs in the pipeline.
+- [VS Code editor](../8_editor/en.md): the extension that checks every block on this page.
 

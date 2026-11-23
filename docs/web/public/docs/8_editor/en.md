@@ -7,9 +7,9 @@ The [StewBeet extension for VSCode](https://marketplace.visualstudio.com/items?i
 <video src="/vscode_extension.mp4" controls loop muted playsinline preload="auto">
 </video>
 
-**Install**: search *StewBeet* in the Extensions panel, or [open it on the marketplace](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet).<br>
-**Needs your venv**: no. It reads your sources and the files your build writes, nothing else.<br>
-**Source Code**: [`extension/vscode`](https://github.com/Stoupy51/StewBeet/tree/main/extension/vscode) <br>
+- Install it by searching *StewBeet* in the Extensions panel, or [open it on the marketplace](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet).
+- It does not need your venv: it reads your sources and the files your build writes, nothing else.
+- Its source is in [`extension/vscode`](https://github.com/Stoupy51/StewBeet/tree/main/extension/vscode).
 
 | You write | You get |
 |-----------|---------|
@@ -22,7 +22,7 @@ The [StewBeet extension for VSCode](https://marketplace.visualstudio.com/items?i
 ## Setup
 
 1. Install [Spyglass](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server). It provides the completion, hover and errors the extension routes into your blocks.
-2. For navigation to the build, add the [source_maps](../plugins/source_maps.md) plugin to your `beet.yml`:
+2. For navigation to the build, list the [source_maps](../plugins/source_maps.md) plugin in the `require` of your `beet.yml`. The Basic template already does:
 
 ```yaml
 require:
@@ -122,6 +122,6 @@ Keep Aegis if you need that last row.
 
 ## Next steps
 
-- [Writing functions and files](../2_writing_to_files/en.md): everything the extension reads, including Bolt.
+- [Functions and files](../2_writing_to_files/en.md): the four ways to write the commands the extension reads, Bolt included.
 - [stewbeet.plugins.source_maps](../plugins/source_maps.md): the source maps behind the navigation.
 
