@@ -96,6 +96,7 @@ Here is a list of projects that use it:<br>
   - https://github.com/VGreluchon/Crazy-Adventure-Datapack
   - https://github.com/YuWan886/Lucky-Pillar
   - https://www.planetminecraft.com/data-pack/elemental-wands/
+  - https://github.com/RacoonJohn/Headconomics
   - https://github.com/Stoupy51/MC_Guns_System
   - https://github.com/Stoupy51/LifeSteal
   - https://github.com/Stoupy51/SimplEnergy
