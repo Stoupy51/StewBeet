@@ -65,7 +65,7 @@ export const SHOWCASE: ShowcaseProject[] = [
         summary: { en: 'Life steal from the Lifesteal SMP, with hearts to eat and a beacon to revive players.', fr: 'Le vol de vie du Lifesteal SMP, avec des cœurs à manger et une balise pour ressusciter.' },
     },
     {
-        name: 'Imagine Your Craft', owner: 'Stoupy51', url: 'https://github.com/Stoupy51/ImagineYourCraftDatapack',
+        name: 'Imagine Your Craft', owner: 'Stoupy51', url: 'https://github.com/Stoupy51/ImagineYourCraftDatapack', icon: 'imagine_your_craft',
         summary: { en: 'The ImagineYourCraft mod, rebuilt as a datapack.', fr: 'Le mod ImagineYourCraft, refait en datapack.' },
     },
     {
@@ -85,11 +85,11 @@ export const SHOWCASE: ShowcaseProject[] = [
         summary: { en: 'Each mob gets a random scale between a minimum and a maximum.', fr: 'Chaque mob reçoit une taille aléatoire entre un minimum et un maximum.' },
     },
     {
-        name: 'Smithed Summit 2026', owner: 'Stoupy51', url: 'https://github.com/Stoupy51/SmithedSummit2026',
+        name: 'Smithed Summit 2026', owner: 'Stoupy51', url: 'https://github.com/Stoupy51/SmithedSummit2026', icon: 'smithed_direct',
         summary: { en: 'Made for the Smithed Summit 2026.', fr: 'Fait pour le Smithed Summit 2026.' },
     },
     {
-        name: 'Smithed Summit 2024', owner: 'Stoupy51', url: 'https://github.com/Stoupy51/SmithedSummit',
+        name: 'Smithed Summit 2024', owner: 'Stoupy51', url: 'https://github.com/Stoupy51/SmithedSummit', icon: 'smithed_direct',
         summary: { en: 'Made for the Smithed Summit 2024.', fr: 'Fait pour le Smithed Summit 2024.' },
     },
     {

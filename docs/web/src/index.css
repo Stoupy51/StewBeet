@@ -131,8 +131,7 @@
 }
 
 /*
- * Documentation body. 17 px Archivo at 1.5, prose held to about 75 characters, code panels free to
- * use the whole column.
+ * Documentation body. 17 px Archivo at 1.5, prose and code panels both as wide as the column.
  */
 .doc-page {
   /* What can cover the top of the text: on a phone the 56 px header, back when the reader scrolls

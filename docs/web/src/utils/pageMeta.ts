@@ -154,6 +154,11 @@ export function markdownPageMeta(src: string | null, markdown: string): PageMeta
     };
 }
 
+/** File name of a page's preview image in public/generated/og/, written by scripts/build-og-images.ts. */
+export function ogImageName(path: string): string {
+    return `${path.replace(/^\//, '').replace(/\//g, '__')}.png`;
+}
+
 function escapeAttribute(value: string): string {
     return value
         .replace(/&/g, '&amp;')
@@ -182,6 +187,8 @@ export function applyPageMeta(html: string, meta: PageMeta): string {
         output = setMeta(output, 'property', `${prefix}:title`, meta.title);
         output = setMeta(output, 'property', `${prefix}:description`, meta.description);
         output = setMeta(output, 'property', `${prefix}:url`, url);
+        // The home page keeps the hand-made og-image.png of index.html, a missing page has no card
+        if (meta.path !== '/' && !meta.noindex) output = setMeta(output, 'property', `${prefix}:image`, `${SITE_ORIGIN}/generated/og/${ogImageName(meta.path)}`);
     }
 
     const injected = [`    <link rel="canonical" href="${escapeAttribute(url)}" />`];

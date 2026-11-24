@@ -22,6 +22,7 @@ public/highlighted/
 # Written by the prebuild steps of `bun run dev` and `bun run build`, so they are never worth a
 # diff: every one of them carries a fresh timestamp or a rebuilt stat.
 src/generated/
+public/generated/og/
 
 # Daily build counter written by src/api/telemetry.ts when TELEMETRY_DATA_DIR is unset,
 # which is the case under `bun run dev`. Production mounts a docker volume instead.
