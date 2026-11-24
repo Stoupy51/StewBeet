@@ -1,17 +1,16 @@
 
 # Post effects chronométrés
 
-`timed_post_effect` enregistre une chaîne `/posteffect` dont le shader sait combien de ticks se sont écoulés depuis que l'effet a été appliqué. Il faut Minecraft 26.3, où `/posteffect add <joueurs> <id>` applique à un joueur un post effect du resource pack.
+`timed_post_effect` enregistre une chaîne `/posteffect` dont le shader sait combien de ticks se sont écoulés depuis l'application de l'effet. Il nécessite Minecraft 26.3, où `/posteffect add <players> <id>` applique à un joueur un post effect de resource pack.
 
-**Code source** : [stewbeet/core/utils/post_effects.py](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/core/utils/post_effects.py) <br>
-**Requis** : Framework StewBeet (`from stewbeet import *`)  
-**Position** : Appelé dans un hook de plugin `beet_default`
+- Code source : [stewbeet/core/utils/post_effects.py](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/core/utils/post_effects.py)
+- Importez-le avec `from stewbeet import *`, et appelez-le depuis un plugin de votre pipeline, comme `src.link`.
 
 ## Pourquoi une horloge
 
-Le serveur envoie l'id d'un post effect et rien d'autre : ni argument, ni durée, ni instant de départ. Un shader qui fait un fondu, un flash ou une animation doit trouver lui-même son point de départ.
+Le serveur envoie l'id d'un post effect et rien d'autre : ni argument, ni durée, ni heure de début. Un shader qui fait un fondu, un flash ou une animation doit trouver lui-même son point de départ.
 
-`posteffect add` alloue les cibles persistantes de la chaîne à leur `clear_color`. La chaîne que construit `timed_post_effect` garde une cible persistante 1x1 dont l'alpha part de 0, y inscrit `GameTime` à la première frame, et la donne à votre shader sous le nom `ClockSampler`. Retirer l'effet détruit la cible, donc le `posteffect add` suivant relance l'horloge.
+`posteffect add` alloue les targets persistantes de la chaîne à leur `clear_color`. La chaîne que construit `timed_post_effect` garde une target persistante de 1x1 dont l'alpha commence à 0, y inscrit `GameTime` à la première frame, et la passe à votre shader sous le nom `ClockSampler`. Retirer l'effet détruit la target, donc le `posteffect add` suivant relance l'horloge.
 
 ## Exemple : fondu depuis une couleur
 
@@ -49,7 +48,7 @@ timed_post_effect("fade_in", f"{ns}:post/fade", {"FadeConfig": [
 
 ```mcfunction
 posteffect add @s <ns>:fade_in
-# une fois le fondu terminé
+# once the fade is over
 posteffect remove @s <ns>:fade_in
 ```
 
@@ -62,16 +61,16 @@ timed_post_effect(effect_id, fragment_shader, uniforms, inputs=None, pre_passes=
 | Paramètre | Description |
 |-----------|-------------|
 | `effect_id` | Chemin sous `assets/<project_id>/post_effect/`, donc l'id que prend `/posteffect` est `<project_id>:<effect_id>` |
-| `fragment_shader` | Id de votre shader, ex. `"mgs:post/flash"` pour `assets/mgs/shaders/post/flash.fsh` |
-| `uniforms` | Constantes écrites dans l'effet, sous la forme `{nom_du_bloc: [post_uniform(...)]}` |
-| `inputs` | Samplers en plus pour votre shader : une texture de `textures/effect/`, une cible, ou la profondeur de `minecraft:main` |
-| `pre_passes` | Passes exécutées avant l'horloge, pour remplir les cibles que lisent vos `inputs` |
-| `targets` | Les cibles qu'écrivent ces passes |
+| `fragment_shader` | Id de votre shader, ex : `"mgs:post/flash"` pour `assets/mgs/shaders/post/flash.fsh` |
+| `uniforms` | Constantes intégrées à l'effet, sous la forme `{block_name: [post_uniform(...)]}` |
+| `inputs` | Samplers supplémentaires pour votre shader : une texture de `textures/effect/`, une target, ou la profondeur de `minecraft:main` |
+| `pre_passes` | Passes exécutées avant l'horloge, pour remplir les targets que lisent vos `inputs` |
+| `targets` | Les targets que ces passes écrivent |
 
-Votre shader est la passe "apply" de cette chaîne :
+Votre shader s'exécute comme la passe "apply" de cette chaîne :
 
 | Passe | Lit | Écrit |
-|-------|-----|-------|
+|------|-------|--------|
 | `pre_passes` | les vôtres | les vôtres |
 | `<ns>:post/clock` | `clock` | `clock_next` |
 | `<ns>:post/copy` | `clock_next` | `clock` |
@@ -82,11 +81,11 @@ Votre shader est la passe "apply" de cette chaîne :
 
 ## `<ns>:clock.glsl`
 
-Lisez l'horloge en `vec2(0.5)` et passez-la avec `GameTime` :
+Échantillonnez l'horloge à `vec2(0.5)` et passez-la avec `GameTime` :
 
-| Fonction | Renvoie |
+| Function | Renvoie |
 |----------|---------|
-| `clock_elapsed(clock, GameTime)` | Les ticks depuis `posteffect add`, avec une précision inférieure au tick. `1.0e6` une fois 1200 ticks passés |
+| `clock_elapsed(clock, GameTime)` | Les ticks depuis `posteffect add`, avec une précision inférieure au tick. `1.0e6` une fois 1200 ticks écoulés |
 | `clock_ramp(clock, GameTime, duration)` | Une rampe adoucie de 0 à 1 sur `duration` ticks, puis 1 |
 
 ## `post_uniform`
@@ -99,12 +98,17 @@ post_uniform(name, kind, value)
 
 ## Règles du moteur
 
-- **Un effet retiré disparaît à cette frame.** Une animation de sortie est soit chronométrée dans le même effet, qui affiche ensuite l'image inchangée jusqu'à ce que le serveur le retire, soit un second effet échangé au même tick.
-- **Une horloge ne suit pas un changement d'id.** Une animation qui doit se dérouler sans saut reste dans un seul effet.
-- **`add` puis `remove` du même id au même tick n'envoie rien.** Pour rejouer un effet à chaque tick, alternez entre deux ids.
-- **Les effets survivent à la mort, à la reconnexion et au changement de dimension.** Retirez vos propres ids à la réapparition, à la connexion et à la fin de la partie. N'utilisez jamais `posteffect clear`, qui retire aussi les effets des autres packs.
-- **Un shader qui ne compile pas est ignoré jusqu'au rechargement des ressources.** Appuyez sur F3+T après avoir corrigé du GLSL.
-- **Les post effects sont dessinés avant le GUI.** Chat, bossbars et titles restent nets par-dessus.
-- **Une passe ne lit jamais la cible qu'elle écrit**, `minecraft:main` compris. Vos propres passes écrivent une cible de travail, comme la chaîne le fait avec `swap`.
-- **Chaque `in` et `out` a besoin de `layout(location = N)`**, et le shader commence par `POST_SHADER_HEADER`.
+- **Un effet retiré disparaît à cette frame.** Une animation de sortie est soit chronométrée dans le même effet, qui montre alors la frame inchangée jusqu'à ce que le serveur le retire, soit un second effet substitué au même tick.
+- **Une horloge ne suit pas un changement d'id.** Une animation qui doit tourner sans saut reste dans un seul effet.
+- **`add` puis `remove` d'un même id au même tick n'envoie rien.** Pour rejouer un effet à chaque tick, alternez entre deux ids.
+- **Les effets survivent à la mort, à la reconnexion et aux changements de dimension.** Retirez vos propres ids au respawn, à la connexion et à la fin de la partie. N'utilisez jamais `posteffect clear`, qui retire aussi les effets des autres packs.
+- **Un shader qui échoue à compiler est ignoré jusqu'au rechargement des ressources.** Appuyez sur F3+T après avoir corrigé le GLSL.
+- **Les post effects sont dessinés avant le GUI.** Le chat, les bossbars et les titres restent nets par-dessus.
+- **Une passe n'échantillonne jamais la target qu'elle écrit**, `minecraft:main` compris. Vos propres passes écrivent dans une target de travail, comme la chaîne le fait avec `swap`.
+- **Chaque `in` et `out` demande `layout(location = N)`**, et le shader commence par `POST_SHADER_HEADER`.
+
+## Étapes suivantes
+
+- [Functions et fichiers](../2_writing_to_files/fr.md) : `write_function`, pour ajouter et retirer l'effet depuis vos functions.
+- [Configurer le build](../3_beet_config/fr.md#minecraft) : fixez `minecraft` à 26.3 ou plus dans `beet.yml`.
 

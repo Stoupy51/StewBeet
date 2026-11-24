@@ -57,7 +57,7 @@ const guide = (folder: string, slug: string, section: Section, en: string, fr: s
 
 const plugin = (name: string, group: PluginGroup, en: string, fr: string): DocPage => ({
     slug: `plugins/${name}`,
-    src: { en: `plugins/${name}.md` },
+    src: { en: `plugins/${name}.md`, fr: `plugins/${name}.fr.md` },
     title: { en, fr },
     section: 'plugins',
     group,
@@ -106,7 +106,7 @@ export const DOC_PAGES: DocPage[] = [
     plugin('compatibilities.simpledrawer', 'compatibility', 'SimpleDrawer', 'SimpleDrawer'),
     plugin('compatibilities.neo_enchant', 'compatibility', 'NeoEnchant', 'NeoEnchant'),
 
-    { slug: 'contrib/simplenergy', src: { en: 'contrib/simplenergy.md' }, title: { en: 'SimplEnergy', fr: 'SimplEnergy' }, section: 'contrib' },
+    { slug: 'contrib/simplenergy', src: { en: 'contrib/simplenergy.md', fr: 'contrib/simplenergy.fr.md' }, title: { en: 'SimplEnergy', fr: 'SimplEnergy' }, section: 'contrib' },
 
     guide('1_definitions_setup', 'definitions', 'reference', 'Definitions', 'Définitions'),
     guide('2_writing_to_files/reference', 'reference/helpers', 'reference', 'Helpers', 'Helpers'),
@@ -114,11 +114,11 @@ export const DOC_PAGES: DocPage[] = [
     guide('4_equations', 'reference/equations', 'reference', 'Equations', 'Équations'),
 
     guide('how_it_fits', 'how_it_fits', 'understand', 'How StewBeet fits with beet', "Comment StewBeet s'intègre à beet"),
-    { slug: 'handled_for_you', src: { en: 'handled_for_you/en.md' }, title: { en: "Everything you don't need to think about", fr: "Tout ce à quoi vous n'avez pas à penser" }, section: 'understand' },
+    { slug: 'handled_for_you', src: { en: 'handled_for_you/en.md', fr: 'handled_for_you/fr.md' }, title: { en: "Everything you don't need to think about", fr: "Tout ce à quoi vous n'avez pas à penser" }, section: 'understand' },
 ];
 
 /** The index of every plugin, the landing page of their section, kept out of the page list. */
-export const PLUGIN_INDEX: DocPage = { slug: 'plugins', src: { en: 'plugins/README.md' }, title: { en: 'Plugins', fr: 'Plugins' }, section: 'plugins' };
+export const PLUGIN_INDEX: DocPage = { slug: 'plugins', src: { en: 'plugins/README.md', fr: 'plugins/README.fr.md' }, title: { en: 'Plugins', fr: 'Plugins' }, section: 'plugins' };
 
 const EVERY_PAGE = [...DOC_PAGES, PLUGIN_INDEX];
 

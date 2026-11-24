@@ -34,7 +34,7 @@ Painting(
 
 ## Limits
 
-- Without `texture`, the image is the file named `<item>.png` anywhere under `textures_folder`. Two files of that name warn and the first is used. None is a build error.
+- Without `texture`, the image is the file named `<item>.png` anywhere under `textures_folder`. Two files of that name give a warning and the first is used. No file of that name fails the build.
 
 ## Next steps
 

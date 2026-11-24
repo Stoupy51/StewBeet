@@ -1,112 +1,115 @@
 
-# Référence des fonctions utilitaires
+# Référence des fonctions d'aide
 
-Chaque fonction que StewBeet ajoute par-dessus beet pour écrire des fichiers de datapack, avec
-les arguments que chacune accepte.
+Tous les helpers que StewBeet ajoute à beet pour écrire des fichiers de datapack, avec les arguments
+que prend chacun.
 
-**Voir aussi** [Écrire fonctions et fichiers](../fr.md) pour choisir entre les trois
-approches, et [le cookbook](../cookbook/fr.md) pour des exemples complets.
+[Écrire des functions et des fichiers](../fr.md) aide à choisir entre les trois approches, et [le cookbook](../cookbook/fr.md) contient des exemples pratiques.
 
-### Écriture de fonctions
+### Écriture de functions
 
 #### `write_function()`
-Écrire du contenu dans un fichier de fonction.
+Écrit du contenu dans un fichier de function.
 
 ```python
 def write_function(
-    path: str,                      # Chemin de la fonction (ex., "namespace:folder/function_name")
-    content: str,                   # Le contenu à écrire
-    overwrite: bool = False,        # Écraser au lieu d'ajouter
-    prepend: bool = False,          # Préfixer au lieu d'ajouter
-    tags: list[str] | None = None   # Tags de fonction à ajouter (ex., ["minecraft:load"])
-) -> None:
+    path: str,                                      # Function path (e.g., "namespace:folder/function_name")
+    content: str,                                   # The content to write
+    overwrite: bool = False,                        # Overwrite instead of appending
+    prepend: bool = False,                          # Prepend instead of appending, ignored with overwrite
+    tags: list[str] | None = None,                  # Function tags to add (e.g., ["minecraft:load"])
+    condition: Callable[[str], bool] | None = None  # Receives the existing content, writes nothing when it returns False
+) -> Function | None:                               # The written function, None when the condition refused
 ```
 
 **Exemple :**
 ```python
 write_function(f"{ns}:utils/teleport_spawn", """
-# Téléporter le joueur au spawn
+# Teleport player to spawn
 tp @s 0 64 0
 """, tags=[f"{ns}:tp_spawn"])
 ```
-La fonction sera écrite dans `data/your_namespace/functions/utils/teleport_spawn.mcfunction`, et ajoutée au tag de fonction `your_namespace:tp_spawn`.
+La function est écrite dans `data/<namespace>/function/utils/teleport_spawn.mcfunction`, et ajoutée au tag de function `<namespace>:tp_spawn`.
+
+`condition` rend une écriture idempotente : `condition=lambda existing: "tp @s 0 64 0" not in existing` ajoute les commandes une seule fois, quel que soit le nombre d'exécutions du code. Les autres fonctions d'écriture prennent aussi un `condition`, appelé avec les valeurs ou les données existantes.
 
 ---
 
 #### `read_function()`
-Lire le contenu d'une fonction existante.
+Lit le contenu d'une function existante, ou une chaîne vide si elle n'existe pas.
 
 ```python
 def read_function(
-    path: str  # Chemin de la fonction (ex., "namespace:folder/function_name")
+    path: str  # Function path (e.g., "namespace:folder/function_name")
 ) -> str:
 ```
 
 **Exemple :**
 ```python
 existing_content = read_function(f"{ns}:my_function")
-modified_content = existing_content.replace("say Bonjour", "say Au revoir")
+modified_content = existing_content.replace("say Hello", "say Goodbye")
 write_function(f"{ns}:my_function", modified_content, overwrite=True)
 ```
 
 ---
 
-#### Préférez les accesseurs Resource aux chemins codés en dur
+#### Préférer les accesseurs Resource aux chemins en dur
 
-Dès que le chemin appartient à une définition, récupérez-le depuis l'`Item`/`Block` plutôt que de retaper la convention.
-Un objet `Resource` est une chaîne, il s'utilise donc directement dans toutes ces fonctions :
+Dès que le chemin appartient à une définition, prenez-le dans l'`Item` ou le `Block` au lieu de retaper la convention.
+Une `Resource` est une chaîne, elle s'insère donc directement dans chacune de ces fonctions :
 
 ```python
 furnace = Block.from_id("electric_furnace")
 
-# ❌ Codé en dur: casse silencieusement si la convention change
+# Hardcoded: breaks silently if the convention changes
 write_function(f"{ns}:custom_blocks/electric_furnace/tick", "...")
 
-# ✅ Dérivé de la définition
+# Derived from the definition
 write_function(furnace.functions.tick, "...")
 
-# ✅ Équivalent, sans passer par la définition (BlockFunctions construit les mêmes chemins)
+# Equivalent, without the definition lookup (BlockFunctions builds the same paths)
 write_function(BlockFunctions("electric_furnace").tick, "...")
 
-# ✅ Ajouter à une fonction qui existe déjà ? Récupérez la Function beet via .obj :
+# To append to a function that already exists, take the beet Function with .obj:
 furnace.functions.place_secondary.obj.append("tag @s add my_ns.active")
-# (lève KeyError si la fonction n'a pas encore été générée: un échec bruyant
-# plutôt que vos commandes placées silencieusement avant le setup du bloc)
+# (raises KeyError if the function hasn't been generated yet: a loud failure
+#  instead of your commands silently landing before the block setup)
 
-# Fonctionne pareil pour les loot tables, models, textures, advancements
+# Works the same for loot tables, models, textures, advancements
 write_function(f"{ns}:give_furnace", f"loot give @s loot {furnace.loot_table}")
 ```
 
-Voir [Emplacements de ressources](../../1_definitions_setup/fr.md#-emplacements-de-ressources) pour la liste complète des accesseurs.
+Voir [Resource locations et BlockFunctions](../../1_definitions_setup/fr.md#resource-locations-et-blockfunctions) pour la liste complète des accesseurs.
 
 ---
 
 #### `write_load_file()`
-Écrire du contenu dans la fonction de chargement principale (s'exécute au chargement du datapack).
+Écrit du contenu dans la function de load principale (exécutée au chargement du datapack).
 
 ```python
 def write_load_file(
-    content: str,                   # Le contenu à écrire
-    overwrite: bool = False,        # Écraser au lieu d'ajouter
-    prepend: bool = False,          # Préfixer au lieu d'ajouter
-    tags: list[str] | None = None   # Tags supplémentaires à ajouter
-) -> None:
+    content: str,                                   # The content to write
+    overwrite: bool = False,                        # Overwrite instead of appending
+    prepend: bool = False,                          # Prepend instead of appending
+    tags: list[str] | None = None,                  # Additional tags to add
+    condition: Callable[[str], bool] | None = None  # Writes nothing when it returns False for the existing content
+) -> Function | None:
 ```
 
 **Chemin :** `namespace:v{version}/load/confirm_load`
 
 **Exemple :**
 ```python
-# Préfixer le code d'initialisation (s'exécute en premier)
+# Prepend initialization code (runs first)
 write_load_file("""
-# Initialiser les scoreboards de base
+# Initialize core scoreboards
 scoreboard objectives add data dummy
 scoreboard objectives add private dummy
 """, prepend=True)
 
-# Ajouter le code de configuration (s'exécute après le contenu préfixé)
+# Append setup code (runs after prepended content)
 write_load_file("""
-# Définir les valeurs par défaut
+# Set default values
 scoreboard players set #2 data 2
 scoreboard players set #100 data 100
 """)
@@ -115,24 +118,25 @@ scoreboard players set #100 data 100
 ---
 
 #### `persistent_item_display()`
-Ajoute à la fonction de load un `item_display` gardé dans le chunk forceload de `FORCELOAD_BLOCK`, et renvoie son UUID pour le cibler avec `execute as`. Voir [Garder les fonctions rapides](../../10_performance/fr.md).
+Ajoute à la function de load un `item_display` conservé dans le chunk forceloadé à `FORCELOAD_BLOCK`, et renvoie son UUID pour le cibler avec `execute as`. Voir [Garder les functions rapides](../../10_performance/fr.md).
 
 ```python
-def persistent_item_display(name: str) -> str:   # name : unique dans le projet
+def persistent_item_display(name: str) -> str:   # name: unique within the project
 ```
 
 ---
 
 #### `write_tick_file()`
-Écrire du contenu dans la fonction tick principale (s'exécute à chaque tick du jeu - 20 fois par seconde).
+Écrit du contenu dans la function de tick principale (exécutée à chaque tick du jeu, 20 fois par seconde).
 
 ```python
 def write_tick_file(
-    content: str,                   # Le contenu à écrire
-    overwrite: bool = False,        # Écraser au lieu d'ajouter
-    prepend: bool = False,          # Préfixer au lieu d'ajouter
-    tags: list[str] | None = None   # Tags supplémentaires à ajouter
-) -> None:
+    content: str,                                   # The content to write
+    overwrite: bool = False,                        # Overwrite instead of appending
+    prepend: bool = False,                          # Prepend instead of appending
+    tags: list[str] | None = None,                  # Additional tags to add
+    condition: Callable[[str], bool] | None = None  # Writes nothing when it returns False for the existing content
+) -> Function | None:
 ```
 
 **Chemin :** `namespace:v{version}/tick`
@@ -140,10 +144,10 @@ def write_tick_file(
 **Exemple :**
 ```python
 write_tick_file("""
-# Incrémenter le timer
+# Increment timer
 scoreboard players add #global_timer data 1
 
-# Réinitialiser toutes les minutes
+# Reset every minute
 execute if score #global_timer data matches 1200.. run scoreboard players set #global_timer data 0
 """)
 ```
@@ -151,69 +155,109 @@ execute if score #global_timer data matches 1200.. run scoreboard players set #g
 ---
 
 #### `write_versioned_function()`
-Écrire du contenu dans une fonction d'horloge versionnée.
+Écrit du contenu dans une function d'horloge versionnée.
 
 ```python
 def write_versioned_function(
-    path: str,                      # Chemin de fonction SANS namespace (ex., "second", "tick_2")
-    content: str,                   # Le contenu à écrire
-    overwrite: bool = False,        # Écraser au lieu d'ajouter
-    prepend: bool = False,          # Préfixer au lieu d'ajouter
-    tags: list[str] | None = None   # Tags supplémentaires à ajouter
-) -> None:
+    path: str,                                      # Function path without namespace (e.g., "second", "tick_2")
+    content: str,                                   # The content to write
+    overwrite: bool = False,                        # Overwrite instead of appending
+    prepend: bool = False,                          # Prepend instead of appending
+    tags: list[str] | None = None,                  # Additional tags to add
+    condition: Callable[[str], bool] | None = None  # Writes nothing when it returns False for the existing content
+) -> Function | None:
 ```
 
 **Chemin :** `namespace:v{version}/{path}`
 
-**Fonctions d'horloge courantes :** (les autres noms ne seront pas appelés automatiquement par défaut)
+**Functions d'horloge courantes :** (les autres noms ne sont pas appelés automatiquement par défaut)
 | Chemin | Fréquence | Ticks | Description |
-|------|-----------|-------|-------------|
-| `tick` | Chaque tick | 1 | S'exécute avec le fichier tick principal |
-| `tick_2` | Tous les 2 ticks | 2 | Vitesse demi-tick (10 fois/seconde) |
-| `second` | Toutes les secondes | 20 | Une fois par seconde |
-| `second_5` | Toutes les 5 secondes | 100 | Bon pour les vérifications périodiques |
-| `minute` | Toutes les minutes | 1200 | Pour les mises à jour rares |
+|--------|-----------|-------|-------------|
+| `tick` | À chaque tick | 1 | S'exécute avec le fichier tick principal |
+| `tick_2` | Tous les 2 ticks | 2 | Demi-vitesse (10 fois par seconde) |
+| `second` | Chaque seconde | 20 | Une fois par seconde |
+| `second_5` | Toutes les 5 secondes | 100 | Pratique pour les vérifications périodiques |
+| `minute` | Chaque minute | 1200 | Pour les mises à jour rares |
 
 **Exemple :**
 ```python
-# S'exécute toutes les secondes
+# Runs every second
 write_versioned_function("second", """
-# Régénérer la santé pour les joueurs avec effet de régénération
+# Regenerate health for players with regen effect
 execute as @a[nbt={active_effects:[{id:"minecraft:regeneration"}]}] run effect give @s instant_health 1 0 true
 """)
 
-# S'exécute toutes les 5 secondes
+# Runs every 5 seconds
 write_versioned_function("second_5", """
-# Faire apparaître des particules aux entités marker
+# Spawn particles at marker entities
 execute at @e[type=marker,tag=particle_source] run particle flame ~ ~ ~ 0.5 0.5 0.5 0.01 10
 """)
 
-# S'exécute toutes les minutes
+# Runs every minute
 write_versioned_function("minute", """
-# Nettoyer les vieux items
+# Clean up old items
 kill @e[type=item,nbt={Age:5400s}]
 """)
 ```
 
 ---
 
-### Écriture d'advancements
-
-#### `write_advancement()`
-Écrire un fichier d'advancement.
+#### `write_unload_file()`
+Écrit du contenu dans la function exécutée au déchargement du datapack, `namespace:v{version}/unload`, qui est ajoutée au tag de function `namespace:unload`.
 
 ```python
-def write_advancement(
-    path: str,                              # Chemin de l'advancement (ex., "namespace:folder/name")
-    advancement: Advancement | JsonDict,    # Données ou objet advancement
-    overwrite: bool = False,                # Écraser au lieu de fusionner
-    max_level: int = -1                     # Profondeur d'indentation JSON (-1 = illimitée)
-) -> Advancement | None:
+def write_unload_file(
+    content: str,                                   # The content to write
+    overwrite: bool = False,                        # Overwrite instead of appending
+    prepend: bool = False,                          # Prepend instead of appending
+    tags: list[str] | None = None,                  # Additional tags, `namespace:unload` is always added
+    condition: Callable[[str], bool] | None = None  # Writes nothing when it returns False for the existing content
+) -> Function | None:
+```
+
+---
+
+#### `write_scheduled_function()`
+Écrit une function qui se reprogramme elle-même, et programme sa première exécution depuis le fichier load.
+
+```python
+def write_scheduled_function(
+    duration: int | str,            # Delay before each run, a digit-only string is read as an int
+    content: str,                   # The commands run each time
+    unit: str = "t",                # Time unit, used only when duration is an int
+    path: str | None = None,        # Defaults to "namespace:v{version}/scheduled/{delay}"
+    overwrite: bool = False,        # Overwrite instead of appending
+    prepend: bool = False,          # Prepend instead of appending, ignored with overwrite
+    condition: Callable[[str], bool] = lambda existing_content: True  # Receives the existing content of the scheduled function
+) -> Function | None:
 ```
 
 **Exemple :**
 ```python
-# Advancement technique (caché des joueurs)
+write_scheduled_function(10, f"scoreboard players add #timer {ns}.data 1", unit="s")
+```
+Cela écrit `{ns}:v{version}/scheduled/10s`, qui se termine par `schedule function ... 10s` pour s'exécuter toutes les 10 secondes, et ajoute au fichier load le premier `schedule function ... 10s replace`. Une durée en chaîne comme `"5s"` est utilisée telle quelle comme délai.
+
+---
+
+### Écriture d'advancements
+
+#### `write_advancement()`
+Écrit un fichier d'advancement.
+
+```python
+def write_advancement(
+    path: str,                              # Advancement path (e.g., "namespace:folder/name")
+    advancement: Advancement | JsonDict,    # Advancement data or object
+    overwrite: bool = False,                # Overwrite instead of merging into the existing one
+    max_level: int = -1,                    # Maximum depth of the JSON dump (-1 = default)
+    condition: Callable[[JsonDict], bool] = lambda existing_data: True  # Receives the existing data, writes nothing when it returns False
+) -> Advancement | None:                    # None when the condition refused
+```
+
+**Exemple :**
+```python
+# Technical advancement (hidden from players)
 write_advancement(f"{ns}:technical/inventory_changed", {
     "criteria": {
         "requirement": {
@@ -225,12 +269,12 @@ write_advancement(f"{ns}:technical/inventory_changed", {
     }
 })
 
-# Advancement visible
+# Visible advancement
 write_advancement(f"{ns}:story/craft_ruby_sword", {
     "display": {
         "icon": {"id": "minecraft:diamond_sword", "components": {"item_model": f"{ns}:ruby_sword"}},
-        "title": {"text": "Lame Légendaire", "color": "red"},
-        "description": {"text": "Fabriquer une Épée de Rubis"},
+        "title": {"text": "Legendary Blade", "color": "red"},
+        "description": {"text": "Craft a Ruby Sword"},
         "frame": "challenge",
         "show_toast": True,
         "announce_to_chat": True
@@ -247,8 +291,8 @@ write_advancement(f"{ns}:story/craft_ruby_sword", {
 })
 ```
 
-#### `write_predicate()` et `write_enchantment()`
-Même signature et même fusion que `write_advancement()`, pour les prédicats et les enchantements.
+#### `write_predicate()` and `write_enchantment()`
+Même signature et même fusion que `write_advancement()` (les données existantes sont fusionnées avec `super_merge_dict()`), pour les predicates et les enchantments.
 
 ```python
 write_predicate(f"{ns}:is_sneaking", {
@@ -259,8 +303,21 @@ write_predicate(f"{ns}:is_sneaking", {
 ```
 
 #### `write_json_resource()`
-La même chose pour n'importe quel autre registre JSON : on passe le registre et sa classe beet.
+La même chose pour tout autre registre JSON : passez le registre et sa classe beet.
 
+```python
+def write_json_resource(
+    registry: MutableMapping[str, T],   # Where the resource goes (e.g., Mem.ctx.data.item_modifiers)
+    file_type: type[T],                 # Its beet class (e.g., ItemModifier)
+    path: str,                          # Resource location, with or without ".json"
+    data: T | JsonDict,                 # Resource data or object
+    overwrite: bool = False,            # Overwrite instead of merging into the existing one
+    max_level: int = -1,                # Maximum depth of the JSON dump (-1 = default)
+    condition: Callable[[JsonDict], bool] = lambda existing_data: True  # Receives the existing data, writes nothing when it returns False
+) -> T | None:
+```
+
+**Exemple :**
 ```python
 from beet import ItemModifier
 write_json_resource(Mem.ctx.data.item_modifiers, ItemModifier, f"{ns}:set_count_4", {"function": "minecraft:set_count", "count": 4})
@@ -271,34 +328,35 @@ write_json_resource(Mem.ctx.data.item_modifiers, ItemModifier, f"{ns}:set_count_
 ### Écriture de tags
 
 #### `write_tag()`
-Écrire un fichier de tag (générique pour tous types de tags).
+Écrit un fichier de tag (générique pour tout type de tag).
 
 ```python
 def write_tag(
-    path: str,                                  # Chemin du tag (ex., "namespace:my_tag")
-    tag_type: NamespaceProxy | NamespaceContainer,  # Type de tag (ex., ctx.data.function_tags)
-    values: list[Any] | None = None,           # Valeurs à ajouter au tag
-    prepend: bool = False,                      # Préfixer au lieu d'ajouter
-    max_level: int | None = None                # Profondeur d'indentation JSON
-) -> None:
+    path: str,                                  # Tag path (e.g., "namespace:my_tag")
+    tag_type: NamespaceProxy | NamespaceContainer,  # Tag type (e.g., ctx.data.function_tags)
+    values: list[Any] | None = None,           # Values to add to the tag, merged without duplicates
+    prepend: bool = False,                      # Prepend instead of appending
+    max_level: int | None = None,               # Maximum depth of the JSON dump (None = default)
+    condition: Callable[[list[Any]], bool] = lambda existing_values: True  # Receives the existing values, writes nothing when it returns False
+) -> TagFile | None:                            # None when the condition refused
 ```
 
 **Exemple :**
 ```python
-# Tags de fonctions
+# Function tags
 write_tag(f"{ns}:custom_load", Mem.ctx.data.function_tags, [
     f"{ns}:init/scoreboards",
     f"{ns}:init/teams"
 ])
 
-# Tags de types d'entités
+# Entity type tags
 write_tag(f"{ns}:hostile_mobs", Mem.ctx.data.entity_type_tags, [
     "minecraft:zombie",
     "minecraft:skeleton",
     "minecraft:spider"
 ])
 
-# Tags de blocs
+# Block tags
 write_tag(f"{ns}:mineable/pickaxe", Mem.ctx.data.block_tags, [
     "stone",
     "emerald_block"
@@ -307,48 +365,15 @@ write_tag(f"{ns}:mineable/pickaxe", Mem.ctx.data.block_tags, [
 
 ---
 
-#### `write_function_tag()`
-Écrire un tag de fonction (wrapper de commodité pour `write_tag`).
-
-```python
-def write_function_tag(
-    path: str,                      # Chemin du tag (ex., "namespace:my_tag")
-    functions: list[Any] | None = None,  # Chemins de fonctions à ajouter
-    prepend: bool = False,          # Préfixer au lieu d'ajouter
-    max_level: int | None = None    # Profondeur d'indentation JSON
-) -> None:
-```
-
-**Exemple :**
-```python
-# Ajouter des fonctions à minecraft:load
-write_function_tag("minecraft:load", [
-    f"{ns}:load/main"
-])
-
-# Ajouter des fonctions à minecraft:tick
-write_function_tag("minecraft:tick", [
-    f"{ns}:tick/main"
-])
-
-# Custom function tag
-write_function_tag(f"{ns}:custom_blocks/tick", [
-    f"{ns}:custom_blocks/furnace/tick",
-    f"{ns}:custom_blocks/machine/tick"
-])
-```
-
----
-
 ### Fonctions utilitaires
 
 #### `super_merge_dict()`
-Fusionner récursivement deux dictionnaires sans modifier les originaux.
+Fusionne récursivement deux dictionnaires sans modifier les originaux. Les listes sont concaténées, sans doublons sauf si elles contiennent des dictionnaires.
 
 ```python
 def super_merge_dict(
-    dict1: JsonDict,  # Premier dictionnaire
-    dict2: JsonDict   # Deuxième dictionnaire (remplace dict1)
+    dict1: JsonDict,  # First dictionary
+    dict2: JsonDict   # Second dictionary (overrides dict1)
 ) -> JsonDict:
 ```
 
@@ -360,91 +385,91 @@ base_config = {
 }
 
 override_config = {
-    "settings": {"power": 150},  # Remplacer power, garder speed
-    "debug": True                 # Ajouter nouveau champ
+    "settings": {"power": 150},  # Override power, keep speed
+    "debug": True                 # Add new field
 }
 
 merged = super_merge_dict(base_config, override_config)
-# Résultat : {"settings": {"power": 150, "speed": 5}, "enabled": True, "debug": True}
+# Result: {"settings": {"power": 150, "speed": 5}, "enabled": True, "debug": True}
 ```
 
 ---
 
 #### `set_json_encoder()`
-Définir un custom JSON encoder pour un affichage formaté.
+Définit un encodeur JSON personnalisé pour la mise en forme.
 
 ```python
 def set_json_encoder(
-    obj: JsonFileT,              # Objet JsonFile (Advancement, FunctionTag, etc.)
-    max_level: int | None = None,  # Profondeur d'indentation max (None = illimitée)
-    indent: str | int = '\t'      # Caractère d'indentation ou espaces
+    obj: JsonFileT,              # JsonFile object (Advancement, FunctionTag, etc.)
+    max_level: int | None = None,  # Maximum depth of the JSON dump (None = default)
+    indent: str | int = '\t'      # Indentation character or spaces
 ) -> JsonFileT:
 ```
 
 **Exemple :**
 ```python
-from stewbeet import set_json_encoder
+from stewbeet import Mem, set_json_encoder
 from beet import Advancement
 
 advancement = Advancement({
     "criteria": {"requirement": {"trigger": "minecraft:inventory_changed"}}
 })
 
-# Utiliser des tabulations pour l'indentation (défaut)
+# Use tabs for indentation (default)
 Mem.ctx.data.advancements["my_advancement"] = set_json_encoder(advancement)
 
-# Utiliser 2 espaces
+# Use 2 spaces
 Mem.ctx.data.advancements["my_advancement"] = set_json_encoder(advancement, indent=2)
 
-# Limiter la profondeur d'indentation
+# Limit indentation depth
 Mem.ctx.data.advancements["my_advancement"] = set_json_encoder(advancement, max_level=3)
 ```
 
 ---
 
 #### `convert_to_serializable()`
-Convertir les objets avec méthode `to_dict()` en formes sérialisables JSON.
+Convertit en données sérialisables en JSON les objets avec une méthode `to_dict()`, les dataclasses, les mappings et les itérables. Elle vient de stouputils, dont StewBeet dépend.
 
 ```python
 def convert_to_serializable(
-    obj: Any  # Objet à convertir
+    obj: Any  # Object to convert
 ) -> Any:
 ```
 
 **Exemple :**
 ```python
-from stewbeet import Item, convert_to_serializable
+import stouputils as stp
+from stewbeet import Item
 
-item = Item.from_id("ruby_sword")
-serializable_data = convert_to_serializable(item)
-# Peut maintenant être écrit en JSON
+item = Item.from_id("simplunium_ingot")
+serializable_data = stp.convert_to_serializable(item)
 ```
 
 ---
 
 #### `texture_mcmeta()`
-Créer un objet Texture avec fichier mcmeta s'il existe.
+Crée un objet Texture avec son fichier mcmeta s'il existe.
 
 ```python
 def texture_mcmeta(
-    source_path: str  # Chemin vers fichier texture (ex., "assets/textures/my_texture.png")
+    source_path: str  # Path to texture file (e.g., "assets/textures/my_texture.png")
 ) -> Texture:
 ```
 
 **Exemple :**
 ```python
-from stewbeet import texture_mcmeta
+from stewbeet import Mem, texture_mcmeta
 
-# Charge automatiquement animated_block.png.mcmeta s'il existe
+# Automatically loads animated_block.png.mcmeta if it exists
 texture = texture_mcmeta("assets/textures/animated_block.png")
 Mem.ctx.assets["my_namespace"].textures["block/animated_block"] = texture
 ```
 
 ---
 
-## Prochaines étapes
+## Étapes suivantes
 
-- [Écrire fonctions et fichiers](../fr.md): quelle approche choisir, et pourquoi.
-- [Cookbook](../cookbook/fr.md): ces fonctions dans des fichiers complets et fonctionnels.
-- [Équations](../../4_equations/fr.md): construire l'arithmétique de scoreboard à intégrer.
+- [Écrire des functions et des fichiers](../fr.md) : quelle approche choisir, et pourquoi.
+- [Cookbook](../cookbook/fr.md) : ces helpers utilisés dans des fichiers complets qui fonctionnent.
+- [Equations](../../4_equations/fr.md) : construire de l'arithmétique de scoreboard à intégrer dans ce que vous écrivez.
 

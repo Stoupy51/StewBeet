@@ -1,27 +1,25 @@
 
-# Générer le manuel en jeu
+# Générer le manual en jeu
 
-`ingame_manual` génère un manuel en jeu à partir de vos items `Mem.definitions` : une page d'introduction, un navigateur de catégories, une page par catégorie, et une page par item avec ses recipes et boutons wiki, dont les effets qu'il donne une fois consommé et un lien vers le récipient qu'il laisse (`remainder`) et vers les graines qui le font pousser. Il est **orienté dialogue** (l'ancien mode livre écrit NBT est supprimé) et entièrement **extensible**: vous pouvez modifier la page de n'importe quel item, insérer des pages arbitraires (même sans rapport avec un item), contrôler le placement des boutons, et rendre des pages basées sur votre propre texture. Chaque classe publique de l'API (sous-classes de `Page`, `ButtonLayout`, `BakedText`, `PageRef`, `CraftRenderer`, `Manual` lui-même...) est une **dataclass** Python.
+Le plugin `ingame_manual` construit un manual en jeu à partir des items de votre `Mem.definitions` : une page d'introduction, un navigateur de catégories, une page par catégorie, et une page par item avec ses recipes et ses wiki buttons (les boutons par item définis avec `Item(wiki_buttons=...)`). Une page d'item affiche aussi les effets que l'item donne quand il est consommé, un lien vers le récipient qu'il laisse (`remainder`) et un lien vers les graines qui poussent et le font tomber. Vous pouvez modifier la page de n'importe quel item, insérer des pages sans rapport avec les items, contrôler le placement des boutons, et rendre des pages appuyées sur votre propre texture. Chaque classe publique de l'API (les sous-classes de `Page`, `ButtonLayout`, `BakedText`, `PageRef`, `CraftRenderer`, `Manual` lui-même) est une dataclass Python.
 
-**Activez-le en remplaçant `stewbeet.plugins.ingame_manual` par `stewbeet.plugins.ingame_manual`** dans votre pipeline.
+L'entrée du manual dans le pipeline est `stewbeet.plugins.ingame_manual`, placée après `custom_recipes` et avant les plugins du datapack.
 
-**Fichier d'exemple** : [extensive/src/definitions/manual_customization.py](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/src/definitions/manual_customization.py) <br>  
-**Code source** : [stewbeet/plugins/ingame_manual/](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/ingame_manual/) <br>  
-**Requis** : Framework StewBeet (`from stewbeet import *`)  
-**Position** : L'étape `stewbeet.plugins.ingame_manual` de votre pipeline `beet.yml`, après `custom_recipes` et avant les plugins de datapack  
-**Personnalisation** : Appelez `get_manual()` dans votre `setup_definitions` (après la définition des items) pour enregistrer pages et hooks  
-**Sortie** : Orienté dialogue: génère un dialogue Minecraft par page, accessible via le menu **quick actions** natif (et l'item `manual` en mode 1)
+- Fichier d'exemple : [extensive/src/definitions/manual_customization.py](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/src/definitions/manual_customization.py)
+- Code source : [stewbeet/plugins/ingame_manual/](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/ingame_manual/)
 
-- Générer automatiquement les pages de recipes de chaque item (craft, cuisson, forge, découpe, minage, et custom recipe types)
-- Insérer/remplacer/réordonner des pages arbitraires via une API Python claire
-- Enregistrer des fonctions exécutées pendant la création du manuel (hooks `Phase`)
-- Fournir des pages basées sur une custom texture, avec le texte intégré dans l'image elle-même
-- Remplacer la texture de fond du livre ou du bouton home sur une page spécifique (`book_texture`, `home_texture`)
-- Lier des pages entre elles : afficher le bouton de recipe d'un autre item, ou un bouton de lien vers sa page (`extra_buttons`)
-- Décider où apparaissent les boutons wiki et comment gérer le dépassement (`ButtonLayout`)
-- Les liens différés `PageRef` gardent la navigation correcte après toute insertion/réorganisation
+Ce que fait le plugin :
 
-## Présentation des fonctionnalités
+- Génère une page de recipe pour chaque item (crafting, smelting, smithing, stonecutting, mining, et types de recipes custom).
+- Insère, remplace et réordonne des pages par une API Python.
+- Lance vos functions à des étapes fixes de la création du manual (hooks `Phase`).
+- Remplace le fond du livre ou la texture du bouton home sur une seule page (`book_texture`, `home_texture`).
+- Relie les pages entre elles : le bouton de recipe d'un autre item, ou un bouton de lien vers sa page (`extra_buttons`).
+- Garde la navigation correcte après tout insert ou réordonnancement, grâce aux liens `PageRef` différés.
+
+Personnalisez-le en appelant `get_manual()` dans votre `setup_definitions`, après la définition des items, pour enregistrer des pages et des hooks. La sortie est un dialog Minecraft par page, accessible par le menu vanilla des quick actions, et par l'item `manual` quand `use_dialog` vaut `1`.
+
+## Features showcase
 
 <video src="/ingame_manual.mp4" poster="/ingame_manual_poster.jpg" controls loop muted playsinline preload="auto" style="width: min(480px, 100%)">
 </video>
@@ -30,27 +28,27 @@
 
 À définir dans `beet.yml` sous `meta.stewbeet.manual` :
 
-| Clé                 | Type            | Défaut              | Description                                                                  |
-| ------------------- | --------------- | ------------------- | ---------------------------------------------------------------------------- |
-| `cache_path`        | `str`           | - | *Déprécié.* Remplacé par `iso_renders_path` au niveau racine ; les fonts et textures générées vivent maintenant dans `.beet_cache` |
-| `use_dialog`        | `int`           | `1`                 | `1` = dialogue + item `manual` qui l'ouvre · `2` = dialogue seul (sans item) |
-| `high_resolution`   | `bool`          | `true`              | Icônes d'items haute résolution (256px) dans les recipes                    |
-| `cache_assets`      | `bool`          | `true`              | Évite de re-rendre/re-télécharger les textures d'items déjà présentes        |
-| `max_items_per_row` | `int`           | `5`                 | Largeur de la grille de catégorie (max 6)                                    |
-| `max_rows_per_page` | `int`           | `5`                 | Hauteur de la grille de catégorie (max 7)                                    |
-| `name`              | `str`           | `"{projet} Manual"` | Titre du manuel (max 32 caractères)                                          |
-| `first_page_text`   | `TextComponent` | `""`                | Texte de la page d'introduction                                              |
-| `manual_overrides`  | `str`           | `""`                | Dossier de textures remplaçant les défauts fournis                           |
-| `showcase_image`    | `int`           | `3`                 | `0` off · `1` items du manuel · `2` tous les items · `3` les deux            |
-| `json_dump_path`    | `str`           | `""`                | Export de debug optionnel des pages rendues                                  |
+| Clé                 | Type            | Défaut               | Description                                                              |
+| ------------------- | --------------- | -------------------- | ------------------------------------------------------------------------ |
+| `use_dialog`        | `int`           | `1`                  | `1` = dialog + item `manual` qui l'ouvre, `2` = dialog seul (pas d'item). Toute autre valeur devient `1` |
+| `high_resolution`   | `bool`          | `true`               | Icônes d'items en haute résolution (256px) dans les recipes              |
+| `cache_assets`      | `bool`          | `true`               | Évite de refaire le rendu et de retélécharger les textures d'items qui existent déjà |
+| `max_items_per_row` | `int`           | `5`                  | Largeur de la grille de catégorie (max 6)                                |
+| `max_rows_per_page` | `int`           | `5`                  | Hauteur de la grille de catégorie (max 7)                                |
+| `name`              | `str`           | `"{project} Manual"` | Titre du manual, moins de 32 caractères                                  |
+| `first_page_text`   | `TextComponent` | `""`                 | Texte de la page d'intro                                                 |
+| `manual_overrides`  | `str`           | `""`                 | Dossier de textures qui remplacent les défauts fournis                   |
+| `showcase_image`    | `int`           | `3`                  | `0` désactivé, `1` items du manual, `2` tous les items, `3` les deux     |
+| `debug_mode`        | `bool`          | `false`              | Dessine une grille en surimpression pour déboguer la mise en page        |
+| `json_dump_path`    | `str`           | `""`                 | Dump de débogage optionnel des pages rendues                             |
 
-> **Note** : `use_dialog: 0` et `cache_pages` de la v1 sont supprimés. Le manuel est toujours basé sur les dialogues.
+Les rendus d'items vivent dans le `iso_renders_path` de premier niveau, et les fonts et textures générées dans `.beet_cache`.
 
 ---
 
 ## API d'extension
 
-Récupérez le manuel actif après la définition de vos items :
+Récupérez le manual en cours une fois vos items définis :
 
 ```python
 from stewbeet import get_manual, Phase, CustomPage, TexturePage, BakedText, ButtonLayout
@@ -58,89 +56,93 @@ from stewbeet import get_manual, Phase, CustomPage, TexturePage, BakedText, Butt
 manual = get_manual()
 ```
 
-### Hooks & Phases
-Enregistrez des fonctions exécutées pendant la création du manuel. C'est le mécanisme d'extension principal, car les pages par défaut n'existent que *pendant* la génération.
+### Hooks et phases
+
+Enregistrez des functions à lancer pendant la création du manual. C'est le principal mécanisme d'extension, car les pages par défaut n'existent que pendant le build.
 
 ```python
 @manual.on(Phase.PREPARED)
 def tweak(m):
     page = m.get_page_for_item("steel_ingot")
     if page is not None:
-        page.transformers.append(lambda content, _m: [*content, {"text": "\nQuel métal !", "color": "dark_gray"}])
+        page.transformers.append(lambda content, _m: [*content, {"text": "\nGreat metal!", "color": "dark_gray"}])
 ```
 
-| Phase         | Se déclenche après          | Usage typique                                            |
-| ------------- | --------------------------- | -------------------------------------------------------- |
-| `DISCOVERED`  | pages par défaut créées     | insérer/réordonner des pages                             |
-| `PREPARED`    | données par page collectées | éditer les pages d'items, définir les layouts de boutons |
-| `ORDERED`     | ordre final calculé         | réorganisation de dernière minute                        |
-| `RENDERED`    | pages rendues               | ajouter des transformers                                 |
-| `RESOLVED`    | liens résolus               | inspecter les liens finaux                               |
-| `BEFORE_EMIT` | juste avant la sortie       | ajustements finaux                                       |
+| Phase         | Se déclenche après      | Usage typique                       |
+| ------------- | ----------------------- | ----------------------------------- |
+| `DISCOVERED`  | création des pages par défaut | insérer et réordonner des pages |
+| `PREPARED`    | collecte des données par page | modifier les pages d'items, définir les button layouts |
+| `ORDERED`     | calcul de l'ordre final | réordonnancement de dernière minute |
+| `RENDERED`    | rendu des pages         | ajouter des transformers            |
+| `RESOLVED`    | résolution des liens    | inspecter les liens finaux          |
+| `BEFORE_EMIT` | juste avant la sortie   | derniers ajustements                |
 
-`manual.on_item_page(fn)` exécute `fn(page, manual)` sur chaque page d'item pendant la préparation.
+`manual.on_item_page(fn)` lance `fn(page, manual)` sur chaque page d'item pendant la préparation.
 
-### Custom pages & texture
-`insert_page` accepte `before=`/`after=` (un anchor) ou `index=`. Les anchors par défaut incluent `"intro"`, `"category_browser"`, `"category:<Titre>"` et `"item:<id>"`.
+### Pages custom et pages de texture
+
+`insert_page` accepte `before=` ou `after=` (une ancre), ou `index=`. Les ancres par défaut sont `"intro"`, `"category_browser"`, `"category:<Title>"` et `"item:<id>"`. Un titre de catégorie est le nom de la catégorie en title case, suivi de ` #2`, ` #3` et ainsi de suite quand ses items remplissent plusieurs pages (`"category:Materials #2"`).
 
 ```python
-# Une page libre (n'importe quels components de texte)
+# A free-form page (any text components)
 manual.insert_page(CustomPage(
-    anchor="welcome", title="Bienvenue",
-    body=[{"text": "Bonjour depuis une custom page !", "color": "black"}],
+    anchor="welcome", title="Welcome",
+    body=[{"text": "Hello from a custom page!", "color": "black"}],
 ), after="intro")
 
-# Une page dont le corps est une texture, avec le texte intégré dans l'image elle-même
+# A page whose body is a texture, with text baked into the image itself
 from PIL import Image
 manual.insert_page(TexturePage(
-    anchor="credits", title="Crédits",
-    background=Image.new("RGBA", (256, 128), (30, 30, 46, 255)),  # ou un chemin PNG
-    baked_texts=[BakedText(text="Fait avec StewBeet", xy=(128, 40), align="center", color=(255, 255, 255, 255))],
-    body=[{"text": "\n[le texte ci-dessus fait partie de l'image]", "color": "black"}],
+    anchor="credits", title="Credits",
+    background=Image.new("RGBA", (256, 128), (30, 30, 46, 255)),  # or a PNG path
+    baked_texts=[BakedText(text="Made with StewBeet", xy=(128, 40), align="center", color=(255, 255, 255, 255))],
+    body=[{"text": "\n[the text above is part of the image]", "color": "black"}],
     glyph_height=64,
-    left_padding=10,  # décale la texture vers la droite (voir ci-dessous)
+    left_padding=10,  # nudge the texture to the right (see below)
 ), after="welcome")
 ```
 
 Attributs de placement de `TexturePage` :
 
-| Attribut                        | Description                                                                          |
-| ------------------------------- | ------------------------------------------------------------------------------------ |
-| `glyph_ascent` / `glyph_height` | Placement bitmap de la texture de page : taille et **décalage Y**                    |
-| `left_padding` / `right_padding`| Pixels invisibles émis avant/après le glyphe de la texture (**décalage X**)          |
+| Attribut                        | Description                                                                 |
+| ------------------------------- | --------------------------------------------------------------------------- |
+| `glyph_ascent` / `glyph_height` | Placement bitmap de la texture de la page : taille et décalage en Y (défauts 1 et 131) |
+| `left_padding` / `right_padding` | Pixels invisibles émis avant et après le glyphe de la texture, le décalage en X |
 
-Le dialogue centre la ligne : `left_padding` décale donc la texture vers la **droite** et `right_padding` vers la **gauche**, chacun de la moitié du padding. Gardez largeur de texture + paddings dans le corps du dialogue (140px), sinon la ligne passe à la ligne.
+Le dialog centre la ligne, donc `left_padding` décale la texture vers la droite et `right_padding` vers la gauche, chacun de la moitié du padding. Gardez la largeur de la texture plus les paddings dans le corps du dialog (140px), sinon la ligne passe à la ligne suivante.
 
-### Fond de livre & bouton home par page
-Chaque page (toute sous-classe de `Page`) accepte `book_texture` pour remplacer le fond de livre (`book.png`) et `home_texture` pour remplacer le bouton home (`home.png`) sur cette page uniquement: ex. un livre fermé sur la première page. Les deux prennent une image PIL prête, ou un chemin résolu d'abord comme chemin du projet, puis dans le dossier des templates (un nom de fichier de votre dossier `manual_overrides` fonctionne donc). `template_path(filename)` retourne le chemin effectif d'un asset de template fourni/surchargé.
+### Fond de livre et bouton home par page
+
+Chaque page (toute sous-classe de `Page`) accepte `book_texture` pour remplacer le fond du livre (`book.png`) et `home_texture` pour remplacer le bouton home (`home.png`) sur cette page seulement, par exemple un livre fermé sur la première page. Les deux prennent une image PIL prête, ou un chemin résolu d'abord comme chemin du projet, puis par rapport au dossier des templates, donc un nom de fichier de votre dossier `manual_overrides` fonctionne. `template_path(filename)` renvoie le chemin effectif d'un asset de template fourni ou remplacé.
 
 ```python
 from stewbeet import CustomPage, Mem, Phase, get_manual
 
 manual = get_manual()
 
-# Tiré du template extensive : une page d'accueil avec son propre fond de livre et sa propre flèche home
+# From the extensive template: a welcome page with its own book background and home arrow
 textures_folder: str = Mem.ctx.meta["stewbeet"]["textures_folder"]
 manual.insert_page(
     CustomPage(
-        anchor="welcome", title="Bienvenue",
-        body=[{"text": "Bienvenue dans le Template Extensive !", "color": "black", "bold": True}],
+        anchor="welcome", title="Welcome",
+        body=[{"text": "Welcome to the Extensive Template!", "color": "black", "bold": True}],
         book_texture=f"{textures_folder}/manual/a_custom_book_page.png",
         home_texture=f"{textures_folder}/manual/home_for_welcome_page.png",
     ),
     after="intro",
 )
 
-# Les pages existantes fonctionnent aussi, ex. un livre fermé depuis votre dossier manual_overrides sur la page d'intro
+# Existing pages work too, e.g. a closed book from your manual_overrides folder on the intro page
 @manual.on(Phase.DISCOVERED)
 def closed_book_intro(m):
-    m.get_page("intro").book_texture = "closed_book.png"  # résolu depuis manual_overrides
+    m.get_page("intro").book_texture = "closed_book.png"  # resolved from manual_overrides
 ```
 
-> **Notes** : gardez une `home_texture` proche des proportions 16x16 par défaut, car l'avance du glyphe dépend du contenu de l'image (une flèche plus large décale les boutons précédent/suivant sur cette page). La **première page n'affiche jamais le bouton home**: elle *est* la page d'accueil (un espaceur invisible conserve la mise en page des boutons précédent/suivant), et toute autre page peut aussi le masquer avec `home_button=False`.
+Gardez une `home_texture` proche des proportions 16x16 de celle par défaut, puisque l'avance du glyphe suit le contenu de l'image : une flèche plus large décale les boutons précédent et suivant sur cette page. La première page n'affiche jamais le bouton home, puisque c'est la page d'accueil (un espaceur invisible garde la disposition des boutons précédent et suivant inchangée). Toute autre page peut le masquer avec `home_button=False`.
 
 ### Placement des boutons
-Contrôlez où les boutons wiki sont rendus, par page ou comme défaut global du manuel (`ManualConfig.button_layout`) :
+
+Contrôlez où les wiki buttons sont rendus, par page ou comme défaut pour tout le manual (`manual.config.button_layout`, 6 colonnes et 42 boutons tant que vous ne le remplacez pas) :
 
 ```python
 manual.on_item_page(lambda page, _m: setattr(
@@ -148,65 +150,71 @@ manual.on_item_page(lambda page, _m: setattr(
 ))
 ```
 
-| Champ           | Description                                              |
-| --------------- | -------------------------------------------------------- |
-| `columns`       | Boutons par ligne                                        |
-| `max_buttons`   | Plafond strict (dépassement supprimé par priorité)       |
-| `position`      | `"after_recipe"` · `"top"` · `"bottom"` · ou un callable |
-| `order`         | Clé de tri, ex. `lambda b: -b.priority`                  |
-| `include`       | Prédicat `(button) -> bool` pour filtrer                 |
-| `extra_buttons` | `WikiButtonRender` supplémentaires à ajouter             |
+| Champ           | Description                                                              |
+| --------------- | ------------------------------------------------------------------------ |
+| `columns`       | Boutons par ligne (défaut 5)                                             |
+| `max_buttons`   | Plafond strict, le surplus est écarté par priorité (défaut 20)           |
+| `position`      | `"after_recipe"` (défaut), `"top"`, `"bottom"`, ou un callable           |
+| `order`         | Clé de tri, ex : `lambda b: -b.priority`                                 |
+| `include`       | Prédicat `(button) -> bool` pour filtrer                                 |
+| `extra_buttons` | `WikiButtonRender` supplémentaires à ajouter                             |
 
 ### Gestion des pages
-| Méthode                                             | Description              |
-| --------------------------------------------------- | ------------------------ |
-| `manual.add_page(page)`                             | Ajoute une page à la fin |
-| `manual.insert_page(page, *, before/after/index)`   | Insère à une position    |
-| `manual.replace_page(anchor, page)`                 | Remplace une page        |
-| `manual.move_page(anchor, *, before/after/index)`   | Déplace une page         |
-| `manual.remove_page(anchor)`                        | Supprime une page        |
-| `manual.get_page(anchor)` / `get_page_for_item(id)` | Récupère une page        |
 
-> Les opérations de page appelées depuis le setup sont différées et rejouées une fois les pages par défaut créées, vous pouvez donc référencer directement des anchors par défaut comme `"intro"`.
+| Méthode                                             | Description          |
+| --------------------------------------------------- | -------------------- |
+| `manual.add_page(page)`                             | Ajoute une page à la fin |
+| `manual.insert_page(page, *, before/after/index)`   | Insère à une position |
+| `manual.replace_page(anchor, page)`                 | Remplace une page    |
+| `manual.move_page(anchor, *, before/after/index)`   | Déplace une page     |
+| `manual.remove_page(anchor)`                        | Retire une page      |
+| `manual.get_page(anchor)` / `get_page_for_item(id)` | Retrouve une page    |
+
+Les opérations de page appelées depuis le setup sont différées et rejouées une fois les pages par défaut créées, donc vous pouvez référencer directement des ancres par défaut comme `"intro"`.
 
 ---
 
-## Plus d'exemples
+## Autres exemples
 
 ### Insérer une page de lore entre deux catégories
+
 ```python
 manual.insert_page(CustomPage(
     anchor="lore", title="Lore",
-    body=[{"text": "Il y a longtemps, le monde fonctionnait à l'acier...", "color": "black"}],
+    body=[{"text": "Long ago, the world ran on steel...", "color": "black"}],
 ), after="category:Materials")
 ```
 
 ### Remplacer entièrement la page d'un item
+
 ```python
 @manual.on(Phase.DISCOVERED)
-def custom_wrench_page(m):
-    m.replace_page("item:wrench", CustomPage(
-        anchor="item:wrench", item_id="wrench", title="Clé",
-        body=[{"text": "Une page écrite à la main pour la clé.", "color": "black"}],
+def custom_infuser_page(m):
+    m.replace_page("item:starlight_infuser", CustomPage(
+        anchor="item:starlight_infuser", item_id="starlight_infuser", title="Starlight Infuser",
+        body=[{"text": "A hand-written page for the Starlight Infuser.", "color": "black"}],
     ))
 ```
 
 ### Ajouter un pied de page à chaque page
+
 ```python
 @manual.on(Phase.RENDERED)
 def add_footer(m):
     for page in m.pages:
-        page.transformers.append(lambda content, _m: [*content, {"text": "\n- MonPack", "color": "dark_gray"}])
+        page.transformers.append(lambda content, _m: [*content, {"text": "\n- Stardust Fragment", "color": "dark_gray"}])
 ```
 
-### Réordonner les pages (déplacer une catégorie juste après le navigateur)
+### Réordonner les pages (mettre une catégorie juste après le navigateur)
+
 ```python
 @manual.on(Phase.DISCOVERED)
 def reorder(m):
     m.move_page("category:Energy", after="category_browser")
 ```
 
-### Filtrer & trier les boutons wiki d'un item
+### Filtrer et trier les wiki buttons d'un item
+
 ```python
 @manual.on(Phase.PREPARED)
 def tidy_buttons(m):
@@ -214,13 +222,14 @@ def tidy_buttons(m):
     if page is not None:
         page.button_layout = ButtonLayout(
             columns=5,
-            include=lambda b: not b.blue_craft,   # garder uniquement les recipes qui produisent un résultat
-            order=lambda b: -b.priority,          # priorité la plus haute en premier
+            include=lambda b: not b.blue_craft,   # keep only recipes that produce a result
+            order=lambda b: -b.priority,          # highest priority first
         )
 ```
 
 ### Choisir la recipe principale d'une page d'item
-Par défaut, la recipe principale est la façon de miner l'item quand il tombe d'un minerai. Définissez `ItemPage.main_craft` pour afficher un autre craft à la place ; les autres restent disponibles en boutons.
+
+Par défaut, la recipe principale est la façon dont l'item est miné, quand il tombe d'un ore. Définissez `ItemPage.main_craft` pour en afficher une autre à la place. Les autres restent disponibles en boutons.
 
 ```python
 @manual.on(Phase.PREPARED)
@@ -230,49 +239,54 @@ def craft_first(m):
         page.main_craft = next(c for c in page.crafts if c["type"].startswith("crafting"))
 ```
 
-### Lier deux pages d'items entre elles (boutons de recipe inter-pages)
-`ItemPage.extra_buttons` contient les boutons wiki ajoutés par le développeur, placés après les boutons automatiques. Construisez-les avec :
-- `manual.recipes.button_for_item(item_id, index=0)`: le **bouton de recipe** d'un autre item : le survol montre sa recipe, le clic ouvre sa page (`index` choisit lequel de ses crafts ; retourne `None` avec un avertissement si le craft n'existe pas) ;
-- `manual.recipes.link_button(item_id, hover=None)`: un simple **lien de page** : l'icône de l'item dans une case wiki, le clic ouvre sa page (`hover` vaut par défaut le nom de l'item plus une indication de clic).
+### Relier deux pages d'items liés
+
+`ItemPage.extra_buttons` contient les wiki buttons ajoutés par le développeur, ajoutés après les automatiques. Construisez-les avec :
+
+- `manual.recipes.button_for_item(item_id, index=0)` : le bouton de recipe d'un autre item. Au survol il affiche cette recipe et un clic ouvre la page de l'item. `index` choisit lequel de ses crafts, et l'appel renvoie `None` avec un avertissement s'il n'y a pas un tel craft.
+- `manual.recipes.link_button(item_id, hover=None)` : un lien de page, l'icône de l'item dans un slot de wiki qui ouvre sa page au clic. `hover` vaut par défaut le nom de l'item plus une indication de clic.
 
 ```python
-# Exemple tiré de Stardust Fragment : le Starlight Infuser invoque le boss Stardust Pillar,
-# donc chaque page pointe vers l'autre.
+# Example from Stardust Fragment: the Starlight Infuser summons the Stardust Pillar boss,
+# so each page points to the other.
 @manual.on(Phase.PREPARED)
 def link_pillar_and_infuser(m):
     pillar = m.get_page_for_item("stardust_pillar")
     infuser = m.get_page_for_item("starlight_infuser")
     if pillar is not None and infuser is not None:
-        # Afficher la recipe du Starlight Infuser sur la page du Stardust Pillar (clic -> sa page)
+        # Show the Starlight Infuser's recipe on the Stardust Pillar page (click -> its page)
         button = m.recipes.button_for_item("starlight_infuser")
         if button is not None:
             pillar.extra_buttons.append(button)
-        # Et le lien retour : un bouton sur la page du Starlight Infuser ouvrant la page du Stardust Pillar
+        # And link back: a button on the Starlight Infuser page opening the Stardust Pillar page
         infuser.extra_buttons.append(m.recipes.link_button("stardust_pillar"))
 ```
 
-### Insérer une page texture depuis un fichier PNG (au lieu d'une image générée)
+### Insérer une page de texture depuis un fichier PNG
+
 ```python
 manual.insert_page(TexturePage(
-    anchor="tutorial", title="Tutoriel",
-    background="assets/manual/tutorial_bg.png",   # votre propre texture
-    baked_texts=[BakedText(text="Étape 1 : miner le minerai", xy=(20, 40))],
+    anchor="tutorial", title="Tutorial",
+    background="assets/manual/tutorial_bg.png",   # your own texture
+    baked_texts=[BakedText(text="Step 1: mine ore", xy=(20, 40))],
 ), before="category:Materials")
 ```
 
-### Ajouter une page seulement si une condition est remplie
+### Ajouter une page seulement quand une condition est remplie
+
 ```python
 @manual.on(Phase.DISCOVERED)
-def maybe_changelog(m):
-    if m.get_page_for_item("prototype") is not None:
-        m.insert_page(CustomPage(anchor="changelog", title="Changelog",
-            body=[{"text": "Le prototype est activé dans ce build.", "color": "red"}]), index=1)
+def maybe_boss_notes(m):
+    if m.get_page_for_item("stardust_pillar") is not None:
+        m.insert_page(CustomPage(anchor="boss_notes", title="Boss notes",
+            body=[{"text": "The Stardust Pillar is enabled in this build.", "color": "red"}]), index=1)
 ```
 
 ---
 
-## Custom recipe types
-Chaque type de recipe est rendu par un `CraftRenderer` enregistré dans un registre global : ajouter un type = une classe + un appel à `register_craft_renderer(...)`. Les types intégrés vivent un par fichier sous `recipes/types/` (`shaped`, `furnace`, `smithing`, `linear`, `awakened_forge`). Comme toutes les classes de l'API du manuel, les renderers sont des dataclasses: décorez votre sous-classe avec `@dataclass` pour suivre le style des types intégrés.
+## Types de recipes custom
+
+Un `CraftRenderer` dessine chaque type de recipe. Les renderers vivent dans un registre global, donc un nouveau type tient en une classe et un appel à `register_craft_renderer(...)`. Les types intégrés vivent un par fichier sous `recipes/types/` (`shaped`, `furnace`, `smithing`, `linear`, `awakened_forge`). Comme toute classe de l'API du manual, les renderers sont des dataclasses : décorez votre sous-classe avec `@dataclass` pour être cohérent avec les types intégrés.
 
 ```python
 from dataclasses import dataclass
@@ -282,45 +296,25 @@ from stewbeet import CraftRenderer, register_craft_renderer
 
 @dataclass
 class MyMachineRenderer(CraftRenderer):
-    types: ClassVar[tuple[str, ...]] = ("myplugin_machining",)  # le(s) "type" de craft géré(s)
-    name: ClassVar[str] = "Mon Usinage"                         # titre du survol ("" = pas de titre, comme le craft vanilla)
+    types: ClassVar[tuple[str, ...]] = ("myplugin_machining",)  # the craft "type" string(s) this handles
+    name: ClassVar[str] = "My Machining"                        # hover title ("" = no title, like vanilla crafting)
 
     def render_body(self, r, craft, name, content, result_component, page_font, use_dialog, add_change_page_to_ingr):
-        # Ajoutez votre mise en page à `content`. Construisez les cases avec r.item_component(...)
-        # et r.append_or_invisible(content, component, ligne). `result_component` est déjà prêt.
+        # Append your page layout to `content`. Build item cells with r.item_component(...)
+        # and r.append_or_invisible(content, component, row). `result_component` is prebuilt.
         ...
 
-    def append_hover(self, r, craft, hover):   # lignes de survol du bouton wiki (défaut : un seul "- x1 <ingrédient>")
+    def append_hover(self, r, craft, hover):   # wiki-button hover lines (default: a single "- x1 <ingredient>")
         ...
 
 register_craft_renderer(MyMachineRenderer())
 ```
 
-Seuls `types` et `render_body` sont obligatoires ; `static_glyph` (glyphe de template haute résolution), `append_hover` et `build_image` (PNG basse résolution) ont tous des valeurs par défaut. `r` est le `RecipeRenderer`, exposant `r.config`, `r.glyphs`, `r.images`, `r.item_component(...)` et `r.append_or_invisible(...)`. Appelez `register_craft_renderer(...)` une fois (ex. dans votre setup) ; un craft dont le type n'a pas de renderer enregistré est ignoré.
+Seuls `types` et `render_body` sont requis. `static_glyph` (glyphe de template en haute résolution), `append_hover` et `build_image` (PNG en basse résolution) ont tous des défauts. `r` est le `RecipeRenderer`, qui expose `r.config`, `r.glyphs`, `r.images`, `r.item_component(...)` et `r.append_or_invisible(...)`. Appelez `register_craft_renderer(...)` une seule fois, dans votre setup. Un craft dont le type n'a pas de renderer enregistré reçoit un corps de page vide.
 
----
+## Pour continuer
 
-## Migration depuis la v1
-- Changez l'entrée du pipeline en `stewbeet.plugins.ingame_manual`.
-- `WikiButton` et `set_manual_components(...)` continuent de fonctionner sans changement.
-- Retirez la clé `cache_pages` et utilisez `use_dialog: 1` ou `2` (le mode `0` n'existe plus).
-- Le storage `universal_manual` n'est plus enregistré ; le manuel s'ouvre depuis le menu quick actions natif.
-
-## Glossaire
-
-| Terme | Signification |
-|-------|---------------|
-| **Manual** | L'objet orchestrateur qui possède la liste ordonnée des pages, le registre de glyphes/fonts, le constructeur d'images, le rendu des recipes et les hooks développeur. Récupéré avec `get_manual()`. |
-| **Page** | Une unité autonome rendue en components de texte Minecraft. Sous-classes : `IntroPage`, `CategoryBrowserPage`, `CategoryPage`, `ItemPage`, ainsi que `CustomPage`, `TexturePage` et `RawPage` destinées aux développeurs. |
-| **PageRef** | Un lien *différé* vers une page (par `item`, `anchor` ou `page` littéral). Les liens sont résolus en numéros de page concrets **après** l'ordonnancement, donc insérer/réordonner des pages ne casse jamais les liens inter-pages. |
-| **Phase hook** | Une fonction que vous enregistrez pour s'exécuter pendant la création du manuel (`manual.on(Phase.X)`), à une étape précise du pipeline de génération. |
-| **ButtonLayout** | Contrôle *où* et *quels* boutons wiki apparaissent sur une page (colonnes, maximum, tri, filtrage, position). |
-| **BakedText** | Un texte dessiné directement sur l'image de fond d'une `TexturePage` avec PIL. |
-| **WikiButton** | Texte d'information par item affiché comme un bouton dans le manuel (inchangé depuis v1, défini via `Item(wiki_buttons=...)`). |
-
-## Prochaines étapes
-
-- [Définir items et blocs](../1_definitions_setup/fr.md): les items dont chaque page est générée.
-- [Recipes](../plugins/custom_recipes.md): d'où viennent les grilles de craft dessinées.
-- [Tous les plugins](../plugins/README.md): le reste du pipeline.
+- [Definitions](../1_definitions_setup/fr.md) : les items dont chaque page de manual est générée.
+- [Recipes](../plugins/custom_recipes.fr.md) : d'où viennent les grilles de crafting dessinées.
+- [Référence de beet.yml](../3_beet_config/fr.md#manual) : chaque option `manual` à côté des autres.
 

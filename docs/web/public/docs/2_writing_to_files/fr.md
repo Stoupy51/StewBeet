@@ -1,11 +1,10 @@
 
-# Écrire fonctions et fichiers
+# Écrire des functions et des fichiers
 
-Quatre façons d'ajouter vos propres fonctions, advancements et tags au pack : des fichiers statiques chargés par `beet.yml`, l'API native de beet, les fonctions helper de StewBeet, et Bolt. La plupart des packs utilisent les helpers pour leur logique et les fichiers statiques pour le reste.
-
+Quatre façons d'ajouter vos propres functions, advancements et tags au pack : des fichiers statiques chargés par `beet.yml`, l'API native de beet, les fonctions d'aide de StewBeet, et Bolt.
 Votre code s'exécute dans un plugin utilisateur, après la mise en place des définitions et avant la finalisation.
 
-> **Écrivez tout cela avec les commandes vérifiées à la frappe.** Chaque approche ci-dessous finit par des commandes dans une chaîne Python, dans un module `.bolt`, ou les deux. L'[extension StewBeet pour VSCode](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) les lit pour ce qu'elles sont : complétion, erreurs, ctrl+clic, et un lien de chaque bloc vers la fonction que votre build en a tirée. Voir [Support éditeur](../8_editor/fr.md).
+> Chaque approche ci-dessous finit avec des commandes dans une chaîne Python, dans un module `.bolt`, ou les deux. L'[extension StewBeet pour VSCode](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) les lit pour ce qu'elles sont : complétion, erreurs, ctrl+clic, et un lien de chaque bloc vers la function que votre build en a tirée. Voir [Éditeur VS Code](../8_editor/fr.md).
 
 <video src="/vscode_extension.mp4" controls loop muted playsinline preload="auto">
 </video>
@@ -20,89 +19,92 @@ Des fichiers complets à lire en parallèle de cette page :
 
 | Approche | Idéale pour | Effort |
 |----------|-------------|--------|
-| **Fichiers statiques** (`beet.yml`) | Fonctions et JSON écrits à la main qui ne changent pas | Le plus faible |
-| **API native beet** | Types de fichiers inhabituels, contrôle total sur chaque objet | Le plus élevé |
-| **Helpers StewBeet** (recommandé) | Logique générée depuis vos définitions, fonctions de load et d'horloge | Faible |
-| **Bolt** | Logique riche en commandes, boucles et arithmétique autour des commandes | Moyen, un second langage |
+| Fichiers statiques (`beet.yml`) | Des functions et du JSON écrits à la main qui ne changent jamais | Le plus faible |
+| API native de beet | Des types de fichiers inhabituels, un contrôle total sur chaque objet | Le plus élevé |
+| Helpers StewBeet (recommandé) | La logique générée depuis vos définitions, les functions de load et d'horloge | Faible |
+| Bolt | Une logique riche en commandes, des boucles et de l'arithmétique autour des commandes | Moyen, un second langage |
 
-### Approche 1 : Chargement de fichiers statiques (beet.yml)
+### Approche 1 : chargement de fichiers statiques (beet.yml)
 
-Beet charge des fichiers écrits à la main depuis un dossier **avant l'exécution de tout plugin**.
+Beet charge les fichiers écrits à la main depuis un dossier avant l'exécution de tout plugin.
 
 ```yaml
-# Dans beet.yml
+# In beet.yml
 data_pack:
     name: "datapack"
-    load: ["src"]  # Charge tous les fichiers .mcfunction et .json depuis src/
+    load: ["src"]  # Loads all .mcfunction and .json files from src/
 
 resource_pack:
     name: resource_pack
-    load: ["src"]  # Charge tous les fichiers de textures, models et sons depuis src/
+    load: ["src"]  # Loads all texture, model, and sound files from src/
 ```
 
-**Comment ça marche :**
-- Placez les fichiers `.mcfunction` dans `src/data/<namespace>/function/`
-- Placez les fichiers `.json` dans `src/data/<namespace>/advancement/`, `src/data/<namespace>/recipe/`, etc.
-- Beet les charge automatiquement aux emplacements corrects du pack
-- Les fichiers sont chargés **avant** que le code des plugins ne s'exécute
+Fonctionnement :
 
-**Exemple de structure :**
-```
+- Placez les fichiers `.mcfunction` dans `src/data/<namespace>/function/`.
+- Placez les fichiers `.json` dans `src/data/<namespace>/advancement/`, `src/data/<namespace>/recipe/`, et ainsi de suite.
+- Beet les charge aux emplacements correspondants du pack.
+- Les fichiers sont chargés avant l'exécution de tout code de plugin.
+
+Un exemple de structure :
+
+```text
 src/
 ├── data/
-│   └── my_namespace/
+│   └── simplenergy/
 │       ├── function/
 │       │   ├── load.mcfunction
 │       │   └── tick.mcfunction
 │       ├── advancement/
-│       │   └── my_advancement.json
+│       │   └── first_machine.json
 │       └── recipe/
-│           └── my_recipe.json
+│           └── wrench.json
 └── assets/
-    └── my_namespace/
+    └── simplenergy/
         └── textures/
             └── item/
-                └── my_item.png
+                └── wrench.png
 ```
 
 | Dossier | Contient |
 |---------|----------|
-| `data/` | Tout le contenu du datapack : fonctions, advancements, recipes, tags |
+| `data/` | Tout le contenu du datapack : functions, advancements, recipes, tags |
 | `function/` | Les commandes Minecraft, en fichiers `.mcfunction` |
-| `advancement/` | Succès et déclencheurs techniques, en `.json` |
-| `recipe/` | Recipes de craft, de cuisson et autres, en `.json` |
-| `assets/` | Tout le contenu du resource pack : textures, models, sounds |
-| `textures/` | Images PNG des items, blocs et du reste |
+| `advancement/` | Les succès et les déclencheurs techniques, en `.json` |
+| `recipe/` | Les recipes de craft, de cuisson et autres, en `.json` |
+| `assets/` | Tout le contenu du resource pack : textures, models, sons |
+| `textures/` | Les images PNG des items, des blocks et du reste |
 
-**À utiliser quand :**
-- Vous avez des fichiers statiques qui n'ont pas besoin de génération dynamique
-- Vous organisez des commandes et données pré-écrites
-- Vous voulez une structure de fichiers simple et directe
+À utiliser quand :
 
-**À éviter quand :**
-- Vous devez générer du contenu basé sur des définitions
-- Vous devez combiner plusieurs sources de données
-- Vous avez besoin de génération conditionnelle de fichiers
+- Vous avez des fichiers statiques qui n'ont pas besoin d'être générés.
+- Vous organisez des commandes et des données déjà écrites.
+
+À éviter quand :
+
+- Vous devez générer du contenu depuis vos définitions.
+- Vous devez combiner plusieurs sources de données.
+- Vous devez générer des fichiers sous condition.
 
 ---
 
-### Approche 2 : API native Beet
+### Approche 2 : API native de beet
 
-L'API objet de beet, utilisée directement depuis un plugin.
+L'API d'objets de beet, utilisée directement depuis un plugin.
 
 ```python
 from beet import Context, Function, Advancement, FunctionTag
 from stouputils.typing import JsonDict
 
 def beet_default(ctx: Context):
-    # Écrire une fonction
-    ctx.data["my_namespace"].functions["my_folder/my_function"] = Function("""
-# Ceci est ma fonction
-say Bonjour le monde !
-scoreboard players add @a points 1
+    # Writing a function
+    ctx.data["simplenergy"].functions["machines/charge"] = Function("""
+# Charge every machine
+say Charging machines
+scoreboard players add @a energy 1
 """)
-    
-    # Écrire un advancement
+
+    # Writing an advancement
     advancement_data: JsonDict = {
         "criteria": {
             "requirement": {
@@ -110,114 +112,121 @@ scoreboard players add @a points 1
             }
         },
         "rewards": {
-            "function": "my_namespace:rewards/give_item"
+            "function": "simplenergy:rewards/first_machine"
         }
     }
-    ctx.data["my_namespace"].advancements["my_advancement"] = Advancement(advancement_data)
-    
-    # Écrire un tag de fonction
+    ctx.data["simplenergy"].advancements["first_machine"] = Advancement(advancement_data)
+
+    # Writing a function tag
     tag_data: JsonDict = {
         "values": [
-            "my_namespace:my_folder/my_function",
-            "my_namespace:another_function"
+            "simplenergy:machines/charge",
+            "simplenergy:machines/discharge"
         ]
     }
-    ctx.data["my_namespace"].function_tags["minecraft:load"] = FunctionTag(tag_data)
+    ctx.data.function_tags["minecraft:load"] = FunctionTag(tag_data)
 ```
 
-**À utiliser quand :**
-- Vous avez besoin d'un contrôle total sur les objets fichiers
-- Vous travaillez avec des structures imbriquées complexes
-- Vous voulez la sécurité de type avec le modèle d'objets de beet
+À utiliser quand :
 
-**À éviter quand :**
-- Vous voulez des écritures de fichiers simples et rapides
-- Vous gérez beaucoup de petites fonctions
-- Vous avez besoin de gestion automatique des chemins
+- Vous avez besoin d'un contrôle total sur les objets fichier.
+- Vous travaillez avec des structures imbriquées complexes.
+
+À éviter quand :
+
+- Vous voulez écrire des fichiers rapidement.
+- Vous écrivez beaucoup de petites functions.
+- Vous avez besoin d'une gestion automatique des chemins.
 
 ---
 
-### Approche 3 : Fonctions helper StewBeet (Recommandé)
+### Approche 3 : fonctions d'aide de StewBeet (recommandé)
 
-Les helpers StewBeet prennent un chemin et une chaîne, créent le fichier ou le complètent, et savent où vivent les fonctions de load, de tick et d'horloge.
+Les helpers StewBeet prennent un chemin et une chaîne, créent le fichier ou y ajoutent du contenu, et savent où se trouvent les functions de load, de tick et d'horloge.
 
 ```python
-from stewbeet import write_function, write_load_file, write_tick_file, Mem
+from beet import Context
+from stewbeet import write_function, write_load_file, write_tick_file, write_versioned_function
 
 def beet_default(ctx: Context):
     ns = ctx.project_id
-    
-    # Écrire une fonction simple
-    write_function(f"{ns}:my_folder/my_function", """
-# Ceci est ma fonction
-say Bonjour le monde !
-scoreboard players add @a points 1
+
+    # Write a simple function
+    write_function(f"{ns}:machines/charge", """
+# Charge every machine
+say Charging machines
+scoreboard players add @a energy 1
 """)
-    
-    # Ajouter au fichier de chargement (s'exécute au chargement du datapack : "your_namespace:v{version}/load/confirm_load")
+
+    # Append to the load file (runs when the datapack loads: "your_namespace:v{version}/load/confirm_load")
     write_load_file("""
-# Initialiser les scoreboards
-scoreboard objectives add points dummy
+# Initialize scoreboards
+scoreboard objectives add energy dummy
 scoreboard objectives add data dummy
 """)
-    
-    # Ajouter au fichier tick (s'exécute à chaque tick : "your_namespace:v{version}/tick")
-    write_tick_file("""
-# Vérifier les joueurs avec scores élevés
-execute as @a[scores={points=100..}] run function my_namespace:rewards/high_score
+
+    # Append to the tick file (runs every game tick: "your_namespace:v{version}/tick")
+    write_tick_file(f"""
+# Check for players with a full battery
+execute as @a[scores={{energy=100..}}] run function {ns}:machines/discharge
 """)
-    
-    # Écrire des fonctions versionnées (horloge automatique : "your_namespace:v{version}/second", etc.)
+
+    # Write a clock function ("your_namespace:v{version}/second")
     write_versioned_function("second", """
-# S'exécute toutes les secondes (20 ticks)
-execute as @a run title @s actionbar {"score":{"name":"@s","objective":"points"}}
+# Runs every second (20 ticks)
+execute as @a run title @s actionbar {"score":{"name":"@s","objective":"energy"}}
 """)
-    
+
     write_versioned_function("minute", """
-# S'exécute toutes les minutes (1200 ticks)
-say Une minute s'est écoulée !
+# Runs every minute (1200 ticks)
+say One minute has passed!
 """)
 ```
 
-**À utiliser quand :**
-- Vous voulez un code simple et lisible
-- Vous avez besoin de gestion automatique des chemins
-- Vous utilisez les conventions de StewBeet (fonctions versionnées, fichiers load/tick)
-- Vous voulez ajouter/préfixer du contenu facilement
+La function de tick appelle les functions d'horloge `tick_2`, `second`, `second_5` et `minute` quand vous les écrivez : un fichier écrit avec `write_versioned_function` sous l'un de ces noms s'exécute donc à cet intervalle.
 
-**À éviter quand :**
-- Vous avez besoin d'une organisation de fichiers non standard
-- Vous n'utilisez pas le framework StewBeet
+À utiliser quand :
+
+- Vous voulez un code lisible avec une gestion automatique des chemins.
+- Vous suivez les conventions de StewBeet (functions versionnées, fichiers load et tick).
+- Vous voulez ajouter du contenu à la fin ou au début.
+
+À éviter quand :
+
+- Vous avez besoin d'une organisation de fichiers non standard.
+- Le projet n'utilise pas StewBeet.
 
 ---
 
 ### Approche 4 : Bolt
 
-[Bolt](https://github.com/mcbeet/beet/tree/main/packages/bolt) est la couche de script de mecha, et elle inverse les trois approches précédentes.
-Au lieu que du Python écrive une chaîne qui contient des commandes, les commandes **sont** la syntaxe : dans un fichier `.bolt`, `item = 3` est du Python et `item modify entity @s weapon.mainhand set value ...` est une commande, à la même indentation, dans la même portée.
+[Bolt](https://github.com/mcbeet/beet/tree/main/packages/bolt) est la couche de scripting de mecha.
+Les trois approches ci-dessus mettent les commandes dans une chaîne Python. Dans un fichier `.bolt`, les commandes font partie de la syntaxe : `item = 3` est du Python et `item modify entity @s weapon.mainhand set value ...` est une commande, à la même indentation, dans la même portée.
 
-Tout s'exécute au build. Rien du Python n'atteint le datapack.
+Tout s'exécute au moment du build. Rien de Python n'arrive dans le datapack.
+
+Le template Basic liste déjà `bolt` dans `require` et `mecha` dans `pipeline`. Seul `entrypoint` est à ajouter :
 
 ```yaml
-# Dans beet.yml
+# In beet.yml
 require:
     - "stewbeet"
     - "bolt"
 
 pipeline:
-    - "mecha"       # bolt a besoin de mecha pour compiler ce qu'il a produit
+    - "mecha"       # bolt needs mecha to compile what it produced
 
 meta:
     bolt:
-        entrypoint: "*"     # autorise bolt dans n'importe quel fichier de fonction, pas seulement les modules
+        entrypoint: "*"     # let any function file use bolt, not only modules
 ```
 
-Deux types de fichiers :
+Deux sortes de fichiers :
 
-- **Les modules**, `.bolt` sous `data/<namespace>/module/`. Importables, ils n'écrivent une fonction que là où ils le demandent.
-- **Les fichiers de fonction**, `.mcfunction` couverts par `entrypoint`. Le fichier **est** une fonction, écrite en bolt.
+- Les **modules**, des `.bolt` sous `data/<namespace>/module/`. Ils sont importables, et n'écrivent une function que là où ils en demandent une.
+- Les **fichiers function**, des `.mcfunction` couverts par `entrypoint`. Le fichier *est* une function, écrite en bolt.
 
-#### Écrire une fonction
+#### Écrire une function
 
 ```python
 # src/data/voltaic/module/gui.bolt
@@ -230,14 +239,14 @@ for machine in MACHINES:
         tag @s add voltaic.watching
 ```
 
-Trois fonctions issues d'une boucle. La f-string est le chemin, le bloc indenté est le corps.
+Trois functions issues d'une seule boucle. La f-string est le chemin, et le bloc indenté est le corps.
 
-Un chemin est une valeur comme une autre : il se nomme, s'importe et se passe en argument. Deux raccourcis évitent d'écrire le namespace :
+Un chemin est une valeur comme une autre : il peut être nommé, importé et passé en argument. Deux raccourcis évitent d'y écrire le namespace :
 
-| Écrit    | Résout en                                                  |
-|----------|------------------------------------------------------------|
-| `./load` | `<namespace>:<chemin du module>/load`                       |
-| `~/init` | Un enfant de la fonction en cours d'écriture à cet endroit  |
+| Écrit    | Se résout en                                              |
+|----------|-----------------------------------------------------------|
+| `./load` | `<namespace>:<module path>/load`                           |
+| `~/init` | Un enfant de la function en cours d'écriture à cet endroit |
 
 ```python
 SERVER_LOAD = ./load
@@ -251,7 +260,7 @@ function SERVER_LOAD:
 
 #### Imbrication et execute implicite
 
-Un `execute` qui se termine par deux-points écrit sa propre fonction et l'appel qui y mène :
+Un `execute` qui finit par deux-points écrit sa propre function et l'appel qui y mène :
 
 ```python
 execute as @a[tag=voltaic.using] at @s:
@@ -259,7 +268,7 @@ execute as @a[tag=voltaic.using] at @s:
     playsound minecraft:block.beacon.ambient block @s ~ ~ ~ 0.4 2.0
 ```
 
-Les conditions se lisent comme des conditions, avec `if`, `else` et les formes `run return` repliées dedans :
+Les conditions se lisent comme des conditions, avec `if`, `else` et les formes `run return` intégrés :
 
 ```python
 if score @s voltaic.energy matches 1..:
@@ -268,7 +277,7 @@ else:
     function voltaic:machines/shutdown
 ```
 
-#### Compléter une fonction qui appartient à un autre module
+#### Ajouter à une function qui appartient à un autre module
 
 ```python
 from voltaic:core import SERVER_LOAD
@@ -279,26 +288,26 @@ append function SERVER_LOAD:
 ```
 
 `function`, `append function` et `prepend function` sont les trois façons pour un module de contribuer à un chemin.
-Plusieurs modules peuvent compléter la même fonction de load sans se connaître, et c'est ce qui rend viable un fichier par fonctionnalité.
+Plusieurs modules peuvent ajouter à la même function de load sans se connaître, ce qui permet un fichier par feature.
 
-#### C'est du Python, donc tout le langage est là
+#### Les fonctionnalités Python dans bolt
 
 Les imports prennent une resource location là où Python prend un chemin pointé :
 
 ```python
-from lib:helpers import ticks            # un module d'un autre namespace
-from ./items import team_flag            # un module voisin
-from dataclasses import dataclass        # du Python normal, depuis votre environnement
+from lib:helpers import ticks            # a module in another namespace
+from ./items import team_flag            # a sibling module
+from dataclasses import dataclass        # plain Python, from your environment
 from functools import cache
 ```
 
-Classes et décorateurs fonctionnent, et une méthode peut écrire des fonctions :
+Les classes et les décorateurs fonctionnent, et une méthode peut écrire des functions :
 
 ```python
 from functools import cached_property
 
 class Gui:
-    """ L'interface d'une machine, ouverte par un clic droit dessus. """
+    """ One machine's interface, opened by right clicking it. """
 
     def __init__(self, machine):
         self.path = f"voltaic:gui/{machine}"
@@ -316,9 +325,9 @@ function voltaic:gui/pulverizer/tick:
     execute as @a[tag=voltaic.using] run function gui.open
 ```
 
-`cached_property` fait un vrai travail ici : la fonction est écrite la première fois que quelqu'un demande son chemin, et jamais deux fois.
+Avec `cached_property`, la function est écrite la première fois que quelque chose demande son chemin, et jamais deux fois.
 
-Les fichiers JSON sont des littéraux, avec les valeurs Python déposées directement dedans :
+Les fichiers JSON sont des littéraux, où l'on glisse directement des valeurs Python :
 
 ```python
 ON_KILL = ./on_kill
@@ -332,9 +341,9 @@ function ON_KILL:
     advancement revoke @s only ON_KILL
 ```
 
-#### Scoreboards et storage comme des variables
+#### Scoreboards et storage comme variables
 
-[`bolt_expressions`](https://github.com/mcbeet/bolt-expressions) (`pip install bolt-expressions`, puis à ajouter dans `require`) transforme l'arithmétique en les commandes qui l'exécutent :
+[`bolt_expressions`](https://github.com/mcbeet/bolt-expressions) (`pip install bolt-expressions`, puis ajoutez-le à `require`) transforme l'arithmétique en commandes qui l'exécutent :
 
 ```python
 from bolt_expressions import Scoreboard, Data
@@ -347,96 +356,74 @@ Energy["#total"] = Energy["@s"] * 3 + Energy["#buffer"]
 Temp.display.text = Energy["#total"]
 ```
 
-Chaque ligne compile vers la séquence de `scoreboard players operation` nécessaire, temporaires compris.
-C'est le même travail que les [Équations](../4_equations/fr.md) côté StewBeet, exprimé dans le fichier qui s'en sert.
+Chaque ligne compile vers la séquence de `scoreboard players operation` dont elle a besoin, temporaires compris.
+C'est le même travail que les [Equations](../4_equations/fr.md) côté StewBeet, exprimé dans le fichier qui l'utilise.
 
 #### Bolt et StewBeet dans le même pack
 
-Rien n'oblige à choisir. Un pack peut déclarer ses items avec `Item(...)`, laisser les plugins générer les recipes et le manuel, écrire l'essentiel de sa logique avec `write_function`, et garder un module `.bolt` pour la partie où les commandes sont le point difficile.
-Le [pack de démonstration](https://github.com/Stoupy51/StewBeet/tree/main/extension/vscode/demo) dont l'extension tire ses enregistrements est exactement cela : un petit pack écrit de trois façons.
+Un pack peut déclarer ses items avec `Item(...)`, laisser les plugins générer les recipes et le manual, écrire l'essentiel de sa logique avec `write_function`, et garder un module `.bolt` pour la partie où les commandes sont le plus difficile.
+Le [pack de démo](https://github.com/Stoupy51/StewBeet/tree/main/extension/vscode/demo) dont l'extension tire ses démonstrations est exactement cela : un petit pack écrit de trois façons.
 
-**À utiliser quand :**
-- Ce sont les commandes qui sont compliquées, pas les données derrière
-- Vous voulez des boucles, des conditions et des classes autour des commandes sans f-string entre vous et elles
-- Vous faites de l'arithmétique de scoreboard ou de storage et voulez la lire comme de l'arithmétique
-- Vous voulez l'imbrication (`execute ...:`) plutôt que de découper les fonctions à la main
+À utiliser quand :
 
-**À éviter quand :**
-- Le travail consiste à générer beaucoup de fonctions quasi identiques depuis vos définitions. `write_function` dans un plugin voit `Mem.definitions` et c'est la route la plus courte
-- Un plugin StewBeet doit voir ce que vous avez écrit. Les plugins tournent sur le pack, et mecha compile après eux
-- Vos collaborateurs ne veulent pas d'un second langage dans le projet
+- Les commandes sont la partie compliquée, pas les données qui les sous-tendent.
+- Vous voulez des boucles, des conditions et des classes autour des commandes sans f-string entre elles et vous.
+- Vous faites de l'arithmétique sur des scoreboards ou du storage et voulez la lire comme de l'arithmétique.
+- Vous voulez de l'imbrication (`execute ...:`) plutôt que de découper les functions à la main.
+
+À éviter quand :
+
+- Le travail consiste à générer beaucoup de functions quasi identiques depuis vos définitions. `write_function` dans un plugin voit `Mem.definitions` et c'est le chemin le plus court.
+- Un plugin StewBeet listé avant `mecha` dans le pipeline doit voir ce que vous avez écrit. Ces plugins s'exécutent avant que mecha compile le bolt.
+- Vos collaborateurs ne veulent pas d'un second langage dans le projet.
 
 #### Dans l'éditeur
 
-L'[extension StewBeet](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) donne au `.bolt` son propre langage, avec complétion et ctrl+clic sur les commandes et un lens par fonction que le module écrit.
-Elle empêche aussi Spyglass de souligner un `.mcfunction` contenant du bolt, qu'il lit comme du mcfunction vanilla. Voir [Support éditeur](../8_editor/fr.md).
+L'[extension StewBeet](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) donne à `.bolt` son propre langage, avec complétion et ctrl+clic sur les commandes et une lens par function que le module écrit.
+Elle empêche aussi Spyglass de souligner un `.mcfunction` qui contient du bolt, que Spyglass lit comme du mcfunction vanilla. Voir [Éditeur VS Code](../8_editor/fr.md).
 
 ## Bonnes pratiques
 
 ### À faire
 
-**Organisation des fichiers :**
-- Utilisez des structures de dossiers significatives (ex., `machines/`, `items/`, `utils/`)
-- Groupez les fonctions liées ensemble
-- Séparez la logique en petites fonctions réutilisables
+Qualité du code :
 
-**Qualité du code :**
-- Utilisez des f-strings pour les chemins dynamiques : `f"{ns}:folder/{item}"`
-- Utilisez des chaînes multi-lignes (guillemets triples) pour le contenu des commandes
-- Ajoutez des commentaires descriptifs dans les fonctions générées
-- Utilisez `prepend=True` pour le code d'initialisation dans les fichiers qui doivent s'exécuter en premier
+- Utilisez des f-strings pour les chemins dynamiques : `f"{ns}:folder/{item}"`.
+- Utilisez des chaînes entre triples guillemets pour le contenu des commandes.
+- Utilisez `prepend=True` pour le code d'initialisation dans les fichiers qui doivent s'exécuter en premier.
 
-**Performance :**
-- Utilisez des fonctions versionnées (second, second_5, minute) au lieu de tick quand possible
-- Regroupez les opérations dans des fonctions uniques
-- Utilisez des predicates au lieu de conditions execute complexes
-- Évitez les appels de fonction inutiles en tick
+Performance :
 
-**Conventions StewBeet :**
-- Utilisez toujours `Mem.ctx.project_id` pour le namespace
-- Utilisez `write_load_file()` pour l'initialisation
-- Utilisez `write_versioned_function()` pour les fonctions d'horloge
-- Appelez les helpers StewBeet au lieu de l'API beet directe quand disponible
+- Utilisez les functions d'horloge (`second`, `second_5`, `minute`) plutôt que le tick quand c'est possible.
+- Utilisez des predicates plutôt que des conditions execute complexes.
+
+Conventions StewBeet :
+
+- Prenez le namespace dans `Mem.ctx.project_id`.
+- Utilisez `write_load_file()` pour l'initialisation.
+- Utilisez `write_versioned_function()` pour les functions d'horloge.
+- Appelez les helpers StewBeet plutôt que l'API beet quand il en existe un.
 
 ### À ne pas faire
 
-**Gestion des fichiers :**
-- Ne codez pas en dur les chaînes de namespace (utilisez `ctx.project_id` ou variable `ns`)
-- Ne mélangez pas fichiers statiques et génération dynamique pour le même chemin
-- N'écrasez pas les fichiers sauf si intentionnel
-- Ne créez pas d'appels circulaires de fonctions (boucles infinies)
+Gestion des fichiers :
 
-**Qualité du code :**
-- N'utilisez pas `ctx.data["namespace"].functions["path"]` quand des helpers StewBeet existent
-- N'oubliez pas de gérer les cas limites (vérifications vides, limites de score)
-- N'écrivez pas de fonctions monolithiques (divisez en morceaux plus petits)
-- Ne dupliquez pas le code à travers plusieurs fonctions
+- Ne codez pas le namespace en dur (utilisez `ctx.project_id` ou une variable `ns`).
+- Ne mélangez pas fichiers statiques et génération pour le même chemin.
+- N'écrasez pas de fichiers sans le vouloir.
+- Ne créez pas d'appels circulaires entre functions.
 
-## Quelle approche choisir, en bref
+Qualité du code :
 
-- **Fichiers statiques** pour la configuration, les recipes fixes et les petites fonctions qui ne changent pas.
-- **Helpers StewBeet** pour l'essentiel de la logique du datapack, et tout ce qui est généré depuis vos définitions.
-- **API native beet** seulement quand aucun helper ne couvre le fichier dont vous avez besoin.
-- **Bolt** là où ce sont les commandes, et non les données, qui sont difficiles.
+- N'utilisez pas `ctx.data["namespace"].functions["path"]` quand un helper StewBeet existe.
 
-Quelle que soit l'approche, regroupez les fonctions en dossiers par fonctionnalité, et placez le travail périodique dans des fonctions d'horloge versionnées plutôt que dans le tick.
+Performance :
 
-## Glossaire
+- Ne créez pas de functions qui s'appellent elles-mêmes récursivement sans limite.
 
-| Terme | Signification |
-|-------|---------------|
-| **Chargement de fichiers statiques** | Chargement pré-plugin des fichiers déclarés dans `beet.yml` (`data_pack.load` et `resource_pack.load`). |
-| **Écriture via API native Beet** | Création de fichiers via les objets `ctx.data`/`ctx.assets` dans le code plugin. |
-| **Écriture via helpers StewBeet** | Fonctions utilitaires comme `write_function`, `write_tag` et helpers associés pour générer plus vite. |
-| **Bolt** | La couche de script de mecha. Python et commandes partagent une syntaxe, compilée au build. |
-| **Module** | Un fichier `.bolt` sous `data/<namespace>/module/`, importé par d'autres et n'écrivant des fonctions que là où il le demande. |
-| **Imbrication** | Un `execute` ou un `if` finissant par deux-points, que mecha transforme en sa propre fonction et l'appel qui y mène. |
+## Étapes suivantes
 
-## Prochaines étapes
-
-- [Référence des fonctions utilitaires](reference/fr.md): chaque fonction et ses arguments.
-- [Support éditeur](../8_editor/fr.md): l'extension qui vérifie chaque bloc de cette page.
-- [Cookbook](cookbook/fr.md): des exemples complets et fonctionnels.
-- [Équations](../4_equations/fr.md): construire l'arithmétique de scoreboard.
-- [Configurer le build](../3_beet_config/fr.md): contrôler quand votre code s'exécute.
+- [Référence des fonctions d'aide](reference/fr.md) : chaque helper et les arguments qu'il prend.
+- [Equations](../4_equations/fr.md) : construire de l'arithmétique de scoreboard au lieu de l'écrire à la main.
+- [Éditeur VS Code](../8_editor/fr.md) : l'extension qui vérifie chaque bloc de cette page.
 
