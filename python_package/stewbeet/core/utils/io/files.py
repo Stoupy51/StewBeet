@@ -64,10 +64,13 @@ def textures_folder() -> str:
 	return folder
 
 
-def source_textures() -> dict[str, str]:
-	""" Every PNG of the textures folder and its subfolders, by file name (``steel_ingot.png``).
+def source_textures(*, with_extension: bool = True) -> dict[str, str]:
+	""" Every PNG of the textures folder and its subfolders, by file name (``steel_ingot.png``, or ``steel_ingot`` without extension).
 
 	The value is the path relative to the working directory. Of two files with the same name, the last in path order wins.
 	"""
-	return {path.name: stp.relative_path(str(path)) for path in sorted(Path(textures_folder()).rglob("*.png"), key=str)}
+	return {
+		path.name if with_extension else path.stem: stp.relative_path(str(path))
+		for path in sorted(Path(textures_folder()).rglob("*.png"), key=str)
+	}
 
