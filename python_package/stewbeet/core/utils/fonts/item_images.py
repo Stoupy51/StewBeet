@@ -27,6 +27,7 @@ from ...__memory__ import Mem
 from ...cls.items.item import Item
 from ...cls.recipes.recipe import RecipeBase
 from ...constants import (
+	DOWNLOAD_TIMEOUT,
 	DOWNLOAD_VANILLA_ASSETS_RAW,
 	DOWNLOAD_VANILLA_ASSETS_SOURCE,
 	DOWNLOAD_VANILLA_ASSETS_SPECIAL_RAW,
@@ -98,22 +99,43 @@ def get_session() -> requests.Session:
 
 
 def download_item(path: str, item: str, cache_assets: bool, destination: str = "") -> None:
-	""" Download a single vanilla item texture from the wiki. """
+	""" Put a vanilla item texture in the renders, downloading it from the wiki unless the beet cache already holds it.
+
+	The download stays in the cache, so `stewbeet clean` can empty the renders and the next build only copies back what it uses.
+	"""
 	if not destination:
 		destination = f"{path}/minecraft/{item}.png"
 	if os.path.exists(destination) and cache_assets:
 		return
+
+	downloaded: Path = Mem.ctx.cache["stewbeet"].directory / "vanilla_renders" / f"{item}.png"
+	if not (cache_assets and downloaded.is_file()):
+		content: bytes | None = fetch_vanilla_render(item)
+		if content is None:
+			stp.warning(f"Failed to download texture for '{item}', please add it manually to '{destination}'")
+			stp.warning(f"Suggestion link: '{DOWNLOAD_VANILLA_ASSETS_SOURCE}'")
+			return
+		downloaded.parent.mkdir(parents=True, exist_ok=True)
+		downloaded.write_bytes(content)
+
+	with stp.super_open(destination, "wb") as file:
+		file.write(downloaded.read_bytes())
+
+
+def fetch_vanilla_render(item: str) -> bytes | None:
+	""" The PNG the wiki renders for a vanilla item, None when none of its links has one. """
+	import requests
+
 	session: requests.Session = get_session()
 	for base_link in (DOWNLOAD_VANILLA_ASSETS_SPECIAL_RAW, DOWNLOAD_VANILLA_ASSETS_RAW):
 		for folder in ["item", "block", "items"]:
-			link: str = f"{base_link}/{folder}/{item}.png"
-			response = session.get(link)
+			try:
+				response = session.get(f"{base_link}/{folder}/{item}.png", timeout=DOWNLOAD_TIMEOUT)
+			except requests.Timeout:
+				continue
 			if response.status_code == 200:
-				with stp.super_open(destination, "wb") as file:
-					file.write(response.content)
-				return
-	stp.warning(f"Failed to download texture for '{item}', please add it manually to '{destination}'")
-	stp.warning(f"Suggestion link: '{DOWNLOAD_VANILLA_ASSETS_SOURCE}'")
+				return response.content
+	return None
 
 
 def download_vanilla_textures(path: str, used_vanilla_items: set[str], cache_assets: bool) -> None:

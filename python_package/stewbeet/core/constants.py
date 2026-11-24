@@ -166,6 +166,8 @@ SIDES: tuple[str, ...] = ("_bottom", "_top", "_front", "_back", "_left", "_right
 DOWNLOAD_VANILLA_ASSETS_RAW = "https://raw.githubusercontent.com/edayot/renders/renders/resourcepack/assets/minecraft/textures/render"
 DOWNLOAD_VANILLA_ASSETS_SPECIAL_RAW = "https://raw.githubusercontent.com/edayot/renders/renders-special/resourcepack/assets/minecraft/textures/render"
 DOWNLOAD_VANILLA_ASSETS_SOURCE = "https://github.com/edayot/renders/tree/renders/resourcepack/assets/minecraft/textures/render"
+DOWNLOAD_TIMEOUT: float = 10.0
+""" Seconds a download may stay silent, while connecting or between two reads, before it fails instead of hanging the build. """
 CUSTOM_BLOCK_HEAD_CUBE_RADIUS: tuple[int, int, int] = (16, 16, 16)
 """ Size of the region to check around the player when placing a CUSTOM_BLOCK_HEAD. """
 BLOCKS_WITH_INTERFACES: list[str] = [   # List of blocks that are containers and have an interface

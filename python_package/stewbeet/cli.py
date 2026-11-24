@@ -17,6 +17,10 @@ from beet import ProjectConfig
 
 from .utils import get_project_config
 
+# Constants
+KEPT_CACHES: tuple[str, ...] = ("stewbeet", "vanilla")
+""" Beet caches a clean keeps: the downloaded libraries, vanilla renders and client jar, and what is derived from them. """
+
 
 def force_utf8_output() -> None:
 	""" Make stdout and stderr encode UTF-8 whatever the console's code page is.
@@ -93,7 +97,7 @@ def print_help() -> None:
   {stp.GREEN}init, template{stp.RESET}                Initialize a new StewBeet project from template
   {stp.GREEN}migrate{stp.RESET} [template] [--dry-run]  Turn an existing datapack/resource pack into a StewBeet project
   {stp.GREEN}dump{stp.RESET}                          Create a zip archive of the project (excludes build artifacts)
-  {stp.GREEN}clean{stp.RESET}                         Clean all caches and output directories
+  {stp.GREEN}clean{stp.RESET}                         Clean caches and output directories, keeping downloads
   {stp.GREEN}rebuild{stp.RESET}                       Clean and rebuild the project
 
 {stp.CYAN}Beet commands:{stp.RESET}
@@ -114,16 +118,14 @@ def print_help() -> None:
 
 
 def clean_project(cfg: ProjectConfig) -> None:
-	""" Remove the beet cache, the build output, every __pycache__, the item renders and the debug definitions file. """
+	""" Remove the beet cache but its downloads, the build output, every __pycache__, the item renders and the debug definitions. """
 	stp.info("Cleaning project and caches...")
 
-	# Remove the beet cache directory
+	# Downloads only change with a release, and fetching them again is most of a rebuild's time on a slow network
 	with contextlib.suppress(Exception):
 		from beet.toolchain.project import Project
 		project = Project(resolved_config=cfg)
-		project.clear_cache([])
-	if os.path.exists(".beet_cache"):
-		shutil.rmtree(".beet_cache", ignore_errors=True)
+		project.clear_cache(["*", *(f"!{name}" for name in KEPT_CACHES)])
 
 	# Remove the output directory specified in the config
 	shutil.rmtree(str(cfg.output), ignore_errors=True)

@@ -244,16 +244,8 @@ def describe_body(text: str) -> str:
 	exceptions=TransientDownloadError, max_attempts=DOWNLOAD_ATTEMPTS, delay=DOWNLOAD_DELAY, backoff=2.0, message="Download failed"
 )
 def attempt_download(cache: Cache, url: str, target: Path) -> Path:
-	""" One download attempt, never letting a previously failed one masquerade as a hit.
-
-	beet creates the destination file before fetching, so a failed download leaves a 0-byte file that every
-	later build happily reuses, hiding the real error behind a bogus parsing failure.
-	"""
+	""" One download attempt, failing on an empty body rather than caching it as the content. """
 	try:
-		if target.is_file() and target.stat().st_size == 0:
-			target.unlink()
-			stp.debug(f"Discarded the empty cache entry left by a previous failed download of '{url}'.")
-
 		result: Path = cache.download(url, target, headers=HEADERS)
 		if result.stat().st_size == 0:
 			result.unlink(missing_ok=True)

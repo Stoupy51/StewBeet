@@ -16,12 +16,16 @@ import sys
 from collections.abc import Callable, Iterator
 from pathlib import Path
 from typing import Any
+from urllib.request import Request, urlopen
 
+import beet.core.cache
 import beet.library.utils
 import stouputils as stp
-from beet import Pack, PngFile
+from beet import Cache, Pack, PngFile
 from beet.core.utils import FileSystemPath
 from PIL import Image
+
+from ...core.constants import DOWNLOAD_TIMEOUT
 
 # Variables
 patches_applied: bool = False
@@ -51,6 +55,38 @@ def fast_list_files(directory: FileSystemPath) -> Iterator[Path]:
 		relative_root: str = root[prefix_length:]
 		for filename in sorted(files):
 			yield Path(relative_root, filename)
+
+
+def timed_urlopen(url: str | Request, *args: Any, **kwargs: Any) -> Any:
+	""" Drop-in replacement for the `urlopen` of `beet.core.cache`, which passes no timeout and so waits forever on a silent server.
+
+	A timeout raises `TimeoutError`, which the library downloader retries like any other transient failure.
+	"""
+	kwargs.setdefault("timeout", DOWNLOAD_TIMEOUT)
+	return urlopen(url, *args, **kwargs)
+
+
+def discarding_empty_download(download: Callable[..., Path]) -> Callable[..., Path]:
+	""" Wrap `Cache.download`, which serves the empty file an interrupted download leaves behind as a valid entry.
+
+	beet creates the destination before fetching, so a build killed or timed out mid-download leaves a 0-byte file
+	that every later build reads as the content, failing on a bogus parsing error.
+
+	>>> import tempfile
+	>>> with tempfile.TemporaryDirectory() as tmp:
+	...     source = Path(tmp, "lib.zip")
+	...     _ = source.write_bytes(b"content")
+	...     cache = Cache(Path(tmp, "cache"))
+	...     cache.get_path(source.as_uri()).touch()
+	...     discarding_empty_download(Cache.download)(cache, source.as_uri()).read_bytes()
+	b'content'
+	"""
+	def wrapper(self: Cache, arg: str | Request, path: FileSystemPath | None = None, **kwargs: Any) -> Path:
+		target: Path = Path(path) if path else self.get_path(arg.get_full_url() if isinstance(arg, Request) else arg)
+		if target.is_file() and target.stat().st_size == 0:
+			target.unlink()
+		return download(self, arg, target, **kwargs)
+	return wrapper
 
 
 def same_pixels(left: Image.Image, right: Image.Image) -> bool:
@@ -172,6 +208,10 @@ def apply_beet_patches() -> None:
 
 	# Rebind the module global: `list_origin` is beet's only caller and resolves it at call time
 	beet.library.utils.list_files = fast_list_files
+
+	# Same rebinding for every download of beet's caches: the client jar, the libraries, the APIs
+	beet.core.cache.urlopen = timed_urlopen  # pyright: ignore[reportPrivateImportUsage]
+	Cache.download = discarding_empty_download(Cache.download)
 
 	# Retry saving when another program (vscode, Minecraft, ...) holds a file locked for a moment
 	Pack.save = stp.retry(Pack.save, exceptions=PermissionError, max_attempts=10, delay=1.0, backoff=2.0)  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
