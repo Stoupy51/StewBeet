@@ -8,7 +8,6 @@ __lazy_modules__ = ALWAYS_LAZY
 # Imports
 import os
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Self
 
 import stouputils as stp
@@ -29,6 +28,7 @@ from ..cls.recipes.recipe import (
 	SmeltingRecipe,
 )
 from ..constants import CUSTOM_BLOCK_VANILLA, CUSTOM_ITEM_VANILLA
+from ..utils.io import source_textures, textures_folder
 from .equipments import SLOTS, EquipmentsConfig, VanillaEquipments, format_attributes
 
 
@@ -94,10 +94,7 @@ class Material:
 			name=material,
 			base=base,
 			main=Ingr(material),
-			textures={
-				stp.clean_path(str(p)).split("/")[-1]: stp.relative_path(str(p))
-				for p in sorted(Path(textures_folder).rglob("*.png"), key=str)
-			},
+			textures=source_textures(),
 			textures_folder=textures_folder,
 			config=config,
 			ignore_recipes=ignore_recipes or (config is not None and config.ignore_recipes),
@@ -134,9 +131,7 @@ def generate_everything_about_this_material(
 		equipments_config: The base multiplier to apply
 		ignore_recipes:    If True, no recipes will be added in the definitions.
 	"""
-	textures_folder: str = stp.relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
-	assert textures_folder != "", "Textures folder path not found in 'ctx.meta.stewbeet.textures_folder'. Please set a directory path in project configuration."
-	m: Material = Material.of(material, equipments_config, ignore_recipes, textures_folder)
+	m: Material = Material.of(material, equipments_config, ignore_recipes, textures_folder())
 	base: str = m.base
 
 	for item in (base, f"{base}_fragment", f"{base}_ingot", f"{base}_nugget", f"raw_{base}", f"{base}_dust", f"{base}_stick", f"{base}_rod"):
@@ -334,11 +329,9 @@ def add_recipes_for_dust(material: str, pulverize: list[str | JsonDict], smelt_t
 		smelt_to:  The ingredient representation of the result of smelting the dust, ex: Ingr("minecraft:copper_ingot")}
 	"""
 	# Assertions
-	textures_folder: str = stp.relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
-	assert textures_folder != "", "Textures folder path not found in 'ctx.meta.stewbeet.textures_folder'. Please set a directory path in project configuration."
 
 	# Prepare constants
-	textures_set: set[str] = {stp.clean_path(str(p)).split("/")[-1] for p in Path(textures_folder).rglob("*.png")}
+	textures_set: set[str] = set(source_textures())
 	dust: str = material + "_dust"
 	if f"{dust}.png" not in textures_set:
 		stp.error(f"Error during dust recipe generation: texture '{dust}.png' not found (required for '{material}' dust)")

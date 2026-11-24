@@ -5,7 +5,6 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
-from pathlib import Path
 
 import stouputils as stp
 from beet import Context, EntityTypeTag, Predicate
@@ -14,7 +13,7 @@ from stouputils.typing import JsonDict
 from ....core.__memory__ import Mem
 from ....core.cls.items.block import Block
 from ....core.constants import CUSTOM_BLOCK_ALTERNATIVE, VANILLA_BLOCK
-from ....core.utils.io import set_json_encoder, write_function
+from ....core.utils.io import set_json_encoder, source_textures, write_function
 from ....core.utils.loot_table import loot_condition
 from ... import source_maps
 from .aiming import write_aim
@@ -46,16 +45,8 @@ def beet_default(ctx: Context):
 	"""
 	Mem.ctx = ctx
 	ns: str = ctx.project_id
-	textures_folder: str = stp.relative_path(ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
 	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."
-	assert textures_folder != "", (
-		"Textures folder path not found in 'ctx.meta.stewbeet.textures_folder'. "
-		"Please set a directory path in project configuration."
-	)
-	source_textures: dict[str, str] = {
-		stp.clean_path(str(p)).split("/")[-1]: stp.relative_path(str(p))
-		for p in sorted(Path(textures_folder).rglob("*.png"), key=str)
-	}
+	textures: dict[str, str] = source_textures()
 	blocks: list[Block] = [data for data in Mem.definitions.values() if isinstance(data, Block)]
 	resolve_mining_hosts(blocks)
 	warn_unplaceable_blocks()
@@ -77,7 +68,7 @@ def beet_default(ctx: Context):
 			custom_block_entities.add(placed[1])
 		if obj_block.growing_seed:
 			has_growing_seed = True
-			write_growing_seed(obj_block, obj_block.growing_seed, item, source_textures)
+			write_growing_seed(obj_block, obj_block.growing_seed, item, textures)
 	if has_growing_seed:
 		write_seed_functions(ns)
 	write_block_features(ns, blocks)

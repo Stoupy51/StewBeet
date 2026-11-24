@@ -5,7 +5,6 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
-from pathlib import Path
 
 import stouputils as stp
 from beet import Atlas, Context, FormatSpecifier, ResourcePack
@@ -13,7 +12,7 @@ from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
 from ....core.cls.items.item import Item
-from ....core.utils.io import setup_model_cache
+from ....core.utils.io import setup_model_cache, source_textures
 from .object import AutoModel, to_atlas
 
 
@@ -79,17 +78,9 @@ def beet_default(ctx: Context):
 	setup_model_cache(ctx)
 
 	# Textures folder
-	textures_folder: str = stp.relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
-	assert textures_folder != "", (
-		"Textures folder path not found in 'ctx.meta.stewbeet.textures_folder'. "
-		"Please set a directory path in project configuration."
-	)
 
 	# Textures
-	textures: dict[str, str] = {
-		stp.clean_path(str(p)).split("/")[-1]: stp.relative_path(str(p))
-		for p in sorted(Path(textures_folder).rglob("*.png"), key=str)
-	}
+	textures: dict[str, str] = source_textures()
 
 	# Initialize rendered_item_models set in ctx.meta
 	Mem.ctx.meta["stewbeet"]["rendered_item_models"] = set()

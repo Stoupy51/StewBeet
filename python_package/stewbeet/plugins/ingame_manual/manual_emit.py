@@ -13,10 +13,8 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 import os
-from pathlib import Path
 from typing import TYPE_CHECKING
 
-import stouputils as stp
 from beet import Texture
 from PIL import Image
 
@@ -207,7 +205,7 @@ def create_manual_item(manual: Manual) -> None:
 	""" Create/merge the ``manual`` item (dialog-first: no written_book NBT). """
 	from ...core.definitions_helper import add_item_name_and_lore_if_missing
 	from ...core.definitions_helper.completion import add_private_custom_data_for_namespace
-	from ...core.utils.io import super_merge_dict
+	from ...core.utils.io import source_textures, super_merge_dict
 	from ..custom_recipes.vanilla import VanillaRecipeHandler
 	from ..resource_pack.item_models.object import AutoModel
 
@@ -233,11 +231,7 @@ def create_manual_item(manual: Manual) -> None:
 	add_private_custom_data_for_namespace(black_list=[item for item in Mem.definitions if item != "manual"])
 
 	if not manual_already_exists:
-		textures_folder: str = stp.relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
-		textures: dict[str, str] = {
-			stp.clean_path(str(p)).split("/")[-1]: stp.relative_path(str(p))
-			for p in sorted(Path(textures_folder).rglob("*.png"), key=str)
-		}
+		textures: dict[str, str] = source_textures()
 		AutoModel.from_definitions(manual_obj, textures).process()
 	VanillaRecipeHandler().generate_recipes(override=["manual"])
 

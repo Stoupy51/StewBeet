@@ -16,7 +16,9 @@ from .dicts import (
 from .files import (
 	JsonFileT as JsonFileT,
 	set_json_encoder as set_json_encoder,
+	source_textures as source_textures,
 	texture_mcmeta as texture_mcmeta,
+	textures_folder as textures_folder,
 )
 from .functions import (
 	McFunction as McFunction,

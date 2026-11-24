@@ -6,10 +6,13 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 import os
+from pathlib import Path
 from typing import TypeVar
 
 import stouputils as stp
 from beet import JsonFile, Texture
+
+from ...__memory__ import Mem
 
 # Constants
 JsonFileT = TypeVar("JsonFileT", bound=JsonFile)
@@ -48,4 +51,23 @@ def texture_mcmeta(source_path: str) -> Texture:
 	if os.path.exists(mcmeta_path):
 		return Texture(source_path=source_path, mcmeta=stp.json_load(mcmeta_path))
 	return Texture(source_path=source_path)
+
+
+def textures_folder() -> str:
+	""" The project's ``meta.stewbeet.textures_folder``, relative to the working directory.
+
+	Raises:
+		AssertionError: When beet.yml sets no textures folder.
+	"""
+	folder: str = stp.relative_path(Mem.ctx.meta.get("stewbeet", {}).get("textures_folder", ""))
+	assert folder != "", "Textures folder path not found in 'ctx.meta.stewbeet.textures_folder'. Set it in beet.yml."
+	return folder
+
+
+def source_textures() -> dict[str, str]:
+	""" Every PNG of the textures folder and its subfolders, by file name (``steel_ingot.png``).
+
+	The value is the path relative to the working directory. Of two files with the same name, the last in path order wins.
+	"""
+	return {path.name: stp.relative_path(str(path)) for path in sorted(Path(textures_folder()).rglob("*.png"), key=str)}
 
