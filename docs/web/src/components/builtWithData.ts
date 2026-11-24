@@ -29,7 +29,7 @@ export interface ShowcaseProject extends Entry {
 
 export const SHOWCASE: ShowcaseProject[] = [
     {
-        name: 'Switch', owner: 'Paralya', url: 'https://github.com/Paralya/Switch', community: true,
+        name: 'Switch', owner: 'Paralya', url: 'https://github.com/Paralya/Switch', icon: 'switch', community: true,
         summary: { en: "The datapack running Paralya's Switch minigame server.", fr: 'Le datapack du serveur de mini-jeux Switch de Paralya.' },
     },
     {

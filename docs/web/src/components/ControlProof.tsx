@@ -67,7 +67,7 @@ export const ControlProof = () => {
                     <a href={docHref(sourceMaps, language)} className="text-link underline underline-offset-2">{t('control.sourceMaps')}</a>
                 </p>
                 <figure className="mt-8 pt-5 border-t border-border">
-                    <blockquote className="text-[1.0625rem] leading-normal text-pretty">{t('control.racoonQuote')}</blockquote>
+                    <blockquote className="quoted text-[1.0625rem] leading-normal text-pretty">{t('control.racoonQuote')}</blockquote>
                     <figcaption className="mt-3.5 flex items-center gap-2.5 text-sm text-text-muted">
                         <img src="/testimonials/headconomics.webp" alt="" width={36} height={36} className="pixelated w-9 h-9 flex-shrink-0" />
                         <span>

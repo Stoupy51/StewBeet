@@ -457,6 +457,12 @@ html[data-transition='panel']::view-transition-new(doc-main) { animation: none; 
   to   { opacity: 1; transform: none; }
 }
 
+/* Someone's own words, in the quotation marks of the page's language. Set explicitly, since a browser's default ones are curly. */
+.quoted { quotes: '"' '"'; }
+:lang(fr) .quoted { quotes: '\00AB\00A0' '\00A0\00BB'; }
+.quoted::before { content: open-quote; }
+.quoted::after { content: close-quote; }
+
 /*
  * The gains comparison: the eight hand-written files are struck through one after the other, then
  * the definition replacing them drops in. Without data-armed, or with reduced motion, the lines are
