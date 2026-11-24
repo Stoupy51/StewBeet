@@ -2,7 +2,7 @@
 # Testing your pack with Ward
 
 [Ward](https://github.com/mcbookshelf/ward) runs `.mcfunction` tests on a headless server and reports each `assert` that fails with its file and line.
-A StewBeet project keeps its tests in a `tests/` folder next to `src/`, as a second datapack loaded beside the built zip, so the tests run against exactly what players download, libraries included.
+  Stewreet project keeps its tests in a `tests/` folder next to `src/`, as a second datapack loaded beside the built zip, so the tests run against exactly what players download, libraries included.
 
 ### Layout
 

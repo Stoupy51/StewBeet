@@ -1,8 +1,7 @@
 
 # Writing functions and files
 
-Four ways to put your own functions, advancements and tags into the pack: static files loaded by `beet.yml`, the native beet API, StewBeet's helper functions, and Bolt. Most packs use the helpers for their logic and static files for the rest.
-
+Four ways to put your own functions, advancements and tags into the pack: static files loaded by `beet.yml`, the native beet API, StewBeet's helper functions, and Bolt.
 Your code runs in a user plugin, after the definitions are set up and before finalisation.
 
 > Every approach below ends with commands inside a Python string, inside a `.bolt` module, or both. The [StewBeet extension for VSCode](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) reads them as what they are: completion, errors, ctrl+click, and a link from each block to the function your build wrote from it. See [VS Code editor](../8_editor/en.md).
@@ -25,7 +24,7 @@ Complete files to read alongside this page:
 | StewBeet helpers (recommended) | Logic generated from your definitions, load and clock functions | Low |
 | Bolt | Command-heavy logic, loops and arithmetic around commands | Medium, a second language |
 
-### Approach 1: Static File Loading (beet.yml)
+### Approach 1: static file loading (beet.yml)
 
 Beet loads hand-written files from a folder before any plugin runs.
 
@@ -89,7 +88,7 @@ Avoid it when:
 
 ---
 
-### Approach 2: Native Beet API
+### Approach 2: native beet API
 
 Beet's own object API, used directly from a plugin.
 
@@ -141,7 +140,7 @@ Avoid it when:
 
 ---
 
-### Approach 3: StewBeet Helper Functions (Recommended)
+### Approach 3: StewBeet helper functions (recommended)
 
 StewBeet helpers take a path and a string, create the file or add to it, and know where the load, tick and clock functions live.
 
@@ -201,8 +200,8 @@ Avoid it when:
 
 ### Approach 4: Bolt
 
-[Bolt](https://github.com/mcbeet/beet/tree/main/packages/bolt) is mecha's scripting layer, and it inverts the three approaches above.
-Instead of Python writing a string that happens to hold commands, the commands are the syntax: in a `.bolt` file, `item = 3` is Python and `item modify entity @s weapon.mainhand set value ...` is a command, at the same indentation, in the same scope.
+[Bolt](https://github.com/mcbeet/beet/tree/main/packages/bolt) is mecha's scripting layer.
+The three approaches above put commands in a Python string. In a `.bolt` file the commands are the syntax: `item = 3` is Python and `item modify entity @s weapon.mainhand set value ...` is a command, at the same indentation, in the same scope.
 
 All of it runs at build time. Nothing Python reaches the datapack.
 
@@ -291,7 +290,7 @@ append function SERVER_LOAD:
 `function`, `append function` and `prepend function` are the three ways a module contributes to a path.
 Several modules can append to the same load function without knowing about each other, which is what makes one file per feature work.
 
-#### It is Python, so the whole language is there
+#### Python features in bolt
 
 Imports take a resource location where Python takes a dotted path:
 
@@ -326,7 +325,7 @@ function voltaic:gui/pulverizer/tick:
     execute as @a[tag=voltaic.using] run function gui.open
 ```
 
-`cached_property` is doing real work there: the function is written the first time something asks for its path, and never twice.
+With `cached_property`, the function is written the first time something asks for its path, and never twice.
 
 JSON files are literals, with Python values dropped straight into them:
 
@@ -362,7 +361,7 @@ It is the same job as [Equations](../4_equations/en.md) on the StewBeet side, ex
 
 #### Bolt and StewBeet in the same pack
 
-Nothing forces a choice. A pack can declare its items with `Item(...)`, let the plugins generate recipes and the manual, write most of its logic with `write_function`, and keep one `.bolt` module for the part where the commands are the hard bit.
+A pack can declare its items with `Item(...)`, let the plugins generate recipes and the manual, write most of its logic with `write_function`, and keep one `.bolt` module for the part where the commands are the hard bit.
 The [demo pack](https://github.com/Stoupy51/StewBeet/tree/main/extension/vscode/demo) the extension records its showcases from is exactly that: one small pack written three ways.
 
 Use it when:
@@ -387,25 +386,16 @@ It also keeps Spyglass from underlining a `.mcfunction` holding bolt, which Spyg
 
 ### Do's
 
-File organization:
-
-- Use meaningful folder structures (`machines/`, `items/`, `utils/`).
-- Group related functions together.
-- Separate logic into small, reusable functions.
-
 Code quality:
 
 - Use f-strings for dynamic paths: `f"{ns}:folder/{item}"`.
 - Use triple-quoted strings for command content.
-- Add descriptive comments in generated functions.
 - Use `prepend=True` for initialization code in files that must run first.
 
 Performance:
 
 - Use clock functions (`second`, `second_5`, `minute`) instead of tick when possible.
-- Batch operations together in single functions.
 - Use predicates instead of complex execute conditions.
-- Avoid unnecessary function calls in tick.
 
 StewBeet conventions:
 
@@ -426,42 +416,10 @@ File management:
 Code quality:
 
 - Do not use `ctx.data["namespace"].functions["path"]` when a StewBeet helper exists.
-- Do not forget edge cases (empty checks, score limits).
-- Do not write monolithic functions.
-- Do not duplicate code across functions.
 
 Performance:
 
-- Do not run expensive operations in the tick file.
 - Do not create functions that call themselves recursively without a limit.
-- Do not check complex conditions every tick.
-
-Organization:
-
-- Do not mix different concerns in one function.
-- Do not use generic names like `temp`, `test` or `function`.
-- Do not nest folders too deeply.
-- Do not create files that are never called.
-
-## Which one to pick, in short
-
-- Static files for configuration, fixed recipes and small functions that never change.
-- StewBeet helpers for most datapack logic, and anything generated from your definitions.
-- The native beet API only when no helper covers the file you need.
-- Bolt where the commands, not the data, are the hard part.
-
-Whichever you use, group functions in folders by feature, and put periodic work in versioned clock functions rather than in tick.
-
-## Glossary
-
-| Term | Meaning |
-|------|---------|
-| Static file loading | Pre-plugin loading of files declared in `beet.yml` (`data_pack.load` and `resource_pack.load`). |
-| Native Beet API writing | Creating files through `ctx.data`/`ctx.assets` objects in plugin code. |
-| StewBeet helper writing | Utility functions like `write_function`, `write_tag`, and related helpers for faster generation. |
-| Bolt | Mecha's scripting layer. Python and commands share one syntax, compiled at build time. |
-| Module | A `.bolt` file under `data/<namespace>/module/`, imported by others and writing functions only where it asks to. |
-| Nesting | An `execute` or `if` ending in a colon, which mecha turns into its own function and the call reaching it. |
 
 ## Next steps
 

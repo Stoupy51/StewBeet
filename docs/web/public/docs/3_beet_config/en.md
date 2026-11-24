@@ -1,7 +1,7 @@
 
 # Configuring the build
 
-The options of the beet configuration file that StewBeet reads, and what it does with each. The file is read at the start of every build and decides how the whole project is processed.
+The options of the beet configuration file that StewBeet reads, and what it does with each. The file is read at the start of every build.
 
 If beet, bolt and mecha are new names to you, [How StewBeet fits with beet](../how_it_fits/en.md) says who makes what.
 
@@ -361,14 +361,6 @@ pipeline:
     - "mecha"
     - "stewbeet.plugins.auto.headers"
 ```
-
-## Glossary
-
-| Term | Meaning |
-|------|---------|
-| Beet configuration file | The project config (`beet.yml`, `beet.yaml`, `beet.json` or `pyproject.toml`) loaded at the start of a build |
-| Pipeline | The ordered list of plugins that transform and package the project |
-| Meta section | The `meta` container for plugin settings, used by StewBeet and related tools |
 
 ## Next steps
 

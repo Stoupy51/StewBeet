@@ -3,9 +3,9 @@
 
 Worked examples of writing datapack files with StewBeet. Each function runs from a plugin of your own, such as `src/link.py`, and assumes `from beet import Context` and `from stewbeet import *`. The [helper reference](../reference/en.md) lists what each function accepts.
 
-## Real-World Examples
+## Examples
 
-### Example 1: Custom Block Ticking
+### Example 1: custom block ticking
 
 Generate tick functions for custom blocks with different behaviors.
 
@@ -43,9 +43,9 @@ data modify block ~ ~ ~ cooking_time_spent set value 199s
 
 ---
 
-### Example 2: Machine State Management
+### Example 2: machine state management
 
-Manage machine states with multiple functions.
+Switch a machine between a running and an idle function from its power score.
 
 ```python
 def setup_machine_states(ctx: Context):
@@ -88,9 +88,9 @@ loot spawn ~ ~ ~ loot {ns}:i/steel_ingot
 
 ---
 
-### Example 3: Advancement Triggers
+### Example 3: advancement triggers
 
-Set up advancement-based detection system.
+Detect inventory changes and item use with advancements that call a function and revoke themselves.
 
 ```python
 def setup_advancement_triggers(ctx: Context):
@@ -143,9 +143,9 @@ function {ns}:items/right_click_handler
 
 ---
 
-### Example 4: Programmatic Function Generation
+### Example 4: programmatic function generation
 
-Generate multiple similar functions automatically.
+Write an upgrade and an operate function per tier, from a dict.
 
 ```python
 def generate_tier_functions(ctx: Context):
@@ -181,9 +181,9 @@ title @s actionbar {{"text":"Power: ","color":"gray","extra":[{{"score":{{"name"
 
 ---
 
-### Example 5: Complex Load Setup
+### Example 5: load setup
 
-Initialize complete datapack systems on load.
+Create scoreboards, constants, teams and storage in the load file, then call one load function per module.
 
 ```python
 def setup_load_system(ctx: Context):
@@ -233,7 +233,7 @@ function {ns}:modules/items/load
 
 ---
 
-### Example 6: Right-Click Detection System
+### Example 6: right-click detection
 
 Complete right-click detection using custom items.
 
@@ -272,9 +272,9 @@ execute anchored eyes positioned ^ ^ ^1 align xyz positioned ~0.5 ~ ~0.5 as @n[t
 
 ---
 
-### Example 7: Growing Crops System
+### Example 7: growing crops
 
-Implement custom growing mechanics.
+Advance a growth timer every 5 seconds, swap the model when grown, and drop loot on harvest.
 
 ```python
 def setup_growing_system(ctx: Context):
@@ -326,9 +326,9 @@ playsound minecraft:block.crop.break block @a ~ ~ ~ 1 0.8
 
 ---
 
-### Example 8: Tag Management
+### Example 8: tag management
 
-Organize functions and entities with tags.
+Fill function, entity type and block tags.
 
 ```python
 def setup_tags(ctx: Context):
@@ -365,7 +365,7 @@ def setup_tags(ctx: Context):
 ```
 
 ---
-## Complete Example
+## Complete example
 
 A complete file that combines the helpers and the beet API, adapted from [Stardust Fragment](https://github.com/Stoupy51/StardustFragment/blob/main/src/utils/remaining.py):
 

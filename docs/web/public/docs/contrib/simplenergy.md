@@ -130,7 +130,7 @@ The wrench also breaks any of your custom blocks, through `#mechanization:wrench
 ## Limits
 
 - DatapackEnergy, and ItemIO for item cables and servos, must be among the pack's [libraries](../5_dependencies/en.md).
-- `insert_lib_calls()` is deprecated and does nothing: the Custom blocks plugin registers energy blocks. Remove the call.
+- `insert_lib_calls()` does nothing: the Custom blocks plugin registers energy blocks. Remove the call.
 
 ## Next steps
 

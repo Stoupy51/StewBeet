@@ -34,7 +34,7 @@ execute unless items entity @s contents *[minecraft:item_model="ns:machine_on"] 
 
 A value the game moves on its own every tick, like a furnace's `cooking_time_spent`, never equals the one written the tick before. Write it when what the player sees would change instead, such as once a progress arrow would show another pixel.
 
-### Test items with `if items`, not by copying their NBT
+### Test items with `if items`
 
 `data modify storage ... set from entity @s SelectedItem` serializes the whole player, inventory included, to read one item. `execute if items` reads the slot directly:
 
@@ -55,9 +55,9 @@ Test what the block state already tells before that copy: `execute if block ~ ~ 
 A value an entity reads and writes every tick (a progression, an unlocked flag) costs a full entity serialization each way when it lives in NBT. Store it as a score or a tag on the entity, and move it to and from NBT only when the block is placed or broken, where the item carries it.
 A value that never changes while the entity tracks the block, like the furnace type, is read once, the first tick its score is missing: `execute unless score @s ns.type matches 0.. run function ns:read_type`.
 
-### Make an absent value absent
+### Clear optional values with `data remove`
 
-`data modify storage ... set value {}` before an optional `set from` leaves `{}` when the source is missing, and `execute unless data` then never sees the absence. Clear it with `data remove` instead.
+`data modify storage ... set value {}` before an optional `set from` leaves `{}` when the source is missing, so `execute unless data` never sees the absence. Use `data remove` to clear it.
 
 ### Reuse a result while its input does not change
 

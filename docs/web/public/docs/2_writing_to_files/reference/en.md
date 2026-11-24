@@ -6,7 +6,7 @@ one takes.
 
 [Writing functions and files](../en.md) helps choose between the three approaches, and [the cookbook](../cookbook/en.md) has worked examples.
 
-### Function Writing
+### Function writing
 
 #### `write_function()`
 Write content to a function file.
@@ -240,7 +240,7 @@ This writes `{ns}:v{version}/scheduled/10s`, which ends in `schedule function ..
 
 ---
 
-### Advancement Writing
+### Advancement writing
 
 #### `write_advancement()`
 Write an advancement file.
@@ -325,7 +325,7 @@ write_json_resource(Mem.ctx.data.item_modifiers, ItemModifier, f"{ns}:set_count_
 
 ---
 
-### Tag Writing
+### Tag writing
 
 #### `write_tag()`
 Write a tag file (generic for any tag type).
@@ -365,7 +365,7 @@ write_tag(f"{ns}:mineable/pickaxe", Mem.ctx.data.block_tags, [
 
 ---
 
-### Utility Functions
+### Utility functions
 
 #### `super_merge_dict()`
 Recursively merge two dictionaries without modifying the originals. Lists are concatenated, without duplicates unless they hold dictionaries.

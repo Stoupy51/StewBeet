@@ -252,7 +252,7 @@ The manual lists your items with their recipes, drawn from your definitions.
 
 ## What is in `beet.yml`
 
-Two parts of `beet.yml` are worth knowing before you go further.
+`beet.yml` has two parts to know before you go further.
 
 The folders StewBeet reads from, under `meta.stewbeet`:
 

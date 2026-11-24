@@ -35,7 +35,7 @@ Three libraries are pulled in by your declarations instead of by a string. `smit
 | `cinemalya` | [Cinemalya](https://github.com/Stoupy51/Cinemalya) | Modrinth |
 | `player_motion` | [Player Motion API](https://github.com/MulverineX/player_motion) | Modrinth |
 
-`player_motion` is downloaded and merged, but it is left out of the Lantern Load enumeration and of the version checks.
+`player_motion` is downloaded and merged, but it is left out of the Lantern Load enumeration (the community convention that sets the order datapacks load in) and of the version checks.
 
 Bookshelf has one key per module, all resolved through Modrinth: `bs.bitwise`, `bs.block`, `bs.color`, `bs.dump`, `bs.environment`, `bs.generation`, `bs.health`, `bs.hitbox`, `bs.id`, `bs.interaction`, `bs.link`, `bs.log`, `bs.math`, `bs.move`, `bs.position`, `bs.random`, `bs.raycast`, `bs.schedule`, `bs.sidebar`, `bs.spline`, `bs.string`, `bs.time`, `bs.tree`, `bs.vector`, `bs.view` and `bs.xp`. The [Bookshelf releases](https://github.com/mcbookshelf/bookshelf/releases) describe each one.
 
@@ -160,7 +160,7 @@ A pack with at least one dependency, official or custom, loads in this order:
 
 1. Lantern Load runs each dependency's `#<dep>:load` tag, and the libraries publish their versions to the `load.status` scoreboard.
 2. `check_dependencies` sets `#dependency_error <ns>.data` to 1 when a version score is too old.
-3. `valid_dependencies` waits for a player, reads their `DataVersion` and compares it with the oldest Minecraft version the pack supports (the lowest release of `mc_supports`). It then sends a `tellraw @a` with a clickable link for each failing library, and calls `confirm_load` only when every check passes.
+3. `valid_dependencies` waits for a player, reads their `DataVersion` (the player NBT field that holds the running Minecraft version) and compares it with the oldest Minecraft version the pack supports (the lowest release of `mc_supports`). It then sends a `tellraw @a` with a clickable link for each failing library, and calls `confirm_load` only when every check passes.
 
 A pack with no dependency has no check to run: its load function calls `confirm_load` directly, without waiting for a player.
 
@@ -183,16 +183,6 @@ A pack with no dependency has no check to run: its load function calls `confirm_
 | `<ns>:v<version>/load/valid_dependencies` | Function | Waits for a player, checks `DataVersion`, shows the errors |
 | `<ns>:v<version>/load/confirm_load` | Function | Runs only when every check passes |
 | `<ns>:v<version>/load/tick_verification` | Function | Runs the pack's tick function only when its own version scores match, written when the pack has a tick function |
-
-## Glossary
-
-| Term | Meaning |
-|------|---------|
-| `load_dependencies` | A `meta.stewbeet` dict in `beet.yml` where you declare libraries to download and version-check at runtime. |
-| Source | How a library is resolved: `"smithed"` (Smithed API) or `"modrinth"` (Modrinth API). |
-| Official library | A library registered in StewBeet's `OFFICIAL_LIBS`, detected from your functions with no configuration. |
-| Lantern Load | A community standard for datapack loading order, which StewBeet sets up for you. |
-| `DataVersion` | An entity NBT field that gives the running Minecraft version, compared with the oldest version in `mc_supports`. |
 
 ## Next steps
 

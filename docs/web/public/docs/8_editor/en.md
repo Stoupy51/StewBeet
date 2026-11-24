@@ -1,7 +1,7 @@
 
 # Editor support
 
-The [StewBeet extension for VSCode](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) is editor support for the whole [beet](https://github.com/mcbeet/beet) ecosystem: **beet**, **bolt**, **mecha** and **StewBeet**.
+The [StewBeet extension for VSCode](https://marketplace.visualstudio.com/items?itemName=stoupy.stewbeet) is editor support for the whole [beet](https://github.com/mcbeet/beet) ecosystem: beet, bolt, mecha and StewBeet.
 `.bolt` files get their own language, and the mcfunction strings inside your Python get highlighting, completion, errors and links to the built datapack.
 
 <video src="/vscode_extension.mp4" controls loop muted playsinline preload="auto">
@@ -30,7 +30,7 @@ require:
     - "stewbeet.plugins.source_maps"    # writes the .mcfunction.map files the editor navigates with
 ```
 
-That is the whole setup. The extension works without step 2, minus the links between your Python and the built pack.
+The extension works without step 2, minus the links between your Python and the built pack.
 
 ## Bolt
 
@@ -108,15 +108,15 @@ All under `StewBeet.*`:
 
 ## Coming from Aegis
 
-Compared to [Aegis](https://marketplace.visualstudio.com/items?itemName=thenuclearnexus.mecha-language-server), StewBeet is lighter and easier to install, but it does not provide Python symbols in completion yet.
+Compared to [Aegis](https://marketplace.visualstudio.com/items?itemName=thenuclearnexus.mecha-language-server), StewBeet needs no `ms-python.python` and no environment, but it does not provide Python symbols in completion yet.
 
 | | Aegis | StewBeet |
 |---|-------|----------|
-| `.bolt` highlighting | None, read as `mcfunction` | **Bolt grammar** |
-| Commands in Python strings | No | **Yes** |
-| Source to build navigation | No | **Both directions** |
-| Needs | `ms-python.python` and your environment | **Nothing** |
-| `.bolt` completion | **Full compiler, Python symbols included** | Commands only, through Spyglass |
+| `.bolt` highlighting | None, read as `mcfunction` | Bolt grammar |
+| Commands in Python strings | No | Yes |
+| Source to build navigation | No | Both directions |
+| Needs | `ms-python.python` and your environment | Nothing |
+| `.bolt` completion | Full compiler, Python symbols included | Commands only, through Spyglass |
 
 Keep Aegis if you need that last row.
 

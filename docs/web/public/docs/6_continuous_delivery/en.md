@@ -3,7 +3,7 @@
 
 One `upload.py` script publishes a release to GitHub, Modrinth, Smithed and PlanetMinecraft. It calls each platform in turn: GitHub first, because it writes the changelog, then the others with that changelog.
 
-Credentials live outside the project, in `~/stewbeet/credentials.yml`, so they can never be committed by accident.
+Credentials live outside the project, in `~/stewbeet/credentials.yml`, so a commit does not pick them up.
 
 - A published script: [SimplEnergy/upload.py](https://github.com/Stoupy51/SimplEnergy/blob/main/upload.py)
 - The source: [stewbeet/continuous_delivery/](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/continuous_delivery/)
@@ -269,16 +269,6 @@ pmc_config: JsonDict = {
 }
 upload_to_pmc(pmc_config, changelog)
 ```
-
-## Glossary
-
-| Term | Meaning |
-|------|---------|
-| `load_credentials` | Reads `~/stewbeet/credentials.yml` (or a custom path) and returns a dictionary of API keys and secrets used by the upload functions. |
-| `get_project_config` | Finds the `beet.yml` in the current directory or a parent, makes its folder the working directory, and returns a `ProjectConfig` with `name`, `version`, `id`, `output` and `directory` fields. |
-| Changelog | A Markdown string generated from the Git commits since the last tag. Returned by `upload_to_github` and forwarded to the other upload functions. |
-| `version_type` | The release maturity for Modrinth: `"release"`, `"beta"`, or `"alpha"`. |
-| `package_as_mod` | Optional Modrinth packaging mode that wraps your datapack as a Fabric, Forge, NeoForge or Quilt mod jar alongside the normal datapack upload. |
 
 ## Next steps
 

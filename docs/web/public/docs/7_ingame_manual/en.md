@@ -1,7 +1,7 @@
 
 # Generating the in-game manual
 
-The `ingame_manual` plugin builds an in-game manual from your `Mem.definitions` items: an introduction page, a category browser, one page per category, and one page per item with its recipes and wiki buttons. An item page also shows the effects the item gives when consumed, a link to the container it leaves (`remainder`) and a link to the growing seeds that drop it. You can edit any item's page, insert pages unrelated to items, control button placement, and render pages backed by your own texture. Every public class of the API (`Page` subclasses, `ButtonLayout`, `BakedText`, `PageRef`, `CraftRenderer`, `Manual` itself) is a Python dataclass.
+The `ingame_manual` plugin builds an in-game manual from your `Mem.definitions` items: an introduction page, a category browser, one page per category, and one page per item with its recipes and wiki buttons (the per-item buttons set with `Item(wiki_buttons=...)`). An item page also shows the effects the item gives when consumed, a link to the container it leaves (`remainder`) and a link to the growing seeds that drop it. You can edit any item's page, insert pages unrelated to items, control button placement, and render pages backed by your own texture. Every public class of the API (`Page` subclasses, `ButtonLayout`, `BakedText`, `PageRef`, `CraftRenderer`, `Manual` itself) is a Python dataclass.
 
 The pipeline entry of the manual is `stewbeet.plugins.ingame_manual`, placed after `custom_recipes` and before the datapack plugins.
 
@@ -13,10 +13,8 @@ What the plugin does:
 - Generates a recipe page for every item (crafting, smelting, smithing, stonecutting, mining, and custom recipe types).
 - Inserts, replaces and reorders pages through a Python API.
 - Runs your functions at fixed steps of the manual creation (`Phase` hooks).
-- Ships pages backed by a custom texture, with text baked into the image.
 - Replaces the book background or the home button texture on any one page (`book_texture`, `home_texture`).
 - Cross-links related pages: another item's recipe button, or a link button to its page (`extra_buttons`).
-- Decides where wiki buttons appear and how overflow is handled (`ButtonLayout`).
 - Keeps navigation correct after any insert or reorder, through deferred `PageRef` links.
 
 Customize it by calling `get_manual()` in your `setup_definitions`, after the items are defined, to register pages and hooks. The output is one Minecraft dialog per page, reachable through the vanilla quick actions menu, and through the `manual` item when `use_dialog` is `1`.
@@ -313,18 +311,6 @@ register_craft_renderer(MyMachineRenderer())
 ```
 
 Only `types` and `render_body` are required. `static_glyph` (high-res template glyph), `append_hover` and `build_image` (low-res PNG) all have defaults. `r` is the `RecipeRenderer`, exposing `r.config`, `r.glyphs`, `r.images`, `r.item_component(...)` and `r.append_or_invisible(...)`. Call `register_craft_renderer(...)` once, in your setup. A craft whose type has no registered renderer gets an empty page body.
-
-## Glossary
-
-| Term | Meaning |
-|------|---------|
-| Manual | The orchestrator object that owns the ordered list of pages, the glyph and font registry, the image builder, the recipe renderer and the developer hooks. Retrieved with `get_manual()`. |
-| Page | A self-contained unit rendered to Minecraft text components. Subclasses: `IntroPage`, `CategoryBrowserPage`, `CategoryPage`, `ItemPage`, plus the developer-facing `CustomPage`, `TexturePage` and `RawPage`. |
-| PageRef | A deferred link to a page (by `item`, `anchor` or literal `page`). Links resolve to page numbers after ordering, so inserting or reordering pages never breaks cross-page links. |
-| Phase hook | A function you register to run during manual creation (`manual.on(Phase.X)`), at a precise step of the build. |
-| ButtonLayout | Controls where and which wiki buttons appear on a page (columns, max, ordering, filtering, position). |
-| BakedText | A piece of text drawn directly onto a `TexturePage` background image with PIL. |
-| WikiButton | Per-item info text shown as a button in the manual, set with `Item(wiki_buttons=...)`. |
 
 ## Next steps
 

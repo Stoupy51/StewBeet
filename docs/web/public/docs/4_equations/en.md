@@ -1,9 +1,9 @@
 
 # Equations
 
-`ScoreboardEquation` and `StorageEquation` are chainable equation builders that turn a readable Python expression into Minecraft commands. Both generate a self-documenting output: the first line is a `# comment` showing the full equation, followed by the commands that compute it.
+`ScoreboardEquation` and `StorageEquation` are chainable equation builders that turn a readable Python expression into Minecraft commands. Both write the full equation as a `# comment` on the first line, followed by the commands that compute it.
 
-Use equations any time you need multi-step integer arithmetic in a datapack function. Instead of writing `scoreboard players operation` commands by hand, you build the expression in Python and call `str()` to get the full mcfunction block.
+Use equations for multi-step integer arithmetic in a datapack function. Build the expression in Python and call `str()` to get the full mcfunction block, rather than writing `scoreboard players operation` commands by hand.
 
 - Example file: [extensive/src/link.py](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/src/link.py)
 - Source code: [stewbeet/core/utils/equation.py](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/core/utils/equation.py)
@@ -196,16 +196,6 @@ Every method accepts an optional `scoreboard` second argument to target a differ
 | Equation | another `ScoreboardEquation` or `StorageEquation` | Inlines the source equation's commands first, then uses its final player and scoreboard as source |
 
 Scoreboard arithmetic is integer-only. Use the `scale` parameter of `StorageEquation` to turn the integer result into a floating-point NBT value when writing to storage.
-
-## Glossary
-
-| Term | Meaning |
-|------|---------|
-| ScoreboardEquation | A chainable builder that generates the commands of an arithmetic expression and leaves the result in a scoreboard objective. |
-| StorageEquation | A chainable builder that computes the expression, then stores the result in NBT storage with a configurable scale factor. |
-| Method chaining | Every operation method returns `self`, so calls can be chained: `.set(10).add(5).multiply(2)`. |
-| Equation header comment | The first line of every rendered equation is a `# comment` that mirrors the full expression, making generated functions self-documenting. |
-| Macro argument | A Minecraft function macro parameter in the form `$(name)`. When used as an operand, the line that uses it starts with `$`. |
 
 ## Next steps
 
