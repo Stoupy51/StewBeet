@@ -13,6 +13,7 @@ execute as @e[type=minecraft:item_display,tag=_your_namespace.custom_block] at @
 
 # Kill entities with custom tags
 execute as @e[tag=_your_namespace.chair] at @s run function _your_namespace:v3.0.0/unload/safe_kill
+execute as @e[tag=_your_namespace.drop] at @s run function _your_namespace:v3.0.0/unload/safe_kill
 execute as @e[tag=_your_namespace.interaction] at @s run function _your_namespace:v3.0.0/unload/safe_kill
 execute as @e[tag=_your_namespace.lamp] at @s run function _your_namespace:v3.0.0/unload/safe_kill
 execute as @e[tag=_your_namespace.new] at @s run function _your_namespace:v3.0.0/unload/safe_kill

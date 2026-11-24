@@ -102,6 +102,10 @@ kill @s
 """
 	if data[VANILLA_BLOCK].get("interaction"):
 		write_function(obj_block.functions.destroy, counts + interaction_destroy(obj_block))
+		custom: str = f"\n# Make it the custom item\nloot replace entity @s contents loot {obj_block.loot_table}\n"
+		drop: str = no_silk_touch_content(ns, item, data, obj_block, item_nbt="") if data.get(NO_SILK_TOUCH_DROP) else custom
+		placeholder: str = f"\n# The item destroy summoned holding a placeholder\ntag @s remove {ns}.drop\n"
+		write_function(obj_block.functions.replace_item, placeholder + drop)
 		return
 
 	item_nbt: str = f"""{{id:"{block_id}"}}"""
@@ -135,8 +139,8 @@ def no_silk_touch_content(ns: str, item: str, data: Item, obj_block: Block, item
 	"""
 	is_ore: bool = data.get(VANILLA_BLOCK) == VANILLA_BLOCK_FOR_ORES
 	if not is_ore:
-		# A host too weak a tool broke drops nothing on purpose, so no item is made up for it
-		made_up: str = "" if obj_block.mining else (
+		# A host too weak a tool broke drops nothing on purpose, and an interaction host summons its item, so none is made up
+		made_up: str = "" if obj_block.mining or (obj_block.vanilla_block and obj_block.vanilla_block.interaction) else (
 			f"\n# If no item found, summon it\nexecute unless entity @n[type=item,nbt={{Item:{item_nbt}}},distance=..1] "
 			'run loot spawn ~ ~ ~ loot {pools:[{entries:[{type:"minecraft:item",name:"minecraft:glass"}],rolls:1}]}\n'
 		)

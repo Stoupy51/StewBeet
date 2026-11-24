@@ -11,7 +11,6 @@ from stouputils.typing import JsonDict
 from ....core.__memory__ import Mem
 from ....core.cls.items.block import Block
 from ....core.cls.items.features import Interaction
-from ....core.cls.items.item import Item
 from ....core.constants import CUSTOM_BLOCK_VANILLA
 from ....core.utils.io import write_advancement, write_function, write_load_file, write_versioned_function
 from ....core.utils.loot_table import advancement_entity, entity_type_field, loot_condition
@@ -43,15 +42,16 @@ def interaction_destroy(block: Block) -> str:
 	""" The commands ending the block's destroy function: feedback, its item unless `#no_drop` is 1, and its entities gone.
 
 	Only a creative player or a weak tool sets `#no_drop`, so anything else breaking the block, such as a quarry, gets the item.
-	An item id as `no_silk_touch_drop` drops that item instead, as a lit lamp drops an unlit one.
+	The block's `replace_item` makes the summoned item, as it turns the vanilla drop of any other host into the custom one.
+	That item holds a placeholder until then, since Minecraft discards an item entity summoned empty.
 	"""
 	ns: str = Mem.ctx.project_id
-	drop: str = block.no_silk_touch_drop if isinstance(block.no_silk_touch_drop, str) else block.id
 	lines: str = f"""
 # Break feedback, the item, and the interaction gone
-{feedback(block, "break")}execute unless score #no_drop {ns}.data matches 1 run loot spawn ~ ~ ~ loot {Item.from_id(drop).loot_table}
+{feedback(block, "break")}execute unless score #no_drop {ns}.data matches 1 run summon item ~ ~ ~ {{Item:{{id:"minecraft:stone"}},Tags:["{ns}.drop"]}}
+execute as @e[type=item,tag={ns}.drop,distance=..0.01] run function {block.functions.replace_item}
 execute positioned ~ ~-0.5 ~ run kill @e[type=interaction,tag={ns}.interaction,distance=..0.01]
-"""
+"""  # noqa: E501
 	if interaction_of(block).seat is not None:
 		lines += f"kill @e[type=item_display,tag={ns}.seat,distance=..0.6]\n"
 	return lines
@@ -109,7 +109,7 @@ tag @s remove {ns}.user
 """)  # noqa: E501
 	seats: list[Block] = [block for block in blocks if interaction_of(block).seat is not None]
 	write_function(f"{ns}:custom_blocks/_interaction/use", "data remove entity @s interaction\n" + "".join(
-		f"execute if entity @s[tag={ns}.{block.id}] run return run function {block.functions['sit']}\n" for block in seats
+		f"execute if entity @s[tag={ns}.{block.id}] run function {block.functions['sit']}\n" for block in seats
 	))
 	if seats:
 		write_seats(seats)

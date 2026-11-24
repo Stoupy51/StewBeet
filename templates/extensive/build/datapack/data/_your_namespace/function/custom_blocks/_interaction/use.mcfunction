@@ -7,5 +7,5 @@
 #
 
 data remove entity @s interaction
-execute if entity @s[tag=_your_namespace.chair] run return run function _your_namespace:custom_blocks/chair/sit
+execute if entity @s[tag=_your_namespace.chair] run function _your_namespace:custom_blocks/chair/sit
 

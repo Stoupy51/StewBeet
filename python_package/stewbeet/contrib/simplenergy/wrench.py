@@ -7,16 +7,17 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 from beet import FunctionTag
+from stouputils.typing import JsonDict
 
 from ...core import CUSTOM_BLOCKS_FOLDER, Block, BlockFunctions, Mem, set_json_encoder, write_function
 
 
 # Setup simplenergy wrench rotatable tags and mechanization calls
 def setup_wrench(blocks: list[str] | str, tag_ns: str = "simplenergy") -> None:
-	""" Setup rotatable tags for blocks and mechanization wrench calls.
+	""" Setup rotatable tags for blocks, and mechanization wrench calls, its tools included on interaction blocks.
 
 	Args:
-		blocks: List of block names that should be rotatable.
+		blocks: List of block names that should be rotatable, or any string for every block turned toward the player.
 			(e.g. ["furnace_generator", "electric_furnace", "electric_smelter", "pulverizer"])
 		tag_ns: Namespace for the tags. Default is "simplenergy".
 	"""
@@ -24,7 +25,9 @@ def setup_wrench(blocks: list[str] | str, tag_ns: str = "simplenergy") -> None:
 	if isinstance(blocks, str):
 		blocks = [
 			x for x, y in Mem.definitions.items()
-			if isinstance(y, Block) and y.vanilla_block and y.vanilla_block.block_facing == "player"
+			if isinstance(y, Block) and y.vanilla_block and (
+				y.vanilla_block.block_facing == "player" or (y.vanilla_block.interaction and y.vanilla_block.visual_facing == "player")
+			)
 		]
 
 	# Add tags for rotatables
@@ -51,4 +54,10 @@ execute if entity @s[tag={ns}.custom_block] run function {ns}:{CUSTOM_BLOCKS_FOL
 		f"{ns}:calls/mechanization/wrench_modify",
 		f"execute if entity @s[tag={tag_ns}.rotatable] run function {tag_ns}:utils/wrench/rotate"
 	)
+
+	# Using an interaction never uses the item in hand, so Mechanization's tools only see that click when given it here
+	if any(isinstance(y, Block) and y.vanilla_block and y.vanilla_block.interaction for y in Mem.definitions.values()):
+		optional_tag: JsonDict = {"values": [{"id": "#mechanization:calls/right_click", "required": False}]}
+		Mem.ctx.data[ns].function_tags["calls/mechanization/right_click"] = set_json_encoder(FunctionTag(optional_tag))
+		write_function(f"{ns}:{CUSTOM_BLOCKS_FOLDER}/_interaction/used", f"function #{ns}:calls/mechanization/right_click\n")
 

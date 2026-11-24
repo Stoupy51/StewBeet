@@ -17,7 +17,8 @@ kill @s
 # Break feedback, the item, and the interaction gone
 particle minecraft:item{item: {id: "minecraft:furnace", components: {"minecraft:item_model": "_your_namespace:chair"}}} ~ ~ ~ 0.25 0.25 0.25 0.1 30
 playsound minecraft:block.wood.break block @a ~ ~ ~ 1.0
-execute unless score #no_drop _your_namespace.data matches 1 run loot spawn ~ ~ ~ loot _your_namespace:i/chair
+execute unless score #no_drop _your_namespace.data matches 1 run summon item ~ ~ ~ {Item: {id: "minecraft:stone"}, Tags: ["_your_namespace.drop"]}
+execute as @e[type=item, tag=_your_namespace.drop, distance=..0.01] run function _your_namespace:custom_blocks/chair/replace_item
 execute positioned ~ ~-0.5 ~ run kill @e[type=interaction, tag=_your_namespace.interaction, distance=..0.01]
 kill @e[type=item_display, tag=_your_namespace.seat, distance=..0.6]
 

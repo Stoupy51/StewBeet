@@ -4,6 +4,7 @@
 # @executed	as @e[tag=_your_namespace.chair] & at @s
 #
 # @within	_your_namespace:v3.0.0/unload [ as @e[tag=_your_namespace.chair] & at @s ]
+#			_your_namespace:v3.0.0/unload [ as @e[tag=_your_namespace.drop] & at @s ]
 #			_your_namespace:v3.0.0/unload [ at @s ]
 #			_your_namespace:v3.0.0/unload [ as @e[tag=_your_namespace.lamp] & at @s ]
 #			_your_namespace:v3.0.0/unload [ as @e[tag=_your_namespace.new] & at @s ]

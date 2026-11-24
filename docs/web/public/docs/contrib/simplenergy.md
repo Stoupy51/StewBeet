@@ -123,9 +123,11 @@ setup_wrench([
 ])
 ```
 
-Tags each block `simplenergy.rotatable` when placed. The Mechanization wrench then turns it with `simplenergy:utils/wrench/rotate`, a function of SimplEnergy, so the pack runs beside SimplEnergy. `tag_ns="<namespace>"` uses your own tag and function instead.
+Tags each block `simplenergy.rotatable` when placed. A string instead of the list, such as `"all"`, takes every block placed facing the player, and every interaction block whose display faces the player. The Mechanization wrench then turns it with `simplenergy:utils/wrench/rotate`, a function of SimplEnergy, so the pack runs beside SimplEnergy. `tag_ns="<namespace>"` uses your own tag and function instead.
 
 The wrench also breaks any of your custom blocks, through `#mechanization:wrench_break`.
+
+Using an [interaction](../1_definitions_setup/en.md#interaction) block never uses the item in hand. SimplEnergy's tools hear that click by themselves, and Mechanization's get it through `#<namespace>:calls/mechanization/right_click` when your pack has such a block.
 
 ## Limits
 
