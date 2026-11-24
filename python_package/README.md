@@ -26,7 +26,7 @@ StewBeet is a set of plugins for [beet](https://github.com/mcbeet/beet), the bui
   <img alt="beet runs the build, and bolt and mecha plug into it, all three made by the beet team. StewBeet is a separate project that runs inside beet as plugins." src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/web/public/img/stack/stewbeet-stack.en.dark.png">
 </picture>
 
-## One definition, eight files
+## One definition, 8 files
 
 This is the Life Crystal Block of [Stardust Fragment](https://github.com/Stoupy51/StardustFragment):
 
@@ -52,6 +52,12 @@ uv run stewbeet build
 ```
 
 The [quickstart](https://stewbeet.paralya.fr/docs/quickstart) takes you from nothing to a loaded datapack, and the [tutorial](https://stewbeet.paralya.fr/docs/tutorial) builds a whole pack step by step. Already have a datapack? [Migrate it](https://stewbeet.paralya.fr/docs/migrate).
+
+## An in-game manual of every item
+
+The build turns your definitions into a book players open in game: every item, its recipes, and what it is used for, with the items drawn from their real models.
+
+![The in-game manual of Stardust Fragment, browsed page by page](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/ingame_manual.gif)
 
 ## What the build does for you
 
