@@ -39,23 +39,23 @@ const box = (style: Record<string, unknown>, children: (Node | string)[] | Node 
 /** One card: the logo, the section label in its colour, the title, the lead, the address. */
 async function render(meta: PageMeta, section: { label: string; color: string } | null): Promise<Buffer> {
     const title = meta.title.replace(/ \| StewBeet$/, '');
-    const lead = meta.description.length > 150 ? `${meta.description.slice(0, meta.description.lastIndexOf(' ', 147))}...` : meta.description;
+    const lead = meta.description.length > 120 ? `${meta.description.slice(0, meta.description.lastIndexOf(' ', 117))}...` : meta.description;
     const card = box(
-        { width: 1052, height: 518, flexDirection: 'column', justifyContent: 'space-between', paddingTop: 56, paddingBottom: 56, paddingLeft: 72, paddingRight: 72, background: COLORS.surface, borderLeft: `2px solid ${COLORS.border}`, borderRight: `2px solid ${COLORS.border}`, fontFamily: 'Archivo', color: COLORS.text },
+        { width: 1052, height: 534, flexDirection: 'column', justifyContent: 'space-between', paddingTop: 48, paddingBottom: 48, paddingLeft: 72, paddingRight: 72, background: COLORS.surface, borderLeft: `2px solid ${COLORS.border}`, borderRight: `2px solid ${COLORS.border}`, fontFamily: 'Archivo', color: COLORS.text },
         [
             box({ alignItems: 'center', gap: 20 }, [
-                { type: 'img', props: { src: logo, width: 64, height: 64 } },
-                box({ fontSize: 34, fontWeight: 700 }, 'StewBeet'),
-                ...(section ? [box({ marginLeft: 24, alignItems: 'center', gap: 12, fontSize: 22, letterSpacing: 2, color: section.color }, [
-                    box({ width: 14, height: 14, background: section.color }, []),
+                { type: 'img', props: { src: logo, width: 80, height: 80 } },
+                box({ fontSize: 42, fontWeight: 700 }, 'StewBeet'),
+                ...(section ? [box({ marginLeft: 28, alignItems: 'center', gap: 14, fontSize: 28, letterSpacing: 2, color: section.color }, [
+                    box({ width: 18, height: 18, background: section.color }, []),
                     section.label.toUpperCase(),
                 ])] : []),
             ]),
             box({ flexDirection: 'column', gap: 24 }, [
-                box({ fontSize: title.length > 34 ? 60 : 76, fontWeight: 700, lineHeight: 1.1 }, title),
-                box({ fontSize: 28, lineHeight: 1.4, color: COLORS.muted }, lead),
+                box({ fontSize: title.length > 30 ? 76 : 96, fontWeight: 700, lineHeight: 1.05 }, title),
+                box({ fontSize: 34, lineHeight: 1.35, color: COLORS.muted }, lead),
             ]),
-            box({ fontSize: 24, color: COLORS.muted }, `stewbeet.paralya.fr${meta.path}`),
+            box({ fontSize: 28, color: COLORS.muted }, `stewbeet.paralya.fr${meta.path}`),
         ],
     );
     const svg = await satori(card as unknown as React.ReactNode, { width: 1200, height: 630, fonts });
