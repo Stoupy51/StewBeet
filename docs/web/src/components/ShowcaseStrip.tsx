@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { useInView } from 'framer-motion';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import { useTranslation } from '../i18n/useTranslation';
@@ -6,7 +7,16 @@ import { SHOWCASE, TOTAL_BUILT_WITH, type ShowcaseProject } from './builtWithDat
 
 const numberFormat = new Intl.NumberFormat('en-US');
 
-/** One project: its pack icon in an inventory slot, and how many files the packs measured for it build. */
+/** A project's pack icon in an inventory slot, or its initial when it has none. */
+export const ProjectIcon = ({ project, index = 0 }: { project: ShowcaseProject; index?: number }) => (
+    <span className="mc-slot mc-slot-hover flex-shrink-0 w-[4.5rem] h-[4.5rem]">
+        {project.icon
+            ? <img src={`/showcase/${project.icon}.webp`} alt="" width={64} height={64} loading="lazy" className="slot-fill pixelated w-16 h-16" style={{ '--slot': index } as React.CSSProperties} />
+            : <span className="slot-fill font-pixel text-2xl text-white" style={{ '--slot': index } as React.CSSProperties}>{project.name[0]}</span>}
+    </span>
+);
+
+/** One project: its icon, and how many files the packs measured for it build. */
 const ProjectCard = ({ project, index }: { project: ShowcaseProject; index: number }) => {
     const { t } = useTranslation();
     const { stats } = project;
@@ -14,11 +24,7 @@ const ProjectCard = ({ project, index }: { project: ShowcaseProject; index: numb
     return (
         <li className="snap-start flex-shrink-0 w-[10.5rem] lg:w-[12rem]">
             <a href={project.url} target="_blank" rel="noopener noreferrer" className="group flex flex-col h-full p-4 border border-border hover:border-ink-600 transition-colors">
-                <span className="mc-slot mc-slot-hover w-[4.5rem] h-[4.5rem]">
-                    {project.icon
-                        ? <img src={`/showcase/${project.icon}.webp`} alt="" width={64} height={64} loading="lazy" className="slot-fill pixelated w-16 h-16" style={{ '--slot': index } as React.CSSProperties} />
-                        : <span className="slot-fill font-pixel text-2xl text-white" style={{ '--slot': index } as React.CSSProperties}>{project.name[0]}</span>}
-                </span>
+                <ProjectIcon project={project} index={index} />
                 <span className="mt-3 font-bold group-hover:text-link transition-colors">{project.name}</span>
                 <span className="text-sm text-text-muted">
                     {project.owner}{project.community && <span className="text-generated">, {t('builtWith.community')}</span>}
@@ -50,7 +56,10 @@ export const ShowcaseStrip = () => {
             <div className="flex items-end justify-between gap-6">
                 <div>
                     <h2 className="text-[1.75rem] lg:text-[2.25rem] leading-tight font-bold text-balance">{t('builtWith.title').replace('{n}', String(TOTAL_BUILT_WITH))}</h2>
-                    <p className="mt-4 text-text-muted text-pretty">{t('builtWith.subtitle')}</p>
+                    <p className="mt-4 text-text-muted text-pretty">
+                        {t('builtWith.subtitle')}{' '}
+                        <Link to="/showcase" className="text-link underline underline-offset-2">{t('builtWith.seeAll')}</Link>
+                    </p>
                 </div>
                 <div className="flex gap-2 flex-shrink-0">
                     <button type="button" onClick={() => step(-1)} aria-label={t('builtWith.previous')} className={arrow}><HiChevronLeft aria-hidden="true" /></button>

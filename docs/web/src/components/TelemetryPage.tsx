@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { HiArrowLeft, HiCheck, HiExternalLink, HiX } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
@@ -8,8 +7,7 @@ import { PageHeader } from './PageHeader';
 import { TelemetrySlider } from './TelemetrySlider';
 import type { StreamSeries } from './TelemetryStreamPanel';
 import { useTranslation } from '../i18n/useTranslation';
-import { useMotionSafe } from '../hooks/useMotionSafe';
-import { HEADING, SELECTION_BRAND, TEXT_ACCENT, TEXT_ACCENT_HOVER } from '../theme';
+import { HEADING, TEXT_ACCENT, TEXT_ACCENT_HOVER } from '../theme';
 
 /** The file the whole feature lives in. Linking the repository root instead would prove nothing. */
 const IMPLEMENTATION_URL = 'https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/telemetry.py';
@@ -36,7 +34,6 @@ const NOT_COLLECTED = [
  */
 export const TelemetryPage: React.FC = () => {
     const { t } = useTranslation();
-    const motionSafe = useMotionSafe();
     const [streams, setStreams] = useState<Record<string, StreamSeries> | null>(null);
     const [failed, setFailed] = useState(false);
 
@@ -50,33 +47,33 @@ export const TelemetryPage: React.FC = () => {
     }, []);
 
     return (
-        <div className={`min-h-screen bg-ink-950 text-ink-100 ${SELECTION_BRAND}`}>
+        <div className="min-h-screen">
             <Navbar />
 
             <main>
-                <PageHeader title={t('telemetry.title')} lead={t('telemetry.subtitle')} width="max-w-3xl" />
+                <PageHeader title={t('telemetry.title')} lead={t('telemetry.subtitle')} />
 
                 {/* ── Public statistics ──────────────────────────────────────── */}
-                <div className="relative z-10 pb-12 px-4">
-                    <motion.div {...motionSafe({ initial: { y: 20 }, animate: { y: 0 }, transition: { delay: 0.15 } })}>
+                <div className="frame px-4 py-10 lg:px-12 border-t border-border">
+                    <div>
                         {streams ? (
                             <TelemetrySlider streams={streams} />
                         ) : (
-                            <section className="max-w-3xl mx-auto rounded-panel border border-ink-800 bg-ink-900/40 p-6 md:p-8">
+                            <section className="max-w-3xl border border-border p-6 md:p-8">
                                 <p className="text-ink-400">{failed ? t('telemetry.statsUnavailable') : t('telemetry.statsLoading')}</p>
                             </section>
                         )}
-                    </motion.div>
+                    </div>
                 </div>
 
                 {/* ── What is collected ──────────────────────────────────────── */}
-                <div className="relative z-10 pb-12 px-4">
-                    <div className="max-w-3xl mx-auto">
+                <div className="frame px-4 py-10 lg:px-12 border-t border-border">
+                    <div className="max-w-3xl">
                         <h2 className={`text-xl font-semibold mb-2 ${HEADING}`}>{t('telemetry.collectedTitle')}</h2>
                         <p className="text-sm text-ink-400 mb-5">{t('telemetry.collectedWhy')}</p>
 
                         <div className="grid gap-4 md:grid-cols-2">
-                            <div className="rounded-panel border border-ink-800 bg-ink-900/40 p-5">
+                            <div className="border border-border p-5">
                                 <h3 className="text-sm font-semibold text-ink-200 mb-3">{t('telemetry.collectedHeading')}</h3>
                                 <ul className="space-y-2">
                                     {COLLECTED.map(key => (
@@ -88,7 +85,7 @@ export const TelemetryPage: React.FC = () => {
                                 </ul>
                             </div>
 
-                            <div className="rounded-panel border border-ink-800 bg-ink-900/40 p-5">
+                            <div className="border border-border p-5">
                                 <h3 className="text-sm font-semibold text-ink-200 mb-3">{t('telemetry.notCollectedHeading')}</h3>
                                 <ul className="space-y-2">
                                     {NOT_COLLECTED.map(key => (
@@ -109,12 +106,12 @@ export const TelemetryPage: React.FC = () => {
                 </div>
 
                 {/* ── Disabling it */}
-                <div className="relative z-10 pb-12 px-4">
-                    <div className="max-w-3xl mx-auto">
+                <div className="frame px-4 py-10 lg:px-12 border-t border-border">
+                    <div className="max-w-3xl">
                         <h2 className={`text-xl font-semibold mb-2 ${HEADING}`}>{t('telemetry.disableTitle')}</h2>
                         <p className="text-sm text-ink-400 mb-4">{t('telemetry.disableIntro')}</p>
 
-                        <pre className="rounded-panel border border-ink-800 bg-ink-900/60 p-4 overflow-x-auto text-sm font-mono text-ink-200">
+                        <pre className="border border-code-border bg-code-surface p-4 overflow-x-auto text-sm font-mono text-ink-200">
 {`# Linux / macOS
 export STEWBEET_TELEMETRY=0
 stewbeet build
@@ -129,8 +126,8 @@ stewbeet build`}
                 </div>
 
                 {/* ── The code itself */}
-                <div className="relative z-10 pb-20 px-4">
-                    <div className="max-w-3xl mx-auto pt-6 border-t border-ink-800">
+                <div className="frame px-4 py-10 lg:px-12 border-t border-border">
+                    <div className="max-w-3xl">
                         <h2 className={`text-xl font-semibold mb-2 ${HEADING}`}>{t('telemetry.sourceTitle')}</h2>
                         <p className="text-sm text-ink-400 mb-4">{t('telemetry.sourceIntro')}</p>
 

@@ -117,6 +117,18 @@ export const translations = {
             previous: 'Previous projects',
             next: 'Next projects',
             filesFrom: '{files} files from {lines} lines of Python',
+            seeAll: 'See them all.',
+        },
+
+        // The /showcase page
+        showcase: {
+            lead: 'Datapacks, games and libraries with public source. Each card opens it, so you can read how a real project lays out its definitions.',
+            community: 'By the community',
+            packs: "By StewBeet's author",
+            libraries: 'Libraries',
+            addTitle: 'Add yours',
+            addText: 'Built something with StewBeet and published its source?',
+            addLink: 'Open an issue with its link.',
         },
 
         // Standing on giants: one line on the home page, the roles on /credits
@@ -183,6 +195,7 @@ export const translations = {
             equationsDesc: 'Chainable Equation builders that compile to scoreboard commands.',
             apiDesc: 'Every class and function of the Python package, generated from the code.',
             howItFitsDesc: 'What beet, bolt and mecha do, and where StewBeet plugs in.',
+            handledDesc: 'What the build writes and checks so you never do it by hand.',
             pluginsLead: 'Each step of the build is a plugin you can enable, disable or replace.',
             allPlugins: 'Every plugin, in pipeline order',
         },
@@ -574,6 +587,18 @@ export const translations = {
             previous: 'Projets précédents',
             next: 'Projets suivants',
             filesFrom: '{files} fichiers depuis {lines} lignes de Python',
+            seeAll: 'Voir tous les projets.',
+        },
+
+        // The /showcase page
+        showcase: {
+            lead: 'Des datapacks, des jeux et des bibliothèques au code public. Chaque carte ouvre ce code, pour voir comment un vrai projet organise ses définitions.',
+            community: 'Par la communauté',
+            packs: "Par l'auteur de StewBeet",
+            libraries: 'Bibliothèques',
+            addTitle: 'Ajoutez le vôtre',
+            addText: 'Vous avez fait un projet avec StewBeet et publié son code ?',
+            addLink: 'Ouvrez une issue avec son lien.',
         },
 
         // Standing on giants: one line on the home page, the roles on /credits
@@ -640,6 +665,7 @@ export const translations = {
             equationsDesc: 'Des constructeurs Equation chaînables qui compilent en commandes scoreboard.',
             apiDesc: 'Chaque classe et fonction du package Python, générées depuis le code.',
             howItFitsDesc: 'Ce que font beet, bolt et mecha, et où StewBeet se branche.',
+            handledDesc: 'Ce que le build écrit et vérifie pour que vous ne le fassiez jamais à la main.',
             pluginsLead: 'Chaque étape du build est un plugin que vous pouvez activer, désactiver ou remplacer.',
             allPlugins: "Tous les plugins, dans l'ordre du pipeline",
         },

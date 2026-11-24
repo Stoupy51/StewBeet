@@ -98,13 +98,13 @@ export const PlaygroundPage: React.FC = () => {
     const fileCount = result?.files?.length ?? 0;
 
     return (
-        <div className="min-h-screen bg-ink-950 text-ink-100">
+        <div className="min-h-screen">
             <Navbar />
 
-            <PageHeader title={t('playground.title')} lead={t('playground.subtitle')} width="max-w-7xl" />
+            <PageHeader title={t('playground.title')} lead={t('playground.subtitle')} wide />
 
-            <div className="relative z-10 px-4 pb-16">
-                <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-4">
+            <div className="frame frame-wide px-4 py-10 lg:px-12 border-t border-border">
+                <div className="grid lg:grid-cols-2 gap-4">
 
                     {/* ── Editor */}
                     <div className="code-dark rounded-panel border border-ink-800 bg-ink-900 flex flex-col overflow-hidden">
@@ -263,8 +263,8 @@ export const PlaygroundPage: React.FC = () => {
                 {/* ── Limitations */}
                 {/* Always open. Hiding what the playground cannot do behind a toggle means the
                     reader finds out by being surprised, which is the opposite of the point. */}
-                <div className="max-w-7xl mx-auto mt-4">
-                    <div className="rounded-panel border border-ink-800 bg-ink-900/40 p-5 space-y-3">
+                <div className="mt-4">
+                    <div className="border border-border p-5 space-y-3">
                         <p className="text-sm font-semibold text-ink-200">{t('playground.limits')}</p>
                         <p className="text-sm text-ink-400 leading-relaxed">{t('playground.limitsDetail')}</p>
                         <p className="text-sm text-ink-400">
@@ -284,7 +284,7 @@ export const PlaygroundPage: React.FC = () => {
                 </div>
             </div>
 
-            <Footer />
+            <Footer wide />
         </div>
     );
 };

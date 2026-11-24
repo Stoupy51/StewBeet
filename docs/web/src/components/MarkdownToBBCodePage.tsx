@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
 import { HiClipboardCopy, HiRefresh } from 'react-icons/hi';
 import { convertMarkdownToBBCode } from '../utils/markdownToBBCode';
 import { inputSizeBucket } from '../api/telemetry/streams';
@@ -8,7 +7,6 @@ import { Navbar } from './Navbar';
 import { PageHeader } from './PageHeader';
 import { Footer } from './Footer';
 import { useTranslation } from '../i18n/useTranslation';
-import { useMotionSafe } from '../hooks/useMotionSafe';
 import { BTN_PRIMARY, TEXT_ACCENT, TOGGLE_ACTIVE } from '../theme';
 
 type DiffLine = { type: 'unchanged' | 'removed' | 'added'; text: string };
@@ -68,7 +66,6 @@ export function MarkdownToBBCodePage() {
   const [showDiff, setShowDiff] = useState(false);
   const [noWrap, setNoWrap] = useState(true);
   const { t, language } = useTranslation();
-  const motionSafe = useMotionSafe();
 
   const bbcodeOutput = useMemo(
     () => (autoUpdate ? convertMarkdownToBBCode(markdownInput) : manualBbcodeOutput),
@@ -113,20 +110,14 @@ export function MarkdownToBBCodePage() {
   };
 
   return (
-    <div className="min-h-screen bg-ink-950 text-ink-100">
+    <div className="min-h-screen">
       <Navbar />
 
-      <PageHeader title={t('tools.markdownToBBCode')} lead={t('tools.markdownToBBCodeDesc')} width="max-w-7xl" />
+      <PageHeader title={t('tools.markdownToBBCode')} lead={t('tools.markdownToBBCodeDesc')} wide />
 
-      <main className="relative pb-16 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            {...motionSafe({
-                initial: { y: 20 },
-                animate: { y: 0 },
-                transition: { duration: 0.5, delay: 0.1 },
-            })}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
+      <main className="frame frame-wide px-4 py-10 lg:px-12 border-t border-border">
+        <div className="">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
           >
             {/* Input Section */}
             <div className="bg-ink-900 rounded-panel border border-ink-800 p-6">
@@ -177,16 +168,10 @@ export function MarkdownToBBCodePage() {
                   />
                 )}
             </div>
-          </motion.div>
+          </div>
 
           {/* Action Buttons */}
-          <motion.div
-            {...motionSafe({
-                initial: { y: 20 },
-                animate: { y: 0 },
-                transition: { duration: 0.5, delay: 0.2 },
-            })}
-            className="flex flex-wrap justify-center gap-2 mb-12"
+          <div className="flex flex-wrap justify-center gap-2 mb-12"
           >
             {!autoUpdate && (
               <button
@@ -243,16 +228,10 @@ export function MarkdownToBBCodePage() {
               <HiRefresh className="w-4 h-4" />
               {language === 'fr' ? 'Tout effacer' : 'Clear All'}
             </button>
-          </motion.div>
+          </div>
 
           {/* Example Section */}
-          <motion.div
-            {...motionSafe({
-                initial: { y: 20 },
-                animate: { y: 0 },
-                transition: { duration: 0.5, delay: 0.3 },
-            })}
-            className="bg-ink-900 rounded-panel border border-ink-800 p-6"
+          <div className="bg-ink-900 rounded-panel border border-ink-800 p-6"
           >
             <h3 className="text-lg font-semibold text-ink-200 mb-6">
               {language === 'fr' ? 'Exemple de conversion' : 'Conversion Example'}
@@ -284,11 +263,11 @@ export function MarkdownToBBCodePage() {
                 </pre>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </main>
 
-      <Footer />
+      <Footer wide />
     </div>
   );
 }

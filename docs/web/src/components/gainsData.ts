@@ -11,11 +11,22 @@ export const BY_HAND: { path: string; role: string }[] = [
 ];
 
 /**
- * The code of the two examples under the comparison, highlighted at build time by
- * scripts/highlight-docs.ts into src/generated/gainsCode.json under the same keys.
- * Both are what Stardust Fragment and SimplEnergy write and build, cut to fit a phone.
+ * The code of the comparison's definition and of the two examples under it, highlighted at build
+ * time by scripts/highlight-docs.ts into src/generated/gainsCode.json under the same keys.
+ * All are what Stardust Fragment and SimplEnergy write and build, cut to fit a phone.
  */
 export const GAIN_SNIPPETS: Record<string, { lang: string; code: string }> = {
+    definition: {
+        lang: 'python',
+        code: `Block(
+  id="life_crystal_block",
+  vanilla_block=VanillaBlock(id="minecraft:glass"),
+  recipes=[CraftingShapelessRecipe(
+    ingredients=8 * [Ingr("minecraft:glass")]
+      + [Ingr("life_crystal")],
+  )],
+)`,
+    },
     materials: {
         lang: 'python',
         code: `generate_everything_about_these_materials({

@@ -1,14 +1,14 @@
 /**
- * The top of every page that is not the home page: the title and one lead paragraph.
- * `width` is the container of the page below it, so the header's left edge lines up with the content.
+ * The top of every page that is not the home page or a doc page: the title and one lead paragraph,
+ * in the frame the sections below it continue. `wide` matches the frame of the tool pages.
  */
-export const PageHeader = ({ title, lead, width = 'max-w-page' }: {
+export const PageHeader = ({ title, lead, wide = false }: {
     title: string;
     lead?: React.ReactNode;
-    width?: string;
+    wide?: boolean;
 }) => (
-    <header className={`${width} mx-auto px-4 sm:px-6 pt-28 md:pt-32 pb-10`}>
-        <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-ink-50 text-balance">{title}</h1>
-        {lead && <p className="mt-4 max-w-2xl text-base md:text-lg text-ink-300 leading-relaxed text-pretty">{lead}</p>}
+    <header className={`frame ${wide ? 'frame-wide' : ''} px-4 pt-[5.5rem] pb-10 lg:px-12 lg:pt-32`}>
+        <h1 className="text-[2.25rem] lg:text-[3.25rem] leading-[1.12] font-bold text-balance">{title}</h1>
+        {lead && <p className="mt-4 max-w-[40rem] text-text-muted text-pretty">{lead}</p>}
     </header>
 );

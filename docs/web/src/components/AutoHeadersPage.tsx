@@ -200,20 +200,20 @@ export const AutoHeadersPage: React.FC = () => {
     }, [output, selected]);
 
     return (
-        <div className="min-h-screen bg-ink-950 text-ink-100">
+        <div className="min-h-screen">
             <Navbar />
 
-            <PageHeader title={t('autoHeaders.title')} lead={t('autoHeaders.subtitle')} width="max-w-7xl" />
+            <PageHeader title={t('autoHeaders.title')} lead={t('autoHeaders.subtitle')} wide />
 
-            <div className="relative z-10 px-4 pb-16">
-                <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-4">
+            <div className="frame frame-wide px-4 py-10 lg:px-12 border-t border-border">
+                <div className="grid lg:grid-cols-2 gap-4">
 
                     {/* ── Upload */}
                     {/* Both columns take the same explicit height rather than one measuring the
                         other, because there is no editor here to set it: a drop zone is as tall as
                         you make it, and left to itself it made the result panel too short to read a
                         function in. Below lg they stack and the upload panel shrinks to its content. */}
-                    <div className="rounded-panel border border-ink-800 bg-ink-900/60 flex flex-col overflow-hidden lg:h-[34rem]">
+                    <div className="border border-code-border bg-code-surface flex flex-col overflow-hidden lg:h-[34rem]">
                         {/* A button rather than a div with an onClick, so the picker opens from the
                             keyboard too. The input is its sibling and not its child: inside it, the
                             click it receives from picker.click() would bubble straight back into this
@@ -362,7 +362,7 @@ export const AutoHeadersPage: React.FC = () => {
                     once looks next: the tool is the second-best way to use auto.headers, and someone
                     who never learns it is a plugin they can put in their own pipeline has been sold
                     the wrong thing. */}
-                <div className="max-w-7xl mx-auto mt-4 text-center">
+                <div className="mt-4 text-center">
                     <Link
                         to={PLUGIN_DOC}
                         className={`inline-flex items-center gap-2 text-sm px-4 py-2 rounded-control ${BTN_SECONDARY} transition-colors`}
@@ -374,8 +374,8 @@ export const AutoHeadersPage: React.FC = () => {
                 </div>
 
                 {/* ── Limitations */}
-                <div className="max-w-7xl mx-auto mt-4">
-                    <div className="rounded-panel border border-ink-800 bg-ink-900/40 p-5 space-y-3">
+                <div className="mt-4">
+                    <div className="border border-border p-5 space-y-3">
                         <p className="text-sm font-semibold text-ink-200">{t('autoHeaders.limits')}</p>
                         <p className="text-sm text-ink-400 leading-relaxed">{t('autoHeaders.limitsDetail')}</p>
                         <p className="text-sm text-ink-400">
@@ -397,7 +397,7 @@ export const AutoHeadersPage: React.FC = () => {
                 </div>
             </div>
 
-            <Footer />
+            <Footer wide />
         </div>
     );
 };

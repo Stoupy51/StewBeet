@@ -114,6 +114,7 @@ export const DOC_PAGES: DocPage[] = [
     guide('4_equations', 'reference/equations', 'reference', 'Equations', 'Équations'),
 
     guide('how_it_fits', 'how_it_fits', 'understand', 'How StewBeet fits with beet', "Comment StewBeet s'intègre à beet"),
+    { slug: 'handled_for_you', src: { en: 'handled_for_you/en.md' }, title: { en: "Everything you don't need to think about", fr: "Tout ce à quoi vous n'avez pas à penser" }, section: 'understand' },
 ];
 
 /** The index of every plugin, the landing page of their section, kept out of the page list. */

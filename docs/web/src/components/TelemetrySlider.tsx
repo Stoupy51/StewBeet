@@ -52,7 +52,7 @@ export const TelemetrySlider: React.FC<{ streams: Record<string, StreamSeries> }
     }, [index, prefersReducedMotion]);
 
     return (
-        <section className="max-w-3xl mx-auto">
+        <section className="max-w-3xl">
             <div className="flex items-center gap-2">
                 <button
                     type="button"

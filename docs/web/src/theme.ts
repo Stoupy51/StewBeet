@@ -25,10 +25,10 @@ export const BTN_PRIMARY = 'inline-flex items-center justify-center gap-2 rounde
 export const BTN_SECONDARY = 'inline-flex items-center justify-center gap-2 rounded-control border border-ink-700 bg-ink-900 hover:border-ink-500 hover:bg-ink-850 text-ink-100 font-medium transition-colors';
 
 /** A bordered surface. */
-export const CARD = 'rounded-panel border border-ink-800 bg-ink-900';
+export const CARD = 'border border-border';
 
 /** Hover state for a card that is a link. */
-export const HOVER_CARD = 'hover:border-ink-600 hover:bg-ink-850 transition-colors';
+export const HOVER_CARD = 'hover:border-ink-600 transition-colors';
 
 /** Card title reacting to its card's hover. */
 export const CARD_HOVER_TEXT = 'group-hover:text-beet-300 transition-colors';

@@ -1,43 +1,30 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { HiArrowRight } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { useTranslation } from '../i18n/useTranslation';
-import { useMotionSafe } from '../hooks/useMotionSafe';
-import { BTN_PRIMARY, HEADING, TEXT_ACCENT_HOVER } from '../theme';
+import { BTN_PRIMARY } from '../theme';
 
 export const NotFoundPage: React.FC = () => {
     const { t } = useTranslation();
-    const motionSafe = useMotionSafe();
 
     return (
-        <div className="min-h-screen bg-ink-950 text-ink-100 flex flex-col">
+        <div className="min-h-screen flex flex-col">
             <Navbar />
 
-            <div className="relative z-10 flex-1 flex items-center justify-center px-4 py-32">
-                <motion.div
-                    {...motionSafe({
-                        initial: { y: 20 },
-                        animate: { y: 0 },
-                    })}
-                    className="max-w-2xl text-center"
-                >
-                    <p className={`text-7xl md:text-8xl font-semibold mb-6 ${HEADING}`}>404</p>
-                    <h1 className="text-3xl md:text-4xl font-semibold mb-4">{t('notFound.title')}</h1>
-                    <p className="text-lg text-ink-400 leading-relaxed mb-10">{t('notFound.description')}</p>
+            <main className="frame flex-1 px-4 pt-[5.5rem] pb-16 lg:px-12 lg:pt-32">
+                <p className="font-pixel text-[0.8125rem] text-generated">404</p>
+                <h1 className="mt-3 text-[2.25rem] lg:text-[3.25rem] leading-[1.12] font-bold text-balance">{t('notFound.title')}</h1>
+                <p className="mt-4 max-w-[40rem] text-text-muted text-pretty">{t('notFound.description')}</p>
 
-                    <div className="flex flex-wrap items-center justify-center gap-4">
-                        <Link to="/" className={`px-6 py-3 rounded-panel font-medium transition-all ${BTN_PRIMARY}`}>
-                            {t('notFound.backHome')}
-                        </Link>
-                        <Link to="/docs" className={`flex items-center gap-2 px-6 py-3 font-medium group ${TEXT_ACCENT_HOVER}`}>
-                            {t('notFound.browseDocs')}
-                            <HiArrowRight className="group-hover:translate-x-1 transition-transform" />
-                        </Link>
-                    </div>
-                </motion.div>
-            </div>
+                <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+                    <Link to="/" className={`min-h-11 px-5 ${BTN_PRIMARY}`}>{t('notFound.backHome')}</Link>
+                    <Link to="/docs" className="group inline-flex items-center gap-2 min-h-11 font-medium hover:text-link transition-colors">
+                        {t('notFound.browseDocs')}
+                        <HiArrowRight className="group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
+                    </Link>
+                </div>
+            </main>
 
             <Footer />
         </div>

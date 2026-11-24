@@ -26,6 +26,7 @@ const DESCRIPTIONS: Record<string, string> = {
     'reference/beet_yml': 'documentation.beetConfigDesc',
     'reference/equations': 'documentation.equationsDesc',
     how_it_fits: 'documentation.howItFitsDesc',
+    handled_for_you: 'documentation.handledDesc',
 };
 
 const SectionTitle = ({ section }: { section: Section }) => {

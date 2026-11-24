@@ -30,7 +30,7 @@ const THEME_STEPS = {
 /** Routes that light up each entry of the navigation. Showcase has no page of its own yet. */
 const SECTIONS = [
     { key: 'nav.documentation', path: '/docs', routes: ['/docs', '/fr/docs'] },
-    { key: 'nav.showcase', path: '/#built-with', routes: [] },
+    { key: 'nav.showcase', path: '/showcase', routes: ['/showcase'] },
     { key: 'nav.tools', path: '/tools', routes: ['/tools'] },
 ];
 

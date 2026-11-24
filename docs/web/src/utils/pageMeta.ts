@@ -48,6 +48,11 @@ export const STATIC_ROUTE_META: Record<string, PageMeta> = {
         description: 'Tools for StewBeet and Minecraft datapack development: the playground, the auto.headers pass over an existing datapack, and the Markdown to BBCode converter for PlanetMinecraft.',
         path: '/tools',
     },
+    '/showcase': {
+        title: 'Showcase | StewBeet',
+        description: 'Every public datapack and library built with StewBeet, with its source: community projects first, then the packs and libraries of its author.',
+        path: '/showcase',
+    },
     '/credits': {
         title: 'Standing on giants | StewBeet',
         description:

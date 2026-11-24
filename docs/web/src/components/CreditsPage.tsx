@@ -1,14 +1,12 @@
 import { Link } from 'react-router-dom';
 import { srcHref } from '../docsPages';
-import { motion } from 'framer-motion';
 import { HiArrowLeft, HiExternalLink } from 'react-icons/hi';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { PageHeader } from './PageHeader';
 import { LibraryPills } from './LibraryPills';
 import { useTranslation } from '../i18n/useTranslation';
-import { useMotionSafe } from '../hooks/useMotionSafe';
-import { HEADING, HOVER_CARD, SELECTION_BRAND, TEXT_ACCENT_HOVER } from '../theme';
+import { HEADING, TEXT_ACCENT_HOVER } from '../theme';
 import { AUTO_LIBRARIES, BOOKSHELF_MODULE_COUNT, COMPATIBILITIES, DEPENDENCIES_DOC, GIANTS } from './giantsData';
 
 /**
@@ -20,27 +18,18 @@ import { AUTO_LIBRARIES, BOOKSHELF_MODULE_COUNT, COMPATIBILITIES, DEPENDENCIES_D
  */
 export const CreditsPage: React.FC = () => {
     const { t, language } = useTranslation();
-    const motionSafe = useMotionSafe();
 
     return (
-        <div className={`min-h-screen bg-ink-950 text-ink-100 ${SELECTION_BRAND}`}>
+        <div className="min-h-screen">
             <Navbar />
 
             <main>
-                <PageHeader title={t('credits.title')} lead={t('credits.subtitle')} width="max-w-3xl" />
+                <PageHeader title={t('credits.title')} lead={t('credits.subtitle')} />
 
-                <div className="relative z-10 pb-12 px-4">
-                    <div className="max-w-3xl mx-auto space-y-3">
-                        {GIANTS.map((giant, index) => (
-                            <motion.article
-                                key={giant.name}
-                                {...motionSafe({
-                                    initial: { y: 20 },
-                                    animate: { y: 0 },
-                                    transition: { delay: 0.15 + index * 0.05 },
-                                })}
-                                className={`rounded-panel border border-ink-800 bg-ink-900/40 p-5 transition-all ${HOVER_CARD}`}
-                            >
+                <div className="frame px-4 py-10 lg:px-12 border-t border-border">
+                    <div className="max-w-3xl space-y-3">
+                        {GIANTS.map((giant) => (
+                            <article key={giant.name} className="border border-border p-5">
                                 <div className="flex items-baseline justify-between gap-4 mb-2">
                                     <h2 className="text-lg font-semibold text-ink-50">{giant.name}</h2>
                                     <span className="text-xs font-mono text-ink-400 flex-shrink-0">{giant.owner}</span>
@@ -65,13 +54,13 @@ export const CreditsPage: React.FC = () => {
                                         </a>
                                     ))}
                                 </div>
-                            </motion.article>
+                            </article>
                         ))}
                     </div>
                 </div>
 
-                <div className="relative z-10 pb-20 px-4">
-                    <div className="max-w-3xl mx-auto pt-6 border-t border-ink-800">
+                <div className="frame px-4 py-10 lg:px-12 border-t border-border">
+                    <div className="max-w-3xl">
                         <h2 className={`text-xl font-semibold mb-2 ${HEADING}`}>{t('credits.librariesTitle')}</h2>
                         <p className="text-sm text-ink-400 mb-4">{t('credits.librariesNote')}</p>
                         <LibraryPills entries={AUTO_LIBRARIES} />

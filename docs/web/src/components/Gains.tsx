@@ -22,24 +22,26 @@ const Comparison = () => {
     useEffect(() => frame.current?.setAttribute('data-armed', ''), []);
 
     return (
-        <div ref={frame} data-play={inView ? '' : undefined} className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-10 items-start">
-            <div>
+        <div ref={frame} data-play={inView ? '' : undefined} className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-10">
+            {/* On a desktop the rows share the height of the right column, so the list ends with its note */}
+            <div className="flex flex-col">
                 <p className="font-pixel text-[0.8125rem] text-text-muted">{t('gains.byHand')}</p>
-                <ul className="mt-3 border-t border-border font-mono text-xs">
+                <ul className="mt-3 flex-1 flex flex-col border-t border-border font-mono text-xs">
                     {BY_HAND.map(({ path, role }, index) => (
-                        <li key={path} className="strike-row flex items-baseline justify-between gap-3 py-2 border-b border-border" style={{ '--row': index } as React.CSSProperties}>
+                        <li key={path} className="strike-row flex-1 flex items-center justify-between gap-3 py-2 border-b border-border" style={{ '--row': index } as React.CSSProperties}>
                             <span className="truncate">{path}</span>
                             <span className="flex-shrink-0 text-text-muted">{role}</span>
                         </li>
                     ))}
                 </ul>
             </div>
-            <div className="gains-drop">
+            <div className="gains-drop min-w-0">
                 <p className="font-pixel text-[0.8125rem] text-generated">{t('gains.withStewbeet')}</p>
-                <p className="mt-3 flex items-baseline gap-3">
-                    <span className="font-pixel text-5xl leading-none text-generated">1</span>
+                <p className="mt-2 flex items-baseline gap-3">
+                    <span className="font-pixel text-4xl leading-none text-generated">1</span>
                     <span className="text-text-muted">{t('gains.withUnit')}</span>
                 </p>
+                <div className="mt-3"><CodePanel title="src/definitions.py" code="definition" /></div>
                 <p className="mt-4 text-pretty">{t('gains.withNote')}</p>
             </div>
         </div>

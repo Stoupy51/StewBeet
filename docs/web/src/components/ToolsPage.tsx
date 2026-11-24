@@ -33,11 +33,11 @@ export const ToolsPage: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-ink-950 text-ink-200">
+        <div className="min-h-screen">
             <Navbar />
-            <PageHeader title={t('tools.title')} lead={t('tools.subtitle')} width="max-w-5xl" />
+            <PageHeader title={t('tools.title')} lead={t('tools.subtitle')} />
 
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-24 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="frame px-4 py-10 lg:px-12 border-t border-border grid grid-cols-1 md:grid-cols-2 gap-4">
                 {tools.map((tool, index) => (
                     <ToolLink
                         key={tool.path}
