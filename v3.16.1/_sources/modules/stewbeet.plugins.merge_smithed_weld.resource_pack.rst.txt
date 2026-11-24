@@ -1,0 +1,9 @@
+🧬 resource_pack
+==============================
+
+.. automodule:: stewbeet.plugins.merge_smithed_weld.resource_pack
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.merge_smithed_weld.resource_pack.silent

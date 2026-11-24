@@ -16,7 +16,7 @@
       ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
       : m;
   })();
-  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8e8a900e" /><link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" /><link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=6a604523" /><link rel="stylesheet" type="text/css" href="../_static/treeview.css?v=f579613a" /><link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3fad17cc" /><link rel="stylesheet" type="text/css" href="../_static/styles/breeze.css?v=7c62c100" /><script defer="defer" src="../_static/scripts/breeze.js?v=dac9f8c6"></script></head>
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8e8a900e" /><link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" /><link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=6a604523" /><link rel="stylesheet" type="text/css" href="../_static/treeview.css?v=f579613a" /><link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3fad17cc" /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" /><link rel="stylesheet" type="text/css" href="../_static/stewbeet.css?v=29b53ef5" /><link rel="stylesheet" type="text/css" href="../_static/styles/breeze.css?v=7c62c100" /><script defer="defer" src="../_static/scripts/breeze.js?v=dac9f8c6"></script></head>
 <body>
   
   
@@ -31,12 +31,12 @@
     aria-haspopup="true"
     aria-expanded="false"
     data-url="https://stoupy51.github.io/stewbeet/switcher.json"
-    data-current="3.16.0"
+    data-current="3.16.1"
   >
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
       <path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"></path>
     </svg>
-    <span>3.16.0</span>
+    <span>3.16.1</span>
   </button>
   <ul role="menu" aria-hidden="true"></ul>
 </div>
@@ -73,6 +73,16 @@
     </svg>
   </button>
 </div><div class="bz-external-links">
+  <a
+      href="https://stewbeet.paralya.fr/docs"
+      aria-label="Docs"
+      data-tooltip="Docs"
+      target="_blank"
+    >
+    
+      Docs
+    
+    </a>
   <a
       href="https://discord.gg/anxzu6rA9F"
       aria-label="Discord"
@@ -1346,7 +1356,7 @@ The fractional part of a number is the chance of one more point: 0.5 gives 1 poi
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="nc">Item</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="nb">id</span><span class="o">=</span><span class="s2">"stardust_ingot"</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">base_item</span><span class="o">=</span><span class="s2">"minecraft:raw_iron"</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">manual_category</span><span class="o">=</span><span class="s2">"materials"</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">manual_category</span><span class="o">=</span><span class="s2">"material"</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">recipes</span><span class="o">=</span><span class="p">[</span>
 <span class="gp">... </span>        <span class="nc">CraftingShapedRecipe</span><span class="p">(</span>
 <span class="gp">... </span>            <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">"###"</span><span class="p">,</span><span class="s2">"#F#"</span><span class="p">,</span><span class="s2">"###"</span><span class="p">],</span> <span class="n">ingredients</span><span class="o">=</span><span class="p">{</span><span class="s2">"#"</span><span class="p">:</span><span class="nc">Ingr</span><span class="p">(</span><span class="s2">"stardust_fragment"</span><span class="p">),</span><span class="s2">"F"</span><span class="p">:</span><span class="nc">Ingr</span><span class="p">(</span><span class="s2">"minecraft:iron_ingot"</span><span class="p">)}</span>
@@ -1362,6 +1372,12 @@ The fractional part of a number is the chance of one more point: 0.5 gives 1 poi
 <span class="gp">&gt;&gt;&gt; </span><span class="n">also_obj</span> <span class="o">=</span> <span class="nc">Item</span><span class="o">.</span><span class="nf">from_id</span><span class="p">(</span><span class="s2">"stardust_ingot"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="ow">is</span> <span class="n">also_obj</span>
 <span class="go">True</span>
+</pre></div>
+</div>
+<p>A plain list assigned later is normalized like the one given at creation:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">recipes</span> <span class="o">=</span> <span class="p">[</span><span class="nc">CraftingShapedRecipe</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="s2">"##"</span><span class="p">],</span> <span class="n">ingredients</span><span class="o">=</span><span class="p">{</span><span class="s2">"#"</span><span class="p">:</span> <span class="nc">Ingr</span><span class="p">(</span><span class="s2">"stardust_fragment"</span><span class="p">)})]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nc">type</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">recipes</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+<span class="go">'RecipeList'</span>
 </pre></div>
 </div>
 <p>## Resource locations (namespace falls back to “your_namespace” outside a build)</p>
@@ -1927,6 +1943,16 @@ Use <code class="docutils literal notranslate"><span class="pre">generated_item_
   </p>
 </div><div class="bz-external-links">
   <a
+      href="https://stewbeet.paralya.fr/docs"
+      aria-label="Docs"
+      data-tooltip="Docs"
+      target="_blank"
+    >
+    
+      Docs
+    
+    </a>
+  <a
       href="https://discord.gg/anxzu6rA9F"
       aria-label="Discord"
       data-tooltip="Discord"
@@ -1966,5 +1992,5 @@ Use <code class="docutils literal notranslate"><span class="pre">generated_item_
   <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
   <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
   <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle section navigation">
-  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=23646e3d"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=8a241a5b"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
 </html>

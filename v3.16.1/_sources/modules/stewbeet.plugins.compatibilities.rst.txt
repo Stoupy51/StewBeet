@@ -1,0 +1,8 @@
+compatibilities
+==============================
+
+.. toctree::
+   :maxdepth: 1
+
+   stewbeet.plugins.compatibilities.neo_enchant
+   stewbeet.plugins.compatibilities.simpledrawer

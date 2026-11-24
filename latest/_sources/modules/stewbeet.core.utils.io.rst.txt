@@ -19,7 +19,7 @@ files
 ----------
 
 .. automodule:: stewbeet.core.utils.io.files
-   :members: JsonFileT, set_json_encoder, texture_mcmeta
+   :members: JsonFileT, set_json_encoder, source_textures, texture_mcmeta, textures_folder
 
 functions
 ------------------
