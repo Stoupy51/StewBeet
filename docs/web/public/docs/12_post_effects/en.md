@@ -3,9 +3,8 @@
 
 `timed_post_effect` registers a `/posteffect` chain whose shader knows how many ticks have passed since the effect was applied. It needs Minecraft 26.3, where `/posteffect add <players> <id>` applies a resource pack post effect to a player.
 
-**Source Code**: [stewbeet/core/utils/post_effects.py](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/core/utils/post_effects.py) <br>
-**Required**: StewBeet framework (`from stewbeet import *`)  
-**Position**: Called inside a `beet_default` plugin hook
+- Source code: [stewbeet/core/utils/post_effects.py](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/core/utils/post_effects.py)
+- Import it with `from stewbeet import *`, and call it from a plugin of your pipeline, such as `src.link`.
 
 ## Why a clock
 
@@ -107,4 +106,9 @@ post_uniform(name, kind, value)
 - **Post effects are drawn before the GUI.** Chat, bossbars and titles stay sharp on top.
 - **A pass never samples the target it writes**, `minecraft:main` included. Passes of your own write a scratch target, as the chain does with `swap`.
 - **Every `in` and `out` needs `layout(location = N)`**, and the shader starts with `POST_SHADER_HEADER`.
+
+## Next steps
+
+- [Functions and files](../2_writing_to_files/en.md): `write_function`, to add and remove the effect from your functions.
+- [Configuring the build](../3_beet_config/en.md#minecraft): set `minecraft` to 26.3 or later in `beet.yml`.
 

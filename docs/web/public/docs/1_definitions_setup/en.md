@@ -1,929 +1,479 @@
 
-# Defining items and blocks
+# Definitions reference
 
-Item definitions are the heart of the StewBeet framework. They define custom items, blocks, equipment, recipes, and their properties using modern Python classes. The definitions setup creates a database of all custom content that subsequent plugins use to generate datapacks and resource packs.
+A definition is a Python object registered in `Mem.definitions` when it is created. The build plugins read that dictionary to write models, loot tables, recipes, translations and the in-game manual. For a walkthrough, see [Items and blocks](../items_and_blocks/en.md).
 
-**This is typically the first user-created plugin in the pipeline (after `stewbeet.plugins.initialize`).**
+## Mem.definitions
 
-**Required**: StewBeet framework (`from stewbeet import *`)  
-**Required**: Beet context (`from beet import Context`)  
-**Position**: Must be called early in the pipeline before other plugins that depend on definitions  
-**Integration**: Works with all StewBeet plugins that process item definitions
-
-### <u>Some Features Showcase</u>
-
-**Item definitions from the Extensive Template:**<br>
-<img src="./additions.jpg">
-
-**Example File**: [extensive/src/setup_definitions.py](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/src/setup_definitions.py) <br>  
-**Real-world Example**: [SimplEnergy/src/definitions/setup_main.py](https://github.com/Stoupy51/SimplEnergy/blob/main/src/definitions/setup_main.py) <br>
-
-- Define custom items, blocks, and equipment using Python classes
-- Configure automatic material generation (ores, ingots, tools, armor)
-- Set up crafting recipes with typed classes
-- Establish relationships between items and their uses
-- Configure item names, lore, and categories
-- Link items to their texture and model assets
-
-## Configuration
-
-### Basic Setup Structure
-This structure defines the lifecycle of your definitions plugin: generate content, normalize metadata, run required post-processing, and optionally export debug data.
+`Mem.definitions` is a `dict[str, Item]` keyed by id, without namespace. Creating an `Item`, or any subclass of it, registers the object under its `id`.
 
 ```python
-from beet import Context
-from stewbeet import *
-
-# Import your definition modules
-from .definitions.additions import main as main_additions
-from .definitions.ores import main as main_ores
-
-def beet_default(ctx: Context):
-    # 1. Generate materials and equipment
-    main_ores()
-    
-    # 2. Generate custom records
-    generate_custom_records("auto")
-    
-    # 3. Add custom items, blocks, paintings
-    main_additions()
-    
-    # 4. Set missing categories
-    for item in Mem.definitions.keys():
-        obj = Item.from_id(item)
-        if not obj.manual_category:
-            obj.manual_category = "miscellaneous"
-    
-    # 5. Final adjustments (REQUIRED!)
-    add_item_model_component(black_list=["excluded_items"])
-    add_item_name_and_lore_if_missing()
-    add_private_custom_data_for_namespace()
-    add_smithed_ignore_vanilla_behaviours_convention()
-    set_manual_components(white_list=["item_name", "lore", "custom_name", "damage", "max_damage"])
-    
-    # 6. Debug export (optional)
-    export_all_definitions_to_json(f"{Mem.ctx.directory}/definitions_debug.json")
+item = Item(id="life_crystal")
+assert Item.from_id("life_crystal") is item
+assert "life_crystal" in Mem.definitions
 ```
 
-## Core Concepts
+| Call | What it does |
+|---|---|
+| `Item.from_id(id)` | Returns the registered object, of whatever class it was created with. Raises `KeyError` when there is none. |
+| `Item.from_id(id, strict=False)` | Same, and creates and registers an `Item(id=id)` when there is none. |
+| `Mem.definitions[id]` | The same object, without a class check. |
 
-### The Mem.definitions Database
-All item definitions are stored in `Mem.definitions`, a global dictionary that gets populated when you create `Item`, `Block`, or `Painting` instances:
+An item created with an `id` already in `Mem.definitions` is not registered: the build warns, the registered object keeps all its fields, and `Item.from_id(id)` keeps returning the first one. An empty `id` is never registered. To change an existing definition, fetch it with `from_id` and set its fields.
+
+`Mem.external_definitions` holds the `ExternalItem` objects, keyed by `namespace:id`. An `Ingr` naming an item of another datapack reads them.
+
+| Field | Type | Default | What it does |
+|---|---|---|---|
+| `id` | `str` | required | `namespace:id` of the item, as in `simplenergy:machine_block`. |
+| `custom_data_predicate` | `JsonDict \| str` | required | What the item's `custom_data` must contain for a recipe to match it. |
+| `components` | `JsonDict` | `{}` | Components of the item, written without `minecraft:`. |
+| `loot_table` | `str \| Resource[LootTable] \| None` | `None` | Loot table of the other datapack giving the item. A recipe that gives the item as its result needs it. |
+| `base_item` | `str` | `CUSTOM_ITEM_VANILLA` | Vanilla item the external item is based on. |
+
+## Item
+
+`Item` is a keyword-only dataclass.
+
+| Field | Type | Default | What it does |
+|---|---|---|---|
+| `id` | `str` | required | Unique id. A `:` in it prints a warning and keeps the part after the last `:`. |
+| `base_item` | `str` | `CUSTOM_ITEM_VANILLA` (`minecraft:recovery_compass`) | Vanilla item the custom item is built on. `minecraft:` is added when missing. |
+| `manual_category` | `str \| None` | `None` | Category of the item in the in-game manual. Without one the item has no manual page. See [Manual categories](#manual-categories). |
+| `recipes` | `list[RecipeBase]` | `[]` | Recipes giving this item. Each recipe without a `group` gets the item's id. A tag ingredient such as `#minecraft:eggs` is replaced by one recipe per item of the tag. |
+| `override_model` | `JsonDict \| None` | `None` | Merged over the model generated from the textures. `{}` writes no model file. |
+| `hand_model` | `JsonDict \| None` | `None` | Model shown in every display context except those of `override_model_contexts`. |
+| `override_model_contexts` | `list[str] \| None` | `None` | Display contexts keeping the regular model when `hand_model` is set. `None` means `Item.DEFAULT_OVERRIDE_MODEL_CONTEXTS`: `["none", "fixed"]`, the item display entities and item frames. |
+| `wiki_buttons` | `list[WikiButton] \| TextComponent \| None` | `None` | Buttons of the item's manual page. Setting it without `manual_category` prints a warning. See [Wiki buttons and the manual item](#wiki-buttons-and-the-manual-item). |
+| `components` | `JsonDict` | `{}` | Item components. A `minecraft:` prefix on a key is removed. A key starting with `!` removes the component and its value is reset to `{}`. |
+| `skip_gives` | `bool` | `False` | Leaves the item out of the loot tables and of the give-all function. |
+| `remainder` | `str \| None` | `None` | Id of the definition left once the item is eaten or drunk. It becomes the `use_remainder` component, carrying the container's `item_name`, `item_model` and `custom_data`, and the manual links the two pages. |
+| `ranged_weapon` | `RangedWeapon \| None` | `None` | Tuning of a bow or crossbow. See [RangedWeapon](#rangedweapon). |
+
+The class also carries `origin`, a field set by the `source_maps` plugin that is not a constructor argument.
 
 ```python
-# Creating an item automatically registers it
-item = Item(id="my_item", base_item="minecraft:iron_ingot")
-
-# Access it from anywhere
-same_item = Item.from_id("my_item")
-assert item is same_item  # They're the same object!
-
-# Check the underlying dictionary
-assert "my_item" in Mem.definitions
-```
-
-### Item Class
-
-Definition of the `Item` class properties:
-
-#### **Item Properties**
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `id` | `str` | **Required**: Unique identifier (e.g., `"magic_sword"`) |
-| `base_item` | `str` | Base Minecraft item (default: `CUSTOM_ITEM_VANILLA`) |
-| `manual_category` | `str \| None` | Category for in-game manual organization |
-| `recipes` | `list[RecipeBase]` | List of recipe objects that create this item |
-| `override_model` | `JsonDict \| None` | Override auto-generated item model |
-| `hand_model` | `JsonDict \| None` | Model used instead of the regular one in most display contexts (hand, gui, ground, ...) |
-| `override_model_contexts` | `list[str] \| None` | Display contexts keeping the regular model when `hand_model` is set (default: `["none", "fixed"]`, i.e. item display entities and item frames) |
-| `wiki_buttons` | `list[WikiButton] \| TextComponent \| None` | Manual documentation |
-| `remainder` | `str \| None` | Id of the item left once this one is eaten or drunk (e.g. `"beer_mug"`), given back with the container's name, model and custom data, and linked from the item's manual page |
-| `ranged_weapon` | `RangedWeapon \| None` | Charge time, arrow damage and ammunition of a bow or crossbow (see below) |
-| `components` | `JsonDict` | Minecraft item components (without `minecraft:` prefix) |
-
-Example using the `Item` class:
-
-```python
-from stewbeet import Item, Ingr, CraftingShapedRecipe, WikiButton
-
-item = Item(
-    id="magic_sword",                           # Required: unique identifier
-    base_item="minecraft:iron_sword",           # Base Minecraft item (default: CUSTOM_ITEM_VANILLA)
-    manual_category="equipment",                # Category for the manual
-    recipes=[                                   # List of Recipe objects
-        CraftingShapedRecipe(
-            category="equipment",
-            shape=["X", "X", "Y"],
-            ingredients={"X": Ingr("minecraft:amethyst_shard"), "Y": Ingr("minecraft:stick")}
-        )
-    ],
-    override_model=None,                        # Override auto-generated model
-    hand_model=None,                            # Special hand-held model
-    override_model_contexts=None,               # Contexts keeping the regular model when hand_model is set
-    wiki_buttons=[                              # Manual documentation buttons
-        WikiButton({"text": "A powerful sword", "color": "gold"})
-    ],
-    components={                                # Minecraft item components
-        "item_name": {"text": "Magic Sword", "color": "gold"},
-        "lore": [{"text": "Deals extra damage", "color": "gray"}],
-        "max_damage": 500,
-        "enchantments": {"minecraft:sharpness": 5},
-        "attribute_modifiers": [
-            {
-                "type": "minecraft:attack_damage",
-                "amount": 8,
-                "operation": "add_value",
-                "slot": "mainhand",
-                "id": "minecraft:base_attack_damage"
-            }
-        ]
-    }
+Item(
+	id="stardust_ingot",
+	manual_category="material",
+	components={"item_name": {"text": "Stardust Ingot", "color": "aqua"}, "max_stack_size": 99},
 )
 ```
 
-### Block Class
+## Block class
 
-Custom blocks extend the `Item` class with block-specific properties:
+`Block` extends `Item` with the fields below. Its `base_item` defaults to `CUSTOM_BLOCK_VANILLA` (`minecraft:furnace`), which gives the item a `container` component carrying the Smithed custom block data and hides it from the tooltip.
+
+| Field | Type | Default | What it does |
+|---|---|---|---|
+| `vanilla_block` | `VanillaBlock \| None` | `None` | Vanilla block placed in the world as the block's host. |
+| `no_silk_touch_drop` | `NoSilkTouchDrop \| LootTable \| str \| None` | `None` | What drops when the block is broken without silk touch. A `str` is an item id, dropping one of it. A `LootTable` is rolled as it is. |
+| `mining` | `Mining \| None` | `None` | Tool needed to get the item. See [Mining](#mining). |
+| `growing_seed` | `GrowingSeed \| None` | `None` | Makes the block a seed that grows over time. See [GrowingSeed](#growingseed). |
+| `on_place` | `str \| None` | `None` | Commands appended to the placement functions. Prints a warning at build, `functions.place_secondary.obj.append(...)` does the same without it. |
+
+`BlockAlternative` is a `Block` whose `base_item` is `minecraft:item_frame`: the block is placed as an item frame, and its `vanilla_block` is `VanillaBlock(contents=True)`. `BlockHead` is a `Block` whose `base_item` is `minecraft:player_head`: the block is placed as a player head, and its `vanilla_block` id carries the head's profile.
 
 ```python
-from stewbeet import Block, VanillaBlock, CraftingShapedRecipe, SmeltingRecipe, Ingr
-
-block = Block(
-    id="super_stone",
-    vanilla_block=VanillaBlock(id="minecraft:cobblestone"),
-    manual_category="building",
-    recipes=[
-        # Could have been shapeless, but just for example:
-        CraftingShapedRecipe(
-            category="building",
-            shape=["XXX", "XXX", "XXX"],
-            ingredients={"X": Ingr("minecraft:stone")}
-        ),
-        # Multiple recipe types supported
-        SmeltingRecipe(
-            experience=0.1,
-            cookingtime=200,
-            category="building",
-            ingredient=Ingr("super_stone"),
-            result=Ingr("minecraft:diamond")
-        )
-    ],
-    components={
-        # Item name, lore, and container will be auto-generated if missing
-    }
+BlockHead(
+	id="stardust_cable",
+	manual_category=ENERGY,
+	vanilla_block=VanillaBlock(id="minecraft:player_head{profile:" + str(stardust_cable_profile) + "}"),
+	components={"custom_data": {"energy": {"transfer": 480}}, "profile": stardust_cable_profile},
 )
 ```
 
-#### **VanillaBlock Configuration**
+A regular `Block` has no placement advancement of its own, since the Smithed custom block library detects it. `BlockAlternative` and `BlockHead` have one, `Block.advancement`.
 
-`VanillaBlock` defines the vanilla block state StewBeet uses as the runtime anchor for your custom block behavior.
+### VanillaBlock configuration
 
-```python
-@dataclass
-class VanillaBlock:
-    id: str                                          # Base vanilla block (e.g., "minecraft:cobblestone")
-    contents: bool = False                           # For blocks using item frames without vanilla block
-    block_facing: Literal[False, "player"] = False   # Rotate placed block based on player facing
-    visual_facing: Literal["none", "player", "item_frame"] = "none"  # Visual entity orientation source
-    half: Literal["click"] | None = None             # Slab, stairs or trapdoor host on the half the player clicked
-    interaction: Interaction | None = None           # Interaction entity for an invisible host (barrier, structure void, light)
-    uvlock: bool = False                             # With visual_facing="player", turned model copies keeping textures on the world grid
-    margin: float = 1.002                            # Scale of the displayed model about the block's center, 1.0 leaves its size
-    machine_speed: float | None = None               # Furnace, smoker, blast furnace or brewing stand working this many times faster
-```
+| Field | Type | Default | What it does |
+|---|---|---|---|
+| `id` | `str \| None` | `""` | Vanilla block id with optional states, as in `minecraft:furnace[lit=false]`. `minecraft:` is added when missing. `None` with `contents=True`. |
+| `contents` | `bool` | `False` | The block has no vanilla block and is held by an item frame. Sets `id` to `None`. Incompatible with `block_facing`. |
+| `block_facing` | `False \| "player"` | `False` | `"player"` rotates the placed host as vanilla does: towards the player for a furnace, the way the player looks for stairs and fence gates. Sets `visual_facing` to `"player"` when that is left at `"none"`. |
+| `visual_facing` | `"none" \| "player" \| "item_frame"` | `"none"` | Orientation of the displayed model. `"player"` gives four horizontal directions, `"item_frame"` the six of the frame's `Facing`. |
+| `apply_facing` | `False \| True \| "entity" \| None` | `None` | Shorthand for the two fields above. `True` sets both to `"player"`, `"entity"` sets `visual_facing` to `"player"`. |
+| `half` | `"click" \| None` | `None` | A slab, stairs or trapdoor host takes its half from where the player clicked. Raises `ValueError` for another host. |
+| `interaction` | `Interaction \| None` | `None` | Interaction entity breaking the block when hit. For a host without collision. |
+| `uvlock` | `bool` | `False` | Shows a copy of the model turned for each facing instead of turning the display, so its textures keep the world grid. Needs `visual_facing="player"`. |
+| `margin` | `float` | `1.002` | Scale of each element of the displayed model about its own center, so no face lies on a face of the host. `1.0` leaves the size. Ignored with `contents=True`. |
+| `machine_speed` | `float \| None` | `None` | A furnace, smoker, blast furnace or brewing stand cooks or brews this many times faster. Raises `ValueError` for another host. |
 
-With `block_facing="player"`, the host faces the way vanilla turns it: towards the player for a furnace, the way the player looks for stairs and fence gates.
+`half="click"` reads where the player clicked from `{ns}:custom_blocks/_aim/main`. The `type` of a slab and the `half` of stairs and trapdoors take the result. `#floor {ns}.data` is also left at 1 when the player clicked the top of the block below.
 
-The display entity is scaled by `margin` about the block's center, so its faces are drawn in front of the host's. Use a larger margin when faces still flicker from far away (`1.008` is 1/16 of a pixel on a full block). `margin=1.0` leaves the size.
+A stairs host takes a corner `shape` from its neighbours, and its display follows it every second with a copy of the model cut from its elements, drawn facing south. A furnace, smoker or blast furnace host with an `_on` model shows it while it burns. Both switch through the display's `custom_model_data` string, and only for a model StewBeet draws.
 
-`half="click"` places the host's `type` (slab) or `half` (stairs, trapdoor) from where the player clicked, found at placement by stepping along the player's look (`{ns}:custom_blocks/_aim/main`). Besides `#upper`, it leaves `#floor {ns}.data` at 1 when the player clicked the top of the block below.
+### Interaction
 
-A stairs host takes a corner `shape` from its neighbours, and its display follows it every second with a copy of the model cut from its elements, drawn facing south: an inner corner adds the stairs turned a quarter, an outer corner keeps what both share. A furnace, smoker or blast furnace host with an `_on` model shows it while it burns. Both switch through the display's `custom_model_data` string, and only for a model StewBeet draws.
+| Field | Type | Default | What it does |
+|---|---|---|---|
+| `width` | `float` | `1.01` | Width of the interaction entity. |
+| `height` | `float` | `1.01` | Height, from the bottom of the block. A little more than a block so it is targeted before the host. |
+| `seat` | `float \| None` | `None` | Height above the bottom of the block at which using it seats the player. `None` is no seat. |
+| `hits` | `int` | `1` | Hits needed to break the block. Each counts only when it comes less than `hit_timeout` ticks after the previous one. |
+| `hit_timeout` | `int` | `20` | Ticks between two counted hits. |
+| `sound` | `str` | `minecraft:block.stone` | Sound group, played as `<sound>.hit` on each hit and `<sound>.break` on the break. |
 
-#### **Invisible hosts: Interaction**
-
-A host without collision or that cannot be mined (`minecraft:barrier`, `minecraft:structure_void`, `minecraft:light[level=N]`) gets an interaction entity breaking the block when hit:
+Hosts without collision or that cannot be mined are `minecraft:barrier`, `minecraft:structure_void` and `minecraft:light[level=N]`. Hitting the entity breaks the block and drops its item unless the breaker is in creative. Commands run when a player uses the interaction go in `{ns}:custom_blocks/_interaction/use`, run as the interaction with the player tagged `{ns}.user`.
 
 ```python
 Block(
-    id="oak_chair",
-    vanilla_block=VanillaBlock(id="minecraft:barrier", visual_facing="player", interaction=Interaction(
-        width=1.01, height=1.01,         # From the bottom of the block
-        seat=0.5,                        # Using it seats the player this high, None for no seat
-        hits=3, hit_timeout=20,          # 3 hits less than 20 ticks apart break it
-        sound="minecraft:block.wood",    # Plays <sound>.hit and <sound>.break with particles of the item
-    )),
+	id="chair",
+	vanilla_block=VanillaBlock(id="minecraft:barrier", visual_facing="player", interaction=Interaction(seat=0.5, hits=3, sound="minecraft:block.wood")),
 )
 ```
 
-The item drops unless the breaker is in creative, and also when no player breaks it (a quarry calling `#common_signals:calls/destroyed_block` gets it). An item id as `no_silk_touch_drop` drops that item instead. For an emissive block without collision, use `minecraft:light[level=15]` as the host. Run commands when a player uses an interaction by appending to `{ns}:custom_blocks/_interaction/use`, run as the interaction with the player tagged `{ns}.user`.
+### Mining
 
-#### **Mining level: Mining**
+| Field | Type | Default | What it does |
+|---|---|---|---|
+| `tool` | `"pickaxe" \| "axe" \| "shovel" \| "hoe"` | `"pickaxe"` | Kind of tool that gets the item. |
+| `level` | `"wood" \| "stone" \| "iron" \| "diamond" \| "netherite"` | `"wood"` | Weakest tool level that gets the item. Each tool of a level also mines every level below it. |
+
+A weaker tool breaks the block without dropping its item. The class has three read-only properties: `tools`, the vanilla tools of the level or a stronger one, `item_tag`, the tag `{ns}:mining/<tool>_<level>` listing them, and `hosts`, the vanilla blocks making vanilla itself require the level, empty for any tool but a pickaxe and for `netherite`.
+
+| Host of the block | Behavior |
+|---|---|
+| None given | The first of `Mining.hosts`, for example `minecraft:diamond_block` for `iron`. Vanilla drop rules then decide, mining speed and animation included. With no `hosts` the build raises `ValueError`. |
+| One of `Mining.hosts` | Used as it is. Any other real host raises `ValueError`. |
+| An `Interaction` host | The breaker's main hand is checked against `Mining.item_tag`. Works for every tool kind. |
+| `VANILLA_BLOCK_FOR_ORES` (`minecraft:polished_deepslate`) | With a level above `wood`, the nearest player within 8 blocks who is neither in creative nor in spectator is checked against `Mining.item_tag`. |
 
 ```python
-Block(id="steel_block", mining=Mining(tool="pickaxe", level="iron"))
+Block(id="ruby_ore", vanilla_block=VANILLA_BLOCK_FOR_ORES, mining=Mining(level="iron"))
 ```
 
-A weaker tool breaks the block without dropping its item. Without a host, the block takes the first host of `Mining.hosts` for its level (`minecraft:diamond_block` for iron), whose vanilla drop rules then decide, mining speed and animation included; a host given must be one of them. An interaction host checks the breaker's main hand against the item tag `Mining.item_tag` (any tool kind works there). An ore on `VANILLA_BLOCK_FOR_ORES` checks the tool of the nearest survival player within 8 blocks.
+### NoSilkTouchDrop
 
-#### **NoSilkTouchDrop Configuration**
+Set exactly one of `id` and `loot_table`, or the constructor raises `AssertionError`.
 
-Defines custom drops when the block is broken without silk touch:
+| Field | Type | Default | What it does |
+|---|---|---|---|
+| `id` | `str` | `""` | Item id to drop, for example `raw_simplunium`. |
+| `loot_table` | `LootTable \| str \| None` | `None` | A loot table, or its resource location, dropping instead of `id` and `count`, rolled with the breaker's tool. |
+| `count` | `int \| dict` | `1` | Dropped amount, an integer or `{"min": 1, "max": 3}`. |
+| `experience` | `float \| dict` | `0.0` | Experience dropped, as a number or `{"min": 3, "max": 7}`. The fractional part of a number is the chance of one more point: `2.5` gives 2 points, and a third half of the time. The manual shows it in the hover of the mining recipe. |
+
+A dict for `count` or `experience` needs both `min` and `max`.
 
 ```python
-@dataclass
-class NoSilkTouchDrop:
-    id: str = ""                # Item ID to drop (e.g., "raw_simplunium")
-    loot_table: LootTable | str | None = None  # Or a loot table rolled with the breaker's tool, instead of id and count
-    count: dict | int = 1       # Drop count: int or {"min": 1, "max": 3}
-    experience: dict | float = 0.0  # Experience points: 2.5 (a 50% chance of a third point) or {"min": 3, "max": 7}
-```
-The manual shows the experience in the hover of the mining recipe.
-```python
-# Example usage
-block = Block(
-    id="simplunium_ore",
-    vanilla_block=VanillaBlockForOres,
-    no_silk_touch_drop=NoSilkTouchDrop(id="raw_simplunium", count={"min": 2, "max": 4}, experience={"min": 1, "max": 3})
-)
-
-# Or shorthand
-block = Block(
-    id="simplunium_ore",
-    vanilla_block=VanillaBlockForOres,
-    no_silk_touch_drop="raw_simplunium"  # Defaults to count=1
-)
-
-# Or dynamic drops with a direct beet LootTable
-block = Block(
-    id="simplunium_ore",
-    vanilla_block=VanillaBlockForOres,
-    no_silk_touch_drop=LootTable({
-        "pools": [{
-            "rolls": 1,
-            "entries": [
-                {"type": "minecraft:item", "name": "minecraft:raw_iron", "weight": 3},
-                {"type": "minecraft:item", "name": "minecraft:iron_nugget", "weight": 7}
-            ]
-        }]
-    })
-)
-
-# Or a loot table with experience
-block = Block(
-    id="simplunium_ore",
-    vanilla_block=VanillaBlockForOres,
-    no_silk_touch_drop=NoSilkTouchDrop(loot_table="my_ns:blocks/simplunium_ore", experience={"min": 2, "max": 5})
+Block(
+	id="simplunium_ore",
+	vanilla_block=VANILLA_BLOCK_FOR_ORES,
+	no_silk_touch_drop=NoSilkTouchDrop(id="raw_simplunium", count={"min": 2, "max": 4}, experience={"min": 1, "max": 3}),
 )
 ```
 
-#### **RangedWeapon Configuration**
+### RangedWeapon
+
+| Field | Type | Default | What it does |
+|---|---|---|---|
+| `charge_time` | `float \| None` | `None` | Seconds a crossbow takes to load. Vanilla is 1.25. |
+| `damage_multiplier` | `float` | `1.0` | Multiplies the damage of the arrows it shoots. |
+| `ammunition` | `str \| None` | `None` | Id of the only definition a crossbow loads. Anything else is given back. |
+| `name` | `str` | `"Heavy Draw"` | Tooltip name of the hidden enchantment applying it. |
+
+The item gets the enchantment `Item.ranged_weapon_enchantment` at level 1, tagged as a curse so a grindstone keeps it, and no enchantment glint. A crossbow with `_pulling_<n>`, `_arrow` and `_firework` textures gets the vanilla crossbow item model: drawn by its charge, and showing what it holds once loaded.
 
 ```python
-Item(
-    id="crossbow", base_item="minecraft:crossbow",
-    ranged_weapon=RangedWeapon(
-        charge_time=2.5,          # Seconds to load a crossbow, 1.25 in vanilla
-        damage_multiplier=1.5,    # Damage of the arrows it shoots
-        ammunition="bolt",        # The only item of the definitions it loads, anything else is given back
-        name="Heavy Draw",        # Tooltip name of the hidden enchantment applying it
-    ),
+Item(id="crossbow", base_item="minecraft:crossbow", ranged_weapon=RangedWeapon(charge_time=2.5, damage_multiplier=1.5, ammunition="bolt"))
+```
+
+### GrowingSeed
+
+| Field | Type | Default | What it does |
+|---|---|---|---|
+| `texture_basename` | `str` | required | Base of the stage textures, named `<texture_basename>_stage_<n>.png`. |
+| `seconds` | `int` | required | Time to reach the last stage. |
+| `planted_on` | `str` | required | Block the seed must sit on. `minecraft:` is removed. |
+| `loots` | `list[GrowingSeedLoot] \| str` | required | Loot of the harvest, or the resource location of a loot table. |
+
+`GrowingSeedLoot`:
+
+| Field | Type | Default | What it does |
+|---|---|---|---|
+| `id` | `str` | required | Item id to drop. |
+| `rolls` | `JsonDict \| int` | `1` | A count, or a number provider such as `{"type": "minecraft:uniform", "min": 3, "max": 9}`. |
+| `fortune` | `JsonDict \| None` | `None` | Fortune bonus, such as `{"extra": 0, "probability": 0.5}`. |
+
+```python
+BlockAlternative(
+	id="diamond_seed",
+	vanilla_block=VanillaBlock(contents=True),
+	growing_seed=GrowingSeed(texture_basename="diamond", seconds=1200, planted_on="stone", loots=[
+		GrowingSeedLoot(id="minecraft:diamond", rolls={"type": "minecraft:uniform", "min": 0, "max": 2}, fortune={"extra": 0, "probability": 0.1}),
+	]),
 )
 ```
 
-The item gets an enchantment (`Item.ranged_weapon_enchantment`) tagged as a curse so a grindstone keeps it, and no enchantment glint. A crossbow with `_pulling_<n>`, `_arrow` and `_firework` textures gets the vanilla crossbow item model: drawn by its charge, and showing what it holds once loaded.
+## Painting
 
-#### **GrowingSeed Configuration**
+`Painting` extends `Item` with `base_item="minecraft:painting"` and one more field. The component `painting/variant` is set to `<namespace>:<id>` when absent.
 
-For seeds that grow over time (like Stardust Seed from [Stardust Fragment](https://github.com/Stoupy51/StardustFragment)):
+| Field | Type | Default | What it does |
+|---|---|---|---|
+| `painting_data` | `PaintingData` | required | Size, texture and text of the painting. |
+
+`PaintingData`:
+
+| Field | Type | Default | What it does |
+|---|---|---|---|
+| `width` | `int` | required | Width in blocks. |
+| `height` | `int` | required | Height in blocks. |
+| `texture` | `str \| None` | the item id | Texture file name without `.png`, looked up in the textures folder. |
+| `author` | `TextComponent \| None` | `ctx.project_author` | Author shown in the tooltip. |
+| `title` | `TextComponent \| None` | the id with spaces and capitals | Title shown in the tooltip. |
 
 ```python
-@dataclass
-class GrowingSeedLoot:
-    id: str                     # Item ID to drop
-    rolls: JsonDict | int = 1   # Roll definition or count
-    fortune: JsonDict | None = None  # Fortune modifier
-
-@dataclass
-class GrowingSeed:
-    texture_basename: str       # Base texture name (e.g., "stardust")
-    seconds: int                # Growth time in seconds
-    planted_on: str             # Block to plant on (e.g., "diamond_block")
-    loots: list[GrowingSeedLoot] | str  # Loot list or loot table path
-```
-```python
-# Example usage
-seed = Block(
-    id="stardust_seed",
-    vanilla_block=VanillaBlock(id="minecraft:wheat"),
-    no_silk_touch_drop=NoSilkTouchDrop(id="stardust_fragment", count=1),
-    growing_seed=GrowingSeed(
-        texture_basename="stardust",
-        seconds=480,  # 8 minutes
-        planted_on="diamond_block",
-        loots=[
-            GrowingSeedLoot(
-                id="stardust_fragment",
-                rolls={"type": "minecraft:uniform", "min": 3, "max": 9},
-                fortune={"extra": 0, "probability": 0.5}
-            )
-        ]
-    )
+Painting(
+	id="stewbeet_painting",
+	painting_data=PaintingData(texture="stewbeet_painting_2x2", author={"text": "Stoupy", "color": "yellow"}, width=2, height=2),
 )
 ```
 
-#### **BlockAlternative and BlockHead**
+## Recipe system
 
-Alternative block types for special placement methods:
+Every recipe class derives from `RecipeBase`. Its fields are valid on every class below.
+
+| Field | Type | Default | What it does |
+|---|---|---|---|
+| `result_count` | `int` | `1` | Amount of the result. |
+| `category` | `str \| None` | `None` | Recipe book category written to the vanilla recipe. |
+| `group` | `str \| None` | the item id | Recipe book group. |
+| `result` | `Ingr \| None` | the item the recipe belongs to | What the recipe gives. |
+| `manual_priority` | `int \| None` | `None` | Weight of the recipe's button on the manual page. When too many buttons are present, the lowest weight is dropped first. `None` weighs 1. |
+| `smithed_crafter_command` | `str \| None` | `None` | Command run by a Smithed Crafter recipe. Without it the recipe gives the result's loot table. |
+
+An ingredient is checked at construction: it needs an `item` or a `components` key, or the class raises `ValueError`.
+
+| Class | Fields it adds | Notes |
+|---|---|---|
+| `CraftingShapedRecipe` | `shape: list[str]`, `ingredients: dict[str, Ingr]` | At most 3 rows of 3 columns, all rows of one length. Every symbol of `ingredients` must appear in `shape`. |
+| `CraftingShapelessRecipe` | `ingredients: list[Ingr]` | |
+| `SmeltingRecipe` | `ingredient: Ingr`, `experience: float = 0.0`, `cookingtime: int = 200` | `cookingtime` in ticks. |
+| `BlastingRecipe` | `ingredient: Ingr`, `experience: float = 0.0`, `cookingtime: int = 100` | The duration in a blast furnace. The written value is doubled from 26.3, where a blast furnace gets its speed from its fuel. |
+| `SmokingRecipe` | `ingredient: Ingr`, `experience: float = 0.0`, `cookingtime: int = 100` | Doubled from 26.3 like the blasting one. |
+| `CampfireCookingRecipe` | `ingredient: Ingr`, `experience: float`, `cookingtime: int` | No defaults: both are required. |
+| `StonecuttingRecipe` | `ingredient: Ingr` | |
+| `SmithingTransformRecipe` | `template`, `base`, `addition`: `Ingr` | |
+| `SmithingTrimRecipe` | `template`, `base`, `addition`: `Ingr`, `pattern: str` | `pattern` is the trim pattern id. |
+| `PulverizingRecipe` | `ingredient: Ingr` | A SimplEnergy pulverizer recipe. |
+| `AwakenedForgeRecipe` | `ingredients: list[Ingr]`, `particle: str \| None = None` | A Stardust Fragment awakened forge recipe. The manual's forge page has a 3x3 grid for up to 9 ingredients and a 3x4 grid above. |
+| `HardcodedRecipe` | `type` | A vanilla special recipe, such as `crafting_special_armordye` or `crafting_transmute`. `type` is required and must be one of the vanilla special recipe types. |
+
+`experience` and `cookingtime` are checked as a number and an integer.
 
 ```python
-from stewbeet import BlockAlternative, BlockHead
-
-# Using item frames (e.g., for machinery with no vanilla block)
-servo = BlockAlternative(
-    id="servo_inserter",
-    vanilla_block=VanillaBlock(contents=True),  # No vanilla block, just item frame
-    manual_category="machines"
-)
-
-# Using player heads (for custom heads)
-custom_head = BlockHead(
-    id="stoupy_head",
-    vanilla_block=VanillaBlock(id="minecraft:player_head[profile={name:\"Stoupy51\"}]"),
-    manual_category="decorations"
-)
+CraftingShapedRecipe(shape=["II", "CC", "CC"], ingredients={"I": Ingr("minecraft:iron_ingot"), "C": Ingr("simplunium_ingot")})
 ```
 
-### Painting Class
+### Ingr
 
-Custom paintings for decoration:
+`Ingr(id, ns=None, count=None, **kwargs)` builds the dictionary naming an ingredient. `Ingredient` and `IngrRepr` are aliases.
+
+| Argument | What it does |
+|---|---|
+| `id` | An id with a `:` is a vanilla item or an item of a datapack: `{"item": id}`. Without a `:` it is an item of a namespace, matched by its custom data: `{"components": {"minecraft:custom_data": {ns: {id: True}}}}`. A dict is copied as it is. |
+| `ns` | Namespace of an id without a `:`. The project id by default. |
+| `count` | Added as `count`. Used for a result, or by a recipe type supporting counts. |
+| `kwargs` | Added to the dictionary. |
 
 ```python
-from stewbeet import Painting, PaintingData
-
-painting = Painting(
-    id="stewbeet_painting",
-    manual_category="decorations",
-    painting_data=PaintingData(
-        texture="stewbeet_painting_2x2",                # Texture file name (without .png)
-        author={"text": "Stoupy", "color": "yellow"},   # Defaults to ctx.project_author
-        title={"text": "Da' Icon", "color": "gray"},    # Defaults to item name
-        width=2,                                        # Width in blocks
-        height=2                                        # Height in blocks
-    )
-)
+Ingr("minecraft:stick")                     # {'item': 'minecraft:stick'}
+Ingr("steel_ingot")                         # {'components': {'minecraft:custom_data': {'<project id>': {'steel_ingot': True}}}}
+Ingr("tin_ingot", ns="mechanization")       # the same, in the namespace mechanization
+Ingr("#minecraft:eggs")                     # an item tag, expanded in recipes into one recipe per item
 ```
 
-## Recipe System
+Methods used by the plugins: `to_id()`, `to_name()`, `to_item()`, `to_predicate()`, `to_vanilla_item_id()`, `item_to_id()` and `register_loot_table()`.
 
-### Recipe Classes
+## Material generation
 
-StewBeet provides typed recipe classes for all Minecraft recipe types:
+`generate_everything_about_these_materials(ores, ignore_recipes=False)` calls `generate_everything_about_this_material(material, equipments_config=None, ignore_recipes=False)` for each entry of `ores`, a `dict[str, EquipmentsConfig | None]`. It reads `meta.stewbeet.textures_folder` and defines an item for each texture it finds.
 
-#### **Crafting Shaped Recipe**
-Use a shaped recipe when slot position matters; the `shape` maps symbols to ingredients and controls exact crafting layout.
+The material name sets the base used by every generated id. A name with an underscore is cut before its last one (`steel_ingot` gives `steel`, `minecraft:copper_ingot` gives `copper`). A name ending with `!` is its own base (`awakened_stardust!` gives `awakened_stardust`), as does a name without an underscore (`minecraft:stone` gives `stone`).
 
-```python
-from stewbeet import CraftingShapedRecipe, Ingr
+| Texture | Defined as |
+|---|---|
+| `<base>`, `<base>_fragment`, `<base>_ingot`, `<base>_nugget`, `raw_<base>`, `<base>_dust`, `<base>_stick`, `<base>_rod` | An `Item` with `manual_category="material"`. |
+| `<base>_block`, `raw_<base>_block` | A `Block` with `manual_category="material"` and no `vanilla_block`: set it afterwards. |
+| `<base>_ore`, `deepslate_<base>_ore` | A `Block` with `manual_category="material"`, `vanilla_block=VANILLA_BLOCK_FOR_ORES`, and `no_silk_touch_drop` set to `raw_<base>` when that texture exists, else to the material itself. |
+| `<base>_helmet`, `_chestplate`, `_leggings`, `_boots` | An armor `Item` with `manual_category="equipment"`. Needs a config. Its `base_item` is the vanilla armor of the config's `equivalent_to`. |
+| `<base>_sword`, `_pickaxe`, `_axe`, `_shovel`, `_hoe`, `_spear` | A tool `Item` with `manual_category="equipment"`. Its `base_item` is the vanilla tool of `equivalent_to` when a config is given. |
+| `<base>_layer_1`, `<base>_layer_2` | The equipment asset drawing the armor on a player: layer 1 for the helmet, chestplate and boots, layer 2 for the leggings. The armor then gets an `equippable` component. |
 
-recipe = CraftingShapedRecipe(
-    result_count=1,                            # Number of items produced
-    group="tools",                             # Recipe book grouping
-    category="equipment",                      # Recipe book category
-    shape=["X X", " Y ", "X X"],               # 3x3 pattern
-    ingredients={
-        "X": Ingr("minecraft:iron_ingot"),
-        "Y": Ingr("minecraft:stick")
-    }
-)
-```
+Recipes come with the items: a block from 9 of the material and back, an ingot from 9 nuggets, smelting and blasting (200 and 100 ticks, 0.8 experience) from the raw item, the dust or the ores, pulverizing recipes for the dust, 4 sticks from 2 material, the usual vanilla shapes for tools and armor, and a nugget from smelting an equipment piece. `ignore_recipes`, or the config's, skips them all. Equipment recipes have `manual_priority=0`.
 
-#### **Crafting Shapeless Recipe**
-Use a shapeless recipe when only ingredient presence matters, regardless of placement order in the crafting grid.
+Each piece's `max_damage` is its vanilla durability for `equivalent_to`, multiplied by `pickaxe_durability` over the vanilla pickaxe durability. The `custom_data` of every generated item carries a `smithed.dict` entry naming its kind and base.
 
-```python
-recipe = CraftingShapelessRecipe(
-    result_count=4,
-    category="building_blocks",
-    ingredients=[Ingr("minecraft:oak_wood"), Ingr("minecraft:oak_log"),
-                 Ingr("minecraft:oak_log"), Ingr("minecraft:oak_wood")]
-    # Can also use: ingredients=(2*[Ingr("minecraft:oak_wood")] + 2*[Ingr("minecraft:oak_log"])
-)
-```
+`add_recipes_for_dust(material, pulverize, smelt_to)` defines `<material>_dust` from its texture. It adds smelting and blasting recipes giving `smelt_to`, the reverse pulverizing recipe, and a pulverizing recipe giving 2 dust for each entry of `pulverize`. A `str` entry is the vanilla item of that name. `add_recipes_for_all_dusts(dusts_configs)` takes a dict from material to `(pulverize, smelt_to)`.
 
-#### **Smelting Recipe**
-Smelting recipes model furnace-like transformations with controlled time, XP reward, and one input-to-output conversion.
+### EquipmentsConfig
 
-```python
-recipe = SmeltingRecipe(
-    result_count=1,
-    cookingtime=200,        # Ticks (200 = 10 seconds)
-    experience=0.7,
-    category="misc",
-    ingredient=Ingr("ruby_ore"),
-    result=Ingr("ruby")
-)
-```
+`EquipmentsConfig` is a plain class taking these arguments.
 
-#### **Other Recipe Types**
-StewBeet exposes typed wrappers for specialized vanilla recipe systems so each mechanic can be configured explicitly.
+| Argument | Type | Default | What it does |
+|---|---|---|---|
+| `equivalent_to` | `DefaultOre` | `DefaultOre.DIAMOND` | Vanilla tier the base stats come from. |
+| `pickaxe_durability` | `float \| int` | `0` | Durability of the pickaxe, from which every piece scales. `0` uses the vanilla pickaxe durability of `equivalent_to`. |
+| `attributes` | `dict[str, float] \| None` | `{}` | Attribute modifiers added to the vanilla stats, with operation `add_value`. |
+| `ignore_recipes` | `bool` | `False` | Skips the recipes of this material. |
 
-```python
-# Blasting Furnace (faster smelting)
-# cookingtime is the duration inside the block itself, StewBeet writes the value each Minecraft version expects
-BlastingRecipe(cookingtime=100, experience=0.7, ...)
+Attributes are named without prefix: a key containing `player.` or `generic.` prints a warning, as does a `knockback_resistance` of 1 or more, which Minecraft multiplies by 10 on equipment. `attack_damage` and `mining_efficiency` go on tools only, `armor`, `armor_toughness` and `knockback_resistance` on armor only, and any other attribute, such as `movement_speed` or `burning_time`, on both. An `attack_damage` of 1 on a diamond pickaxe makes it 6. Anything else belongs to the item once generated: set it on `Item.from_id(...).components`.
 
-# Smoking (for food)
-SmokingRecipe(cookingtime=100, experience=0.35, ...)
+### DefaultOre
 
-# Campfire
-CampfireCookingRecipe(cookingtime=600, experience=0.35, ...)
+| Member | Vanilla tier |
+|---|---|
+| `NETHERITE` | netherite |
+| `DIAMOND` | diamond |
+| `IRON` | iron |
+| `GOLD` | golden |
+| `COPPER` | copper |
+| `CHAINMAIL` | stone tools, chainmail armor |
+| `LEATHER` | wooden tools, leather armor |
 
-# Stonecutting
-StonecuttingRecipe(result_count=1, ingredient=Ingr(...), result=Ingr(...))
+`VanillaEquipments` holds the vanilla stats of each tier: `VanillaEquipments.PICKAXE.value[DefaultOre.IRON]["durability"]` is 250. Its members are `HELMET`, `CHESTPLATE`, `LEGGINGS`, `BOOTS`, `SWORD`, `PICKAXE`, `AXE`, `SHOVEL`, `HOE` and `SPEAR`.
 
-# Smithing Transform
-SmithingTransformRecipe(template=Ingr(...), base=Ingr(...), addition=Ingr(...), result=Ingr(...))
+## Wiki buttons and the manual item
 
-# Smithing Trim
-SmithingTrimRecipe(template=Ingr(...), base=Ingr(...), addition=Ingr(...))
-```
+`WikiButton(content)` wraps a text component, shown as the hover of an info button on the item's manual page.
 
-### Ingredient Helper
-
-The `Ingr` function creates ingredient specifications:
+`Item.wiki_buttons` takes a list holding at least one `WikiButton`, one button each. Any other value, a text component or a plain list of them, is a single button.
 
 ```python
-from stewbeet import Ingr
-
-# Local namespace item
-Ingr("steel_ingot")
-# Result: {"custom_data": {"your_namespace": {"steel_ingot": True}}}
-
-# Minecraft item
-Ingr("minecraft:iron_ingot")
-# Result: {"id": "minecraft:iron_ingot"}
-
-# External datapack item
-Ingr("tin_ingot", ns="mechanization")
-# Result: {"custom_data": {"mechanization": {"tin_ingot": True}}}
-
-# Use in recipes
-recipe = CraftingShapedRecipe(
-    shape=["XXX", "XYX", "XXX"],
-    ingredients={
-        "X": Ingr("steel_ingot"),
-        "Y": Ingr("minecraft:diamond")
-    }
-)
-```
-
-## Material Generation
-
-### Automatic Equipment Generation
-
-Generate complete material sets automatically:
-
-```python
-# In src/definitions/ores.py
-from stewbeet import *
-
-def main():
-    ORES_CONFIGS: dict[str, EquipmentsConfig | None] = {
-        "steel_ingot": EquipmentsConfig(
-            equivalent_to=DefaultOre.IRON,          # Base material stats
-            pickaxe_durability=3 * VanillaEquipments.PICKAXE.value[DefaultOre.IRON]["durability"],
-            attributes={
-                "attack_damage": 1,                  # +1 damage for weapons
-                "armor": 0.5,                        # +0.5 armor for armor pieces  
-                "mining_efficiency": 2               # +20% mining speed for tools
-            }
-        ),
-        "minecraft:stone": None,    # Auto-detect from textures (e.g., stone_stick, stone_rod, etc.)
-    }
-    
-    # Generates: steel_ingot, steel_pickaxe, steel_axe, steel_shovel, 
-    # steel_sword, steel_hoe, steel_helmet, steel_chestplate, 
-    # steel_leggings, steel_boots, steel_block, raw_steel, raw_steel_block, etc.
-    generate_everything_about_these_materials(ORES_CONFIGS)
-    
-    # Configure custom blocks after generation
-    # ⚠️ We use Block.from_id() to access existing definitions and modify them
-    Block.from_id("steel_block").vanilla_block = VanillaBlock(id="minecraft:iron_block")
-    Block.from_id("raw_steel_block").vanilla_block = VanillaBlock(id="minecraft:raw_iron_block")
-```
-
-### Equipment Configuration
-
-`EquipmentsConfig` controls how generated material families inherit base stats and how custom modifiers are applied across tools and armor.
-
-```python
-class EquipmentsConfig:
-    equivalent_to: DefaultOre                   # Base material (WOOD, STONE, GOLD, IRON, DIAMOND, NETHERITE, COPPER, CHAINMAIL, LEATHER)
-    pickaxe_durability: float | int = 0         # Custom durability (0 = use vanilla equivalent)
-    attributes: dict[str, float] | None = None  # Stat modifiers to ADD (not override)
-    ignore_recipes: bool = False                # Skip automatic recipe generation
-```
-
-**Common attribute modifiers:**
-- `"attack_damage": 1.0` -> +1 attack damage for weapons (e.g., diamond pickaxe: 5 -> 6)
-- `"armor": 0.5` -> +0.5 armor for each armor piece
-- `"armor_toughness": 1.0` -> +1 armor toughness for armor pieces
-- `"mining_efficiency": 2` -> +20% mining speed for tools
-- `"knockback_resistance": 0.1` -> +0.1 knockback resistance (applied to armor only)
-
-## Documentation Integration
-
-### Wiki Buttons
-
-Add interactive documentation for the in-game manual:
-
-```python
-from stewbeet import Item, WikiButton
-
-item = Item.from_id("steel_ingot")  # Get existing item
-item.wiki_buttons = [
-    WikiButton([
-        {"text": "Steel is a stronger variant of iron.\n"},
-        {"text": "It provides better durability.", "color": "yellow"}
-    ]),
-    WikiButton({"text": "This is another button.", "color": "aqua"})
+Item.from_id("steel_ingot").wiki_buttons = [
+	WikiButton([{"text": "Steel is a stronger variant of iron.\n"}, {"text": "It provides better durability.", "color": "yellow"}]),
+	WikiButton({"text": "This is another button.", "color": "aqua"}),
 ]
 ```
 
-### Manual Item
-
-Create a recipe for the in-game manual:
+The manual plugin creates the item `manual`: `base_item` `minecraft:written_book`, the item model `<ns>:manual`, `item_name` set to `meta.stewbeet.manual.name`, a stack size of 16, no glint and the lore `by <author>`. A definition with the id `manual` is merged into it: its components win, and its recipes are the ones the item has. With `use_dialog: 2` and no `manual` definition, no item is created.
 
 ```python
 Item(
-    id="manual",
-    manual_category="miscellaneous",
-    recipes=[
-        # Craft with book + steel ingot
-        CraftingShapelessRecipe(
-            category="misc",
-            ingredients=[Ingr("minecraft:book"), Ingr("steel_ingot")]
-        ),
-        # Update manual by crafting it again
-        CraftingShapelessRecipe(
-            category="misc",
-            ingredients=[Ingr("manual")]
-        )
-    ],
-    components={
-        "item_name": Mem.ctx.meta.get("stewbeet", {}).get("manual", {}).get("name") or "Manual"
-    }
+	id="manual",
+	manual_category="miscellaneous",
+	recipes=[
+		CraftingShapelessRecipe(category="misc", ingredients=[Ingr("minecraft:book"), Ingr("steel_ingot")]),
+		CraftingShapelessRecipe(category="misc", ingredients=[Ingr("manual")]),
+	],
 )
 ```
 
-## Audio Content
+## Music discs
 
-### Custom Music Discs
+`generate_custom_records(records="auto", category=None, attenuation_distance=None)` defines one disc per sound. It reads `meta.stewbeet.records_folder`, and the build stops when that key is missing.
 
-Music disc generation maps `.ogg` assets to definitions so sounds, items, and references stay synchronized automatically.
+| Argument | Type | Default | What it does |
+|---|---|---|---|
+| `records` | `dict[str, str] \| str \| None` | `"auto"` | A dict from disc id to file name in the folder, or `"auto"`, `"all"` and `None` for every `.ogg` of the folder. |
+| `category` | `str \| None` | `None` | `manual_category` of the discs. |
+| `attenuation_distance` | `int \| None` | `None` | Distance in blocks beyond which the disc is silent. `None` is the vanilla 16. |
 
-```python
-# Auto-generate from assets/records/*.ogg files
-generate_custom_records("auto")
+With `"auto"`, the id of a disc is its cleaned file name: lowercase letters and digits, with spaces and hyphens turned into `_`. A file that is not an `.ogg` prints a warning and is skipped.
 
-# Or specify manually
-generate_custom_records({
-    "my_disc": "My Custom Music.ogg",
-    "battle_theme": "Epic Battle Music.ogg"
-})
+Each disc is an `Item` with `jukebox_playable` set to `<ns>:<id>`, `item_name` `Music Disc`, `max_stack_size` 1 and `rarity` `rare`. The file name without extension is the song's description. The duration read from the file gives `length_in_seconds` as the duration plus one second, and `comparator_output` as the duration modulo 16. The sound is streamed under the disc's id.
 
-# Cut the hearing range down from the vanilla 16 blocks
-generate_custom_records("auto", attenuation_distance=5)
-```
+## Manual categories
 
-## Utility Functions
+`manual_category` is a free string. The manual groups items by its exact value, shows each group on a page titled with the value in title case, and lists no item without a category. A category holding more items than `max_items_per_row * max_rows_per_page` is split into numbered pages, and more categories than that fits on one page makes the build fail.
 
-### Essential Helper Functions
+Two spellings are two categories. The material helpers write `"material"` for ingredients and blocks and `"equipment"` for tools and armor, so a hand-written item shares their page by using the same values.
 
-These helpers finalize definitions so generated output remains consistent, namespaced correctly, and ready for downstream plugins.
+## Resource locations and BlockFunctions
 
-```python
-# Generate item models for all defined items
-add_item_model_component(black_list=["excluded_items"])
+Every location StewBeet derives from an id is a property returning a `Resource`. A `Resource` is a `str` holding `namespace:path`, so it works in f-strings, as a `write_function` path and as a dict key. It also gives the beet file.
 
-# Add default names and lore where missing
-add_item_name_and_lore_if_missing()
+| Property or method | Value for `Item(id="steel_ingot")` |
+|---|---|
+| `loot_table` | `ns:i/steel_ingot` |
+| `loot_table_for(n)` | `ns:i/steel_ingot_x4`, or `_x4to6` for `{"min": 4, "max": 6}` |
+| `item_model` | `ns:steel_ingot`, or the `item_model` component when it is set |
+| `generated_item_model` | `ns:steel_ingot`, always the file StewBeet writes |
+| `model` | `ns:item/steel_ingot` |
+| `texture` | `ns:item/steel_ingot` |
+| `recipe(index=1)` | `ns:steel_ingot`, `ns:steel_ingot_2` for index 2 |
+| `ranged_weapon_enchantment` | `ns:ranged_weapon/steel_ingot` |
 
-# Add namespace detection data (REQUIRED!)
-add_private_custom_data_for_namespace()
+`Block` adds `functions`, `no_silk_touch_loot_table` (`ns:custom_blocks/no_silk_touch_drop/<id>`), `seed_loot_table` (`ns:seeds/<id>`), `advancement` (a `ValueError` for a regular `Block`), `alternative_advancement`, `head_advancement`, `head_search` (`ns:custom_blocks/_player_head/search_<id>`), and `seed_stage_name`, `seed_stage_item_model`, `seed_stage_model` and `seed_stage_texture` for a growth stage, named after `texture_basename`. `Painting` adds `variant`, `painting_texture` and `asset_id`.
 
-# Add Smithed convention data
-add_smithed_ignore_vanilla_behaviours_convention()
+| Method of `Resource` | What it does |
+|---|---|
+| `obj` | The beet file. Raises `KeyError` when it does not exist yet. Assigning to it writes the file. |
+| `get(default=None)` | The beet file, or `default`. |
+| `exists()` | Whether the file is in the pack. |
+| `setdefault(default=None)` | The file, inserting `default` or an empty one when absent. |
+| `write(value)` | Writes the file and returns it. |
+| `delete()` | Removes the file when present. |
+| `child(name)`, `suffixed(suffix)`, `sibling(name)` | Derived resources: `<path>/<name>`, `<path><suffix>`, `<folder>/<name>`. |
+| `namespace`, `relative_path`, `file_type` | The parts of the location. |
 
-# Configure manual hover components
-set_manual_components(white_list=["item_name", "lore", "custom_name", "damage", "max_damage"])
+`Block.functions` returns a `BlockFunctions`, which is also built directly: `BlockFunctions(block_id, namespace=None)` needs no definition. `functions["name"]` gives any function of the block's folder, `functions.folder` the folder, and iterating it lists the functions already in the pack.
 
-# Export definitions for debugging
-export_all_definitions_to_json(f"{Mem.ctx.directory}/definitions_debug.json")
-```
-
-## Item Categories
-
-Common categories for manual organization (but it's always up to you!):
-
-| Category | Description |
-|----------|-------------|
-| `"materials"` | Raw materials, ingots, gems |
-| `"equipment"` | Tools, weapons, armor |
-| `"building"` | Building blocks, decorative blocks |
-| `"miscellaneous"` | Other items, special items |
-| `"food"` | Consumable items |
-| `"decorations"` | Paintings, decorative items |
-
-## Advanced Features
-
-### Texture Integration
-Items automatically detect textures by name from `assets/textures/`:
-- `steel_ingot.png` -> `steel_ingot` item
-- `steel_pickaxe.png` -> `steel_pickaxe` tool
-- `steel_block.png` -> `steel_block` custom block
-
-### Accessing Existing Items
-
-`Item.from_id` lets you fetch and mutate previously declared definitions, enabling staged configuration without re-creating objects.
+| Property | Function in `ns:custom_blocks/<id>/` | Runs |
+|---|---|---|
+| `place_main` | `place_main` | At the block's position when it is placed. |
+| `place_secondary` | `place_secondary` | As the summoned item display or item frame, when the block is placed. |
+| `place_check` | `place_check` | Checks the placed block is this one before `place_main`. |
+| `search` | `search` | Searches the placed entity of an item frame block. |
+| `get_facing` | `get_facing` | Computes the facing from the player's orientation. |
+| `destroy` | `destroy` | When the block is destroyed. |
+| `replace_item` | `replace_item` | Replaces the dropped item with the block's item. |
+| `update_seed_model` | `update_seed_model` | Sets a growing seed's model to its stage. |
+| `is_fully_grown` | `is_fully_grown` | When a growing seed reaches its last stage. |
+| `tick`, `tick_2`, `second`, `second_5`, `minute` | the same names | Every tick, 2 ticks, second, 5 seconds, minute, as the block's entity. |
 
 ```python
-# Get an existing item
-item = Item.from_id("my_item")
-
-# Modify it
-item.manual_category = "materials"
-item.wiki_buttons = [WikiButton({"text": "New info!"})]
-
-# Add a recipe
-item.recipes.append(CraftingShapelessRecipe(
-    category="misc",
-    ingredients=[Ingr("something")]
-))
+steel_block = Block.from_id("steel_block")
+write_function(steel_block.functions.tick, "particle heart ~ ~1 ~ 0.5 0.5 0.5 0.01 1")
+write_function(BlockFunctions("steel_block").second, "particle angry_villager ~ ~1 ~ 0.2 0.2 0.2 0.01 10")
 ```
 
-### Resource Locations
+## Recognized texture patterns
 
-Never hardcode a resource location like `f"{ns}:custom_blocks/{item}/place_secondary"` again. Every location StewBeet derives from an item ID is exposed as a property returning a `Resource`.
+A texture is matched to a definition by its file name: `<id>.png`, or `<id>_<suffix>.png` for a variant. A variant is looked up among the files of the textures folder starting with the id and holding at most two more underscores than the id.
 
-A `Resource` **is** a string holding the full `namespace:path` location, so it works everywhere a path is expected: inside f-strings, as a `write_function` argument, as a dict key, compared against a literal. On top of that it gives you the underlying beet file.
+Block patterns apply to a `Block` whose `base_item` is the default one, or whose `override_model` names a block parent. A single texture gives `block/cube_all`. Otherwise the first pattern whose sides all have a texture wins.
 
-```python
-item = Item.from_id("steel_ingot")
+| Parent | Textures |
+|---|---|
+| `block/cake` | `<id>_bottom`, `<id>_side`, `<id>_top`, `<id>_inner` |
+| `block/orientable_with_bottom` | `<id>_front`, `<id>_bottom`, `<id>_side`, `<id>_top` |
+| `block/cube_bottom_top` | `<id>_bottom`, `<id>_side`, `<id>_top` |
+| `block/orientable` | `<id>_front`, `<id>_side`, `<id>_top` |
+| `block/cube_column` | `<id>_end`, `<id>_side` |
 
-item.loot_table                  # "ns:i/steel_ingot"          -> Resource[LootTable]
-item.loot_table_for(4)           # "ns:i/steel_ingot_x4"
-item.item_model                  # "ns:steel_ingot"            -> Resource[ItemModel]
-item.model                       # "ns:item/steel_ingot"       -> Resource[Model]
-item.texture                     # "ns:item/steel_ingot"       -> Resource[Texture]
-item.recipe()                    # "ns:steel_ingot"            -> Resource[Recipe]
+A block matching none of them stops the build, unless its `override_model` gives the textures.
 
-# Use it directly in a command
-write_function(f"{ns}:give_steel", f"loot give @s loot {item.loot_table}")
-```
+| Item pattern | Textures and condition |
+|---|---|
+| Overlay | `<id>_overlay` becomes the second layer of the model. |
+| Leather armor | A `base_item` starting with `leather_` gets its texture as the second layer too, for dyeing. |
+| Bow | A `base_item` ending with `bow` and textures `<id>_pulling_0`, `<id>_pulling_1`, and so on, drawn in order as the bow is pulled. A crossbow also reads `<id>_arrow` and `<id>_firework`. |
+| Spear | An id ending with `_spear` and a texture `<id>_in_hand` shows that texture outside the gui, on the ground, in frames and on shelves. |
+| Powered | A texture ending with `_on` gives the item and the block an `_on` model. A furnace, smoker or blast furnace host shows it while it burns. |
 
-> [!NOTE]
-> `item_model` follows the `item_model` component when you override it, while `generated_item_model` always points at the file StewBeet writes. They only differ if you set the component yourself.
+## Setup helper functions
 
-#### **Block Functions**
+Each function reads `Mem.definitions` at the moment it is called, so it runs after every definition is created.
 
-`Block.functions` groups every mcfunction of a custom block:
+| Function | What it does |
+|---|---|
+| `add_item_model_component(black_list=None)` | Sets `item_model` to the generated item model on each definition that has none, except the ids of `black_list`. |
+| `add_item_name_and_lore_if_missing(is_external=False, black_list=None)` | Sets `item_name` to the id in title case when absent, and adds the `meta.stewbeet.source_lore` line to `lore`. |
+| `add_private_custom_data_for_namespace(is_external=False, black_list=None)` | Sets `custom_data.<ns>.<id>` to `true`, and `custom_data.smithed.id` and `origin`. This is how items are detected in recipes and functions. |
+| `add_smithed_ignore_vanilla_behaviours_convention()` | Sets `custom_data.smithed.ignore.functionality` and `crafting` to `true`. |
+| `set_manual_components(white_list)` | Components shown in the hover of an item in the manual. An empty list changes nothing. |
+| `export_all_definitions_to_json(file_name, is_external=False, verbose=True)` | Writes every definition to one JSON file, without `override_model`. |
+| `resolve_use_remainders()` | Writes `use_remainder` on each item with a `remainder`. The recipe, loading and loot table plugins call it. |
 
-```python
-block = Block.from_id("steel_block")
-
-block.functions.place_main        # "ns:custom_blocks/steel_block/place_main"
-block.functions.place_secondary   # "ns:custom_blocks/steel_block/place_secondary"
-block.functions.destroy           # "ns:custom_blocks/steel_block/destroy"
-block.functions.tick              # "ns:custom_blocks/steel_block/tick"
-block.functions.second            # "ns:custom_blocks/steel_block/second"
-block.functions["my_own_call"]    # any other function in that folder
-block.functions.folder            # "ns:custom_blocks/steel_block"
-
-# Also available: place_check, search, get_facing, replace_item,
-# update_seed_model, is_fully_grown, tick_2, second_5, minute
-
-block.no_silk_touch_loot_table    # "ns:custom_blocks/no_silk_touch_drop/steel_block"
-block.seed_loot_table             # "ns:seeds/steel_block"
-block.advancement                 # placement advancement (BlockAlternative / BlockHead only)
-
-# So the ticking example from the template becomes:
-write_function(block.functions.tick, "particle heart ~ ~1 ~ 0.5 0.5 0.5 0.01 1")
-```
-
-`Block.functions` returns a `BlockFunctions` object, which you can also build directly from a block ID if that reads better to you: no `Block.from_id` lookup needed, so it even works for IDs that have no definition:
-
-```python
-from stewbeet import BlockFunctions
-
-funcs = BlockFunctions("steel_block")
-funcs.tick                                   # "ns:custom_blocks/steel_block/tick"
-BlockFunctions("steel_block").destroy        # same paths as Block.from_id("steel_block").functions.destroy
-BlockFunctions("gauge", namespace="other")   # target another namespace
-```
-
-Both forms produce the exact same `Resource[Function]` objects: use whichever you prefer.
-
-#### **Reading and Writing the File**
-
-```python
-res = item.loot_table
-
-res.exists()          # is the file in the pack yet?
-res.get()             # the beet LootTable, or None
-res.obj               # the beet LootTable, raises KeyError if missing
-res.obj = LootTable({...})    # write it
-res.write(LootTable({...}))   # same, and returns the file
-res.delete()          # remove it if present
-
-res.namespace         # "ns"
-res.relative_path     # "i/steel_ingot"
-res.file_type         # beet.LootTable
-```
-
-For mcfunctions, `.obj` is a beet `Function` object, so you can append commands to an existing function directly: same result as calling `write_function(res, ...)`:
-
-```python
-# Run commands as the block display entity when it is placed
-# (from a plugin running AFTER datapack.custom_blocks, so the function exists):
-Block.from_id("super_stone").functions.place_secondary.obj.append("""
-say Someone placed the super stone!
-particle minecraft:explosion ~ ~ ~
-""")
-```
-
-> [!TIP]
-> Reading `.obj` before the plugin that generates it has run raises `KeyError`. Use `.get()` or `.exists()` when the file may not exist yet or do your code after plugin execution.
-> For the append example above, that's actually a feature: appending too early fails loudly instead of silently landing your commands before the block setup.
-
-### Complex Model Examples
-
-#### **Recognized Texture Patterns**
-
-StewBeet automatically recognizes texture patterns and generates appropriate models:
-
-**Block Patterns:**
-- **`cube_all`**: Single texture (e.g., `my_block.png`)
-- **`cake`**: bottom, side, top, inner (e.g., `my_cake_bottom.png`, `my_cake_side.png`, `my_cake_top.png`, `my_cake_inner.png`)
-- **`orientable_with_bottom`**: front, bottom, side, top (e.g., `furnace_front.png`, `furnace_bottom.png`, `furnace_side.png`, `furnace_top.png`)
-- **`cube_bottom_top`**: bottom, side, top (e.g., `barrel_bottom.png`, `barrel_side.png`, `barrel_top.png`)
-- **`orientable`**: front, side, top (e.g., `dropper_front.png`, `dropper_side.png`, `dropper_top.png`)
-- **`cube_column`**: end, side (e.g., `pillar_end.png`, `pillar_side.png`)
-
-**Item Patterns:**
-- **`leather_armor`**: Items starting with `leather_` automatically use layer1 for overlay coloring
-- **`overlay`**: Items with `_overlay` texture (e.g., `my_item.png` + `my_item_overlay.png` -> layer0 + layer1)
-- **`bow_pulling`**: Bow items with `_pulling_0`, `_pulling_1`, `_pulling_2`, etc. (sorted numerically)
-- **`spear_in_hand`**: Spears ending with `_spear` + `_in_hand` texture variant (uses display context switching)
-
-**Powered States:**
-- Any block/item can have `_on` variants (e.g., `furnace_front.png` + `furnace_front_on.png`)
-- StewBeet automatically generates both states if `_on` textures are detected, a furnace, smoker or blast furnace host showing the `_on` one while it burns
-
-#### **Multiple States (On/Off, Facing)**
-
-Example from SimplEnergy's Electric Furnace with on/off states and directional facing:
-
-```python
-from stewbeet import Block, VanillaBlock, CraftingShapedRecipe, Ingr
-
-# Create the electric furnace block
-electric_furnace = Block(
-    id="electric_furnace",
-    vanilla_block=VanillaBlock(
-        id="minecraft:furnace",
-        block_facing="player"  # Enables directional variants (north, east, south, west)
-    ),
-    manual_category="energy",
-    recipes=[
-        CraftingShapedRecipe(
-            category="misc",
-            shape=["LLL", "LML", "III"],
-            ingredients={
-                "L": Ingr("minecraft:lapis_lazuli"),
-                "M": Ingr("machine_block"),
-                "I": Ingr("minecraft:iron_block")
-            }
-        )
-    ],
-    components={
-        "item_name": {"text": "Electric Furnace", "color": "aqua"},
-        "custom_data": {"energy": {"usage": 20, "max_storage": 1600}}
-    }
-)
-
-# StewBeet automatically detects block model patterns from texture names:
-# Required textures: electric_furnace_front.png, electric_furnace_side.png, electric_furnace_top.png, electric_furnace_bottom.png
-# Optional for on state: electric_furnace_front_on.png (other sides can also have _on variants)
-# Pattern recognized: "orientable_with_bottom" (front, side, top, bottom)
-# Other supported patterns: "orientable" (front, side, top), "cube_bottom_top" (bottom, side, top), "cube_column" (end, side)
-```
-
-#### **Animated Item Models (Bow Pulling)**
-
-Example with bow pulling animations:
-
-```python
-from stewbeet import Item, Ingr, CraftingShapedRecipe
-
-custom_bow = Item(
-    id="super_bow",
-    base_item="minecraft:bow",
-    manual_category="equipment",
-    recipes=[
-        CraftingShapedRecipe(
-            category="equipment",
-            shape=[" XY", "X Y", " XY"],
-            ingredients={"X": Ingr("minecraft:stick"), "Y": Ingr("minecraft:string")}
-        )
-    ],
-    components={
-        "item_name": {"text": "Super Bow", "color": "gold"},
-        "max_damage": 500
-    }
-)
-
-# StewBeet auto-generates pulling animation models and item_model JSON files:
-# Required textures in assets/textures/item/:
-# - super_bow.png (base bow texture)
-# - super_bow_pulling_0.png (slightly pulled)
-# - super_bow_pulling_1.png (half pulled)  
-# - super_bow_pulling_2.png (fully pulled)
-# 
-# Generated files:
-# - assets/models/item/super_bow_pulling_0.json, super_bow_pulling_1.json, super_bow_pulling_2.json
-# - assets/items/super_bow.json (with condition and range_dispatch for pull states)
-```
-
-## Best Practices
-
-### Do's
-- Use `Item`, `Block`, `Painting` classes for clean, typed definitions
-- Use `Ingr()` for all ingredient references
-- Call final adjustment functions at the end of `beet_default()`
-- Organize definitions into separate modules (like `ores.py`, `additions.py`)
-- Use meaningful categories for manual organization
-- Set `vanilla_block` for custom blocks after generation
-
-### Don'ts
-- Don't modify `Mem.definitions` directly (use classes instead)
-- Don't use raw dictionaries for ingredients (use `Ingr()`)
-- Don't forget to call final adjustment functions
-- Don't skip `vanilla_block` configuration for custom blocks
-
-## Complete Example
-
-```python
-# src/setup_definitions.py
-from beet import Context
-from stewbeet import *
-
-from .definitions.additions import main as main_additions
-from .definitions.ores import main as main_ores
-
-def beet_default(ctx: Context):
-    # 1. Generate materials
-    main_ores()
-    
-    # 2. Generate records
-    generate_custom_records("auto")
-    
-    # 3. Add custom items
-    main_additions()
-    
-    # 4. Set missing categories
-    for item_id in Mem.definitions.keys():
-        obj = Item.from_id(item_id)
-        if not obj.manual_category:
-            obj.manual_category = "miscellaneous"
-    
-    # 5. Final adjustments (REQUIRED!)
-    add_item_model_component()
-    add_item_name_and_lore_if_missing()
-    add_private_custom_data_for_namespace()
-    add_smithed_ignore_vanilla_behaviours_convention()
-    set_manual_components(white_list=["item_name", "lore", "custom_name", "damage", "max_damage"])
-    
-    # 6. Debug export
-    export_all_definitions_to_json(f"{Mem.ctx.directory}/definitions_debug.json")
-```
-
-**🎉 This modern approach creates clean, type-safe item definitions that work with every StewBeet plugin!**<br>
-Check the real-world examples at the top of this page to see how it works in practice! 🚀
-
-## Glossary
-
-| Term | Meaning |
-|------|---------|
-| **Definitions Setup** | The user plugin responsible for creating and enriching `Mem.definitions`. |
-| **Definition** | A typed object entry (`Item`, `Block`, `Painting`, etc.) used by downstream StewBeet plugins. |
-| **Mem.definitions** | Global registry where all definitions are stored and shared through the pipeline. |
+`is_external=True` runs on `Mem.external_definitions` instead.
 
 ## Next steps
 
-- [Writing to files](../2_writing_to_files/en.md): turn definitions into functions and files.
-- [Recipes](../plugins/custom_recipes.md): how a declared recipe reaches every crafting system.
-- [In-game manual](../7_ingame_manual/en.md): the book your definitions generate.
+- [Items and blocks](../items_and_blocks/en.md): declare an item, a block and their recipes step by step.
+- [Helpers](../2_writing_to_files/reference/en.md): the functions writing the files a definition points to.
+- [Custom blocks](../plugins/datapack.custom_blocks.md): every file the plugin writes for a `Block`.
 

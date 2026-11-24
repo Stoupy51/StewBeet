@@ -52,5 +52,5 @@ A file longer than 10 seconds is set to `stream`, so the game does not load it w
 
 ## Next steps
 
-- [Definitions](../1_definitions_setup/en.md#audio-content): music discs from sound files.
+- [Definitions](../1_definitions_setup/en.md#music-discs): music discs from sound files.
 

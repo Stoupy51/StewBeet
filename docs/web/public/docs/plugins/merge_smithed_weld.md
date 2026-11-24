@@ -21,7 +21,7 @@ The plain entry merges both, like listing the two halves.
 
 In the `output` folder:
 
-- `StardustFragment_datapack_with_libs.zip`: your datapack, the zips of `libs/datapack/`, then the [official libraries](../5_dependencies/en.md#official-libraries-auto-detected) your functions use.
+- `StardustFragment_datapack_with_libs.zip`: your datapack, the zips of `libs/datapack/`, then the [official libraries](../5_dependencies/en.md#official-libraries) your functions use.
 - `StardustFragment_resource_pack_with_libs.zip`: the same for the resource pack, with `libs/resource_pack/`.
 
 Smithed Weld resolves the files two packs both provide. Your own pack comes last, so its `pack.mcmeta` and `pack.png` win. When a merge has the same sources as the last build, the zip on disk is kept as it is.

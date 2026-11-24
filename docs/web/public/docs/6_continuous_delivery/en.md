@@ -1,21 +1,21 @@
 
 # Shipping releases automatically
 
-One `upload.py` script publishes a release to GitHub, Modrinth, Smithed and PlanetMinecraft in a single command. It calls each platform in turn: GitHub first, because it writes the changelog, then the others with that changelog.
+One `upload.py` script publishes a release to GitHub, Modrinth, Smithed and PlanetMinecraft. It calls each platform in turn: GitHub first, because it writes the changelog, then the others with that changelog.
 
-Credentials live **outside** the project, in `~/stewbeet/credentials.yml`, so they can never be committed by accident.
+Credentials live outside the project, in `~/stewbeet/credentials.yml`, so they can never be committed by accident.
 
 - A published script: [SimplEnergy/upload.py](https://github.com/Stoupy51/SimplEnergy/blob/main/upload.py)
 - The source: [stewbeet/continuous_delivery/](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/continuous_delivery/)
 
 | Platform | What the script does |
 |----------|----------------------|
-| GitHub | Creates a tagged release and uploads the build artefacts |
+| GitHub | Creates a tagged release on the pushed HEAD and uploads the build artefacts |
 | Modrinth | Publishes the version, syncs the description, optionally packages mod jars |
 | Smithed | Registers the version, linking to the GitHub release assets |
 | PlanetMinecraft | Opens the edit page and copies the BBCode changelog to the clipboard |
 
-## Credentials Setup
+## Credentials setup
 
 Create the file `~/stewbeet/credentials.yml` (i.e. `C:\Users\YourName\stewbeet\credentials.yml` on Windows):
 
@@ -28,21 +28,22 @@ modrinth_api_key: "mrp_..."  # PAT with "Create versions" scope: https://modrint
 
 smithed_api_key: "..."       # Token with WRITE_PACKS scope: https://smithed.net/settings?tab=account
 
-# Optional: SFTP destinations used by copy_to_destination plugin
+# Optional: SFTP destinations used by the copy_to_destination plugin
 sftp:
   user@host:
     password: "your_password"
 ```
 
-> **Warning:** Never commit `credentials.yml` to version control. Add it to your `.gitignore` if you keep it inside a project folder.
+Never commit `credentials.yml`. Add it to your `.gitignore` if you keep it inside a project folder.
 
 ---
 
 ## GitHub
 
-`upload_to_github` creates a tagged release on GitHub, uploads all matching build artifacts, and returns a **changelog string** generated from commits since the previous tag.
+`upload_to_github` creates a tagged release on GitHub, uploads the matching build artefacts, and returns a changelog string generated from the commits since the previous tag.
 
 ### Required credentials
+
 | Key | Description |
 |-----|-------------|
 | `github.api_key` | GitHub Personal Access Token |
@@ -52,12 +53,14 @@ sftp:
 
 | Key | Required | Description |
 |-----|----------|-------------|
-| `project_name` | Yes | Repository name (used to construct the release URL) |
+| `project_name` | Yes | Repository name, spaces removed (used to construct the release URL) |
 | `version` | Yes | Version string, e.g. `"1.2.3"`: becomes tag `v1.2.3` |
 | `build_folder` | Yes | Path to the folder containing the built zip files |
 | `endswith` | No | List of suffixes to filter uploaded files (e.g. `[".zip"]`) |
+| `files` | No | Explicit paths to upload instead of scanning `build_folder` |
 
 ### Example
+
 ```python
 github_config: JsonDict = {
     "project_name": cfg.name,
@@ -69,9 +72,12 @@ changelog: str = upload_to_github(credentials, github_config)
 ```
 
 ### Behaviour
-- If the tag `v{version}` already exists, the existing release and tag are **deleted** before recreating.
+
+- The tag is created on your local HEAD. The script stops with an error when that commit is not on GitHub yet, so push before uploading.
+- If the tag `v{version}` already exists, the script asks `y/N`. Answering `y` deletes the existing release and tag, then recreates them. Anything else skips the GitHub release.
+- The release is created as a draft, receives its assets, then is published. An asset upload that fails with a 5xx answer is retried up to 4 times.
 - Uploads every file in `build_folder` whose name ends with one of the `endswith` suffixes.
-- Returns the generated changelog as a Markdown string (used as input to the other upload functions).
+- Returns the generated changelog as a Markdown string, used as input to the other upload functions.
 
 ---
 
@@ -80,6 +86,7 @@ changelog: str = upload_to_github(credentials, github_config)
 `upload_to_modrinth` syncs the project description and summary on Modrinth, then uploads a new version with the built zip files attached.
 
 ### Required credentials
+
 | Key | Description |
 |-----|-------------|
 | `modrinth_api_key` | Modrinth PAT with "Create versions" scope |
@@ -100,7 +107,10 @@ changelog: str = upload_to_github(credentials, github_config)
 | `mod_platforms` | No | List of platforms for mod packaging (default: `["fabric", "forge", "neoforge", "quilt"]`) |
 | `files` | No | Zip paths to upload instead of the `build_folder` packs, datapack first. Names must contain `datapack` and `resource_pack` |
 
+Without `files`, the script uploads the `_datapack_with_libs.zip` and `_resource_pack_with_libs.zip` of `build_folder`, or the plain `_datapack.zip` and `_resource_pack.zip` when the build made no `_with_libs` pair. The resource pack is marked as required on the version.
+
 ### Example
+
 ```python
 modrinth_config: JsonDict = {
     "slug": cfg.id,
@@ -118,23 +128,25 @@ upload_to_modrinth(credentials, modrinth_config, changelog)
 ```
 
 ### Behaviour
-- Always updates the project description and summary **before** uploading the version.
-- If the version already exists, prompts `y/N`: answering `y` deletes and recreates it.
-- With `package_as_mod = "all"`, uploads one datapack version and one mod version covering all platforms.
-- With `package_as_mod = "separate"`, uploads one datapack version and a separate mod version per platform.
+
+- Always updates the project description and summary before uploading the version.
+- If the version already exists, prompts `y/N`: answering `y` deletes and recreates it, anything else stops the upload.
+- With `package_as_mod = "all"`, uploads one datapack version and one mod version (`<version>+mod`) covering all platforms.
+- With `package_as_mod = "separate"`, uploads one datapack version and a separate mod version per platform (`<version>+<platform>`).
 
 ---
 
 ## Smithed
 
-`upload_to_smithed` registers a new version on Smithed. It resolves download links automatically from the GitHub release created in the previous step.
+`upload_to_smithed` registers a new version on Smithed. It finds the download links in the GitHub release created in the previous step.
 
 ### Required credentials
+
 | Key | Description |
 |-----|-------------|
 | `smithed_api_key` | Smithed token with `WRITE_PACKS` scope |
-| `github.api_key` | GitHub PAT (used to resolve the release asset URLs) |
-| `github.username` | GitHub account username |
+| `github.api_key` | GitHub PAT, which must be present in the file |
+| `github.username` | GitHub account username, used to build the release URLs |
 
 ### Configuration
 
@@ -147,6 +159,7 @@ upload_to_modrinth(credentials, modrinth_config, changelog)
 | `files` | No | `{"datapack": ..., "resourcepack": ...}` local zips already attached to the GitHub release (`resourcepack` is optional). Names only use letters, digits, `.`, `_` and `-` |
 
 ### Example
+
 ```python
 smithed_config: JsonDict = {
     "project_id": cfg.id,
@@ -157,24 +170,26 @@ upload_to_smithed(credentials, smithed_config, changelog)
 ```
 
 ### Behaviour
-- Resolves datapack and resource pack download URLs from the GitHub release (`_with_libs.zip` first, falls back to the plain zip).
-- Supported Minecraft versions are determined automatically from the project configuration (`mc_supports` or `minecraft` field in `beet.yml`).
-- Snapshot and release-candidate version strings are excluded from the `supports` list.
+
+- Looks for the datapack and resource pack in the GitHub release (`_with_libs.zip` first, then the plain zip), and keeps the first URL that answers.
+- The supported Minecraft versions come from `mc_supports`, else `minecraft`, in `beet.yml`, without `"infinite"`. Versions that are not made of digits and dots (snapshots, release candidates) are left out.
+- The changelog argument is accepted and not sent: Smithed receives the version and its downloads only.
 
 ---
 
 ## PlanetMinecraft
 
-`upload_to_pmc` has no API. It opens the project's edit page in your browser and copies the changelog converted to **BBCode** to the clipboard, ready to paste.
+`upload_to_pmc` has no API. It opens the project's edit page in your browser and copies the changelog converted to BBCode to the clipboard, ready to paste. It opens the page with the Windows `start` command.
 
 ### Configuration
 
 | Key           | Required | Description                                           |
 | ------------- | -------- | ----------------------------------------------------- |
 | `project_url` | Yes | URL to the project management page on PlanetMinecraft |
-| `version`     | Yes | Version string (included for validation)              |
+| `version`     | Yes | Version string, which the script requires and does not use further |
 
 ### Example
+
 ```python
 pmc_config: JsonDict = {
     "project_url": "https://www.planetminecraft.com/account/manage/data-packs/5305840/",
@@ -184,13 +199,14 @@ upload_to_pmc(pmc_config, changelog)
 ```
 
 ### Behaviour
+
 - Opens `project_url` in the default browser.
 - Converts the Markdown changelog to BBCode and copies it to the clipboard.
 - Prints a confirmation message: paste the clipboard content into the version description on the page.
 
 ---
 
-## Full Example Script
+## Full example script
 
 A complete `upload.py` for a typical project (example from [SimplEnergy](https://github.com/Stoupy51/SimplEnergy/blob/main/upload.py)):
 
@@ -258,15 +274,15 @@ upload_to_pmc(pmc_config, changelog)
 
 | Term | Meaning |
 |------|---------|
-| **`load_credentials`** | Reads `~/stewbeet/credentials.yml` (or a custom path) and returns a dictionary of API keys and secrets used by the upload functions. |
-| **`get_project_config`** | Reads the `beet.yml` in the current directory and returns a `ProjectConfig` object with `name`, `version`, `id`, `output`, and `directory` fields. |
-| **Changelog** | A Markdown string generated automatically from Git commits since the last tag. Returned by `upload_to_github` and forwarded to the other upload functions. |
-| **`version_type`** | The release maturity for Modrinth: `"release"`, `"beta"`, or `"alpha"`. |
-| **`package_as_mod`** | Optional Modrinth packaging mode that wraps your datapack as a Fabric/Forge/NeoForge/Quilt mod jar alongside the normal datapack upload. |
+| `load_credentials` | Reads `~/stewbeet/credentials.yml` (or a custom path) and returns a dictionary of API keys and secrets used by the upload functions. |
+| `get_project_config` | Finds the `beet.yml` in the current directory or a parent, makes its folder the working directory, and returns a `ProjectConfig` with `name`, `version`, `id`, `output` and `directory` fields. |
+| Changelog | A Markdown string generated from the Git commits since the last tag. Returned by `upload_to_github` and forwarded to the other upload functions. |
+| `version_type` | The release maturity for Modrinth: `"release"`, `"beta"`, or `"alpha"`. |
+| `package_as_mod` | Optional Modrinth packaging mode that wraps your datapack as a Fabric, Forge, NeoForge or Quilt mod jar alongside the normal datapack upload. |
 
 ## Next steps
 
-- [compute_sha1](../plugins/compute_sha1.md): the hashes releases are published with.
-- [Configuring the build](../3_beet_config/en.md): the build the release pipeline runs.
-- [Using datapack libraries](../5_dependencies/en.md): version checks your released pack performs.
+- [Configuring the build](../3_beet_config/en.md#mc_supports): `mc_supports` sets the Minecraft versions sent to Modrinth and Smithed.
+- [Using datapack libraries](../5_dependencies/en.md): how the libraries end up in the `_with_libs` zips and the checks your released pack runs.
+- [merge_smithed_weld](../plugins/merge_smithed_weld.md): the plugin that writes those `_with_libs` zips.
 

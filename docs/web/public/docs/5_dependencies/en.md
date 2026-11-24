@@ -1,52 +1,45 @@
 
 # Using datapack libraries
 
-StewBeet's dependency system has two layers: **official libraries** auto-detected from function usage (no config), and **custom `load_dependencies`** declared in `beet.yml`. Both are auto-downloaded at build time and get runtime scoreboard version checks with clickable in-game error messages.
+StewBeet handles libraries in two layers: official libraries it detects from your functions, with no configuration, and custom ones you declare as `load_dependencies` in `beet.yml`. Both are downloaded at build time and both get a runtime version check, with clickable error messages in chat.
 
-**Config Reference**: [extensive/beet.yml](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/beet.yml) <br>  
-**Real-world Example**: [SimplEnergy/beet.yml](https://github.com/Stoupy51/SimplEnergy/blob/main/beet.yml) <br>  
-**Source Code**: [stewbeet/plugins/finalyze/dependencies/__init__.py](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/finalyze/dependencies/__init__.py) <br>
+- Config reference: [extensive/beet.yml](https://github.com/Stoupy51/StewBeet/blob/main/templates/extensive/beet.yml)
+- Real-world example: [SimplEnergy/beet.yml](https://github.com/Stoupy51/SimplEnergy/blob/main/beet.yml)
+- Source code: [stewbeet/plugins/finalyze/dependencies/\_\_init\_\_.py](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/finalyze/dependencies/__init__.py)
 
-- Auto-detect and download official libraries: no configuration needed
-- Declare custom dependencies in `beet.yml` with `load_dependencies`
-- Generate runtime version checks and Minecraft version compatibility checks
-- Provide clickable in-game error messages when dependencies are missing
+The `stewbeet.plugins.finalyze.dependencies` plugin goes after `mecha` in the pipeline, because it scans the finished functions to detect libraries, and after `stewbeet.plugins.datapack.loading`.
 
-**Required**: `stewbeet.plugins.finalyze.dependencies` in pipeline  
-**Required**: `stewbeet.plugins.datapack.loading` must run before  
-**Position**: Must be placed **after** all user functions have been written (scans them to auto-detect libraries)
+## Official libraries
 
-## Official Libraries (Auto-detected)
+The plugin scans every function of the pack and marks a library as used when its marker appears. Writing the library's namespace in a function is enough.
 
-The plugin automatically scans all datapack functions during build and marks a library as used when its namespace appears. **No configuration required**: just use the library in your functions.
+- Most libraries are detected by their namespace as a plain string, such as `itemio` or `common_signals`.
+- Bookshelf modules are detected by a tag call, such as `#bs.math:`.
+- Gamemode 4 libraries are detected by their namespace with a colon, such as `gm4_lore:`.
+- A pack never detects itself, so a project named `itemio` does not pull `itemio` in.
 
-### Detection Logic
-- **Modrinth / static libs** (`furnace_nbt_recipes`, `common_signals`, `realistic_explosion`, `itemio`, `smithed.actionbar`): detected when their namespace string appears in any function.
-- **Bookshelf modules** (`bs.*`): detected when a tag call `#bs.X:...` appears in any function.
+Three libraries are pulled in by your declarations instead of by a string. `smithed.custom_block` comes with a block whose base item is `CUSTOM_BLOCK_VANILLA`, `smithed.crafter` with a crafting recipe that has a custom item as ingredient, and `smart_ore_generation` with a `CustomOreGeneration`.
 
-### Supported Official Libraries
+### Supported libraries
 
-**Smithed**
+| Key | Name | Source |
+|-----|------|--------|
+| `smithed.custom_block` | [Smithed Custom Block](https://wiki.smithed.dev/libraries/custom-block/) | Smithed |
+| `smithed.crafter` | [Smithed Crafter](https://wiki.smithed.dev/libraries/crafter/) | Smithed |
+| `smithed.actionbar` | [Smithed Actionbar](https://wiki.smithed.dev/libraries/actionbar/) | Smithed |
+| `realistic_explosion` | [RealisticExplosion](https://github.com/Stoupy51/RealisticExplosion) | Smithed |
+| `itemio` | [ItemIO](https://github.com/edayot/ItemIO) | Modrinth |
+| `common_signals` | [Common Signals](https://github.com/Stoupy51/CommonSignals) | Modrinth |
+| `furnace_nbt_recipes` | [Furnace NBT Recipes](https://github.com/Stoupy51/FurnaceNbtRecipes) | Modrinth |
+| `smart_ore_generation` | [Smart Ore Generation](https://github.com/Stoupy51/SmartOreGeneration) | Modrinth |
+| `cinemalya` | [Cinemalya](https://github.com/Stoupy51/Cinemalya) | Modrinth |
+| `player_motion` | [Player Motion API](https://github.com/MulverineX/player_motion) | Modrinth |
 
-| Key | Name | URL |
-|-----|------|-----|
-| `smithed.custom_block` | Smithed Custom Block | [wiki.smithed.dev](https://wiki.smithed.dev/libraries/custom-block/) |
-| `smithed.crafter` | Smithed Crafter | [wiki.smithed.dev](https://wiki.smithed.dev/libraries/crafter/) |
-| `smithed.actionbar` | Smithed Actionbar | [wiki.smithed.dev](https://wiki.smithed.dev/libraries/actionbar/) |
-| `realistic_explosion` | RealisticExplosion | [github.com/Stoupy51/RealisticExplosion](https://github.com/Stoupy51/RealisticExplosion) |
+`player_motion` is downloaded and merged, but it is left out of the Lantern Load enumeration and of the version checks.
 
-**Modrinth**
+Bookshelf has one key per module, all resolved through Modrinth: `bs.bitwise`, `bs.block`, `bs.color`, `bs.dump`, `bs.environment`, `bs.generation`, `bs.health`, `bs.hitbox`, `bs.id`, `bs.interaction`, `bs.link`, `bs.log`, `bs.math`, `bs.move`, `bs.position`, `bs.random`, `bs.raycast`, `bs.schedule`, `bs.sidebar`, `bs.spline`, `bs.string`, `bs.time`, `bs.tree`, `bs.vector`, `bs.view` and `bs.xp`. The [Bookshelf releases](https://github.com/mcbookshelf/bookshelf/releases) describe each one.
 
-| Key | Name | URL |
-|-----|------|-----|
-| `itemio` | ItemIO | [github.com/edayot/ItemIO](https://github.com/edayot/ItemIO) |
-| `common_signals` | Common Signals | [github.com/Stoupy51/CommonSignals](https://github.com/Stoupy51/CommonSignals) |
-| `furnace_nbt_recipes` | Furnace NBT Recipes | [github.com/Stoupy51/FurnaceNbtRecipes](https://github.com/Stoupy51/FurnaceNbtRecipes) |
-| `smart_ore_generation` | Smart Ore Generation | [github.com/Stoupy51/SmartOreGeneration](https://github.com/Stoupy51/SmartOreGeneration) |
-
-**Bookshelf modules**: all `bs.*` modules are supported (e.g. `bs.math`, `bs.block`, `bs.raycast`, ...). See the [official Bookshelf releases](https://github.com/mcbookshelf/bookshelf/releases) for the full list.
-
-**Gamemode 4 libraries**: detected from their namespace (`gm4_forceload:`, `gm4_lore:`, ...), downloaded from Smithed. Their version check reads the GM4 scores (`gm4_forceload` and `gm4_forceload_minor` in `load.status`).
+Six Gamemode 4 libraries come from Smithed, and their version check reads the GM4 scores (`gm4_forceload` and `gm4_forceload_minor` in `load.status`, for the first):
 
 | Key | Library |
 |-----|---------|
@@ -57,9 +50,9 @@ The plugin automatically scans all datapack functions during build and marks a l
 | `gm4_potion_tracking` | lib_potion_tracking |
 | `gm4_trees` | lib_trees |
 
-GM4's lib_player_motion is not present: use `player_motion` instead, which is original.
+`lib_player_motion` is not supported: `player_motion` is the same library without the prefix.
 
-> **Note**: `smart_ore_generation` also receives automatic function tag wiring: if your datapack contains `calls/smart_ore_generation/generate_ores`, `denied_dimensions`, or `post_generation` functions, they are wired into the corresponding `smart_ore_generation:v1/signals/` tags automatically.
+`smart_ore_generation` also gets its function tags wired. If the pack has `calls/smart_ore_generation/generate_ores`, `denied_dimensions` or `post_generation` functions, they are added to the matching `smart_ore_generation:v1/signals/` tags.
 
 ### Generating custom ores with `CustomOreGeneration`
 
@@ -98,7 +91,7 @@ Call it from a plugin that runs after the custom blocks exist, like `src/link.py
 | `maximum_height` | `70` | Highest y of a vein |
 | `veins_per_region` | `4` | Veins per region, the decimal part being a chance: `1.2` is one vein plus a 20% chance of a second |
 | `vein_size_logic` | `0.4` | Vein size: `0.0` is a single block, `0.4` a small vein, `1.0` a large one |
-| `provider` | overworld carver replaceables | Block, block tag, or list of them, that the ore replaces |
+| `provider` | the overworld carver replaceables | Block, block tag, or list of them, that the ore replaces. From 26.3 the default is the list of those blocks, since 26.3 has no such tag |
 | `vein_conditions` | `[]` | Conditions checked once at the start of the vein, cancelling all of it |
 | `block_conditions` | `[]` | Conditions checked at every block of the vein |
 | `placer_command` | place the custom block | Execute subcommands ending with `run ...`, placing one ore at `~ ~ ~` |
@@ -107,72 +100,50 @@ Conditions are `execute` subcommands starting with `if ` or `unless `, and all o
 
 When both `x_ore` and `deepslate_x_ore` are defined, the default placer keeps `x_ore` off deepslate and `deepslate_x_ore` off stone.
 
----
-
 ## Custom `load_dependencies`
 
-Use `load_dependencies` in `beet.yml` to declare libraries that should be downloaded **and** version-checked at runtime. Three source types are supported.
-
-### Configuration Structure
+Declare other libraries under `meta.stewbeet.load_dependencies` in `beet.yml`. The key is the library's namespace, and the runtime check reads its version from the score `#<key>.major load.status` (then `minor` and `patch`).
 
 ```yaml
 meta:
   stewbeet:
     load_dependencies:
-      # --- Smithed API (latest MC-compatible version auto-fetched) ---
+      # Smithed API: the latest version that supports the project's Minecraft version
       "smithed.crafter":
         name: "Smithed Crafter"
         url: "https://wiki.smithed.dev/libraries/crafter/"
         source: "smithed"
         smithed_id: "crafter"
-        has_resource_pack: true   # optional, default false
 
-      # --- Modrinth API (latest release for the current MC version auto-fetched) ---
+      # Modrinth API: the latest release for the project's Minecraft version
       "itemio":
         name: "ItemIO"
         url: "https://github.com/edayot/ItemIO"
         source: "modrinth"
         modrinth_slug: "itemio"
 
-      # --- Static URL (version pinned, zip downloaded from given URL per MC version) ---
-      "common_signals":
-        version: [0, 2, 0]
-        name: "Common Signals"
-        url: "https://github.com/Stoupy51/CommonSignals"
-        source: "static"
-        static_urls:
-          "((1, 21, 7), (0, 2, 0))": "https://github.com/Stoupy51/CommonSignals/releases/download/v0.2.0/CommonSignals_datapack.zip"
+      # No source: nothing is downloaded, the version is only checked at load
+      "energy":
+        version: [1, 8, 0]
+        name: "DatapackEnergy"
+        url: "https://github.com/ICY105/DatapackEnergy"
 ```
 
-> **Tip**: The key (e.g. `"smithed.crafter"`) becomes the dependency namespace used in the runtime scoreboard version check (score `#smithed.crafter.major load.status`).
+| Field | Needed | Description |
+|-------|--------|-------------|
+| `name` | Always | Display name in the in-game error |
+| `url` | Always | Link the error message opens |
+| `source` | No | `"smithed"` or `"modrinth"`. Without it, nothing is downloaded |
+| `version` | Without `source` | `[major, minor, patch]` the loaded library must reach. With `"smithed"` it pins a version, and a build warns when that version does not exist |
+| `smithed_id` | `"smithed"` | Pack id on the Smithed API |
+| `modrinth_slug` | `"modrinth"` | Project slug on Modrinth |
+| `no_lantern_load` | No | `true` leaves the library out of the Lantern Load enumeration and of the version checks |
 
-### Source Types
+With a `source`, the build writes the resolved `version` into the entry, so the check always matches the file that was downloaded. Smithed picks the latest version whose `supports` includes the project's Minecraft version, else the newest one made for an older version. Modrinth takes the newest release tagged for that version, else one made for an older version, and its second file is merged as the resource pack. Downloads are cached in `.beet_cache` for 30 days.
 
-| `source` | Extra required fields | Behavior |
-|----------|-----------------------|----------|
-| `"smithed"` | `smithed_id` | Fetches the latest MC-compatible version from the Smithed API |
-| `"modrinth"` | `modrinth_slug` | Fetches the latest release for the current MC version from Modrinth |
-| `"static"` | `static_urls` | Downloads the pinned zip URL for the best matching `((mc_ver), (dep_ver))` key |
-
-### Configuration Field Reference
-
-| Field | Required | Type | Description |
-|-------|----------|------|-------------|
-| `name` | ✅ | `str` | Display name shown in runtime error messages |
-| `url` | ✅ | `str` | Clickable link shown when the dependency is missing |
-| `source` | ✅ | `str` | Download method: `"smithed"`, `"modrinth"`, or `"static"` |
-| `smithed_id` | Smithed only | `str` | Smithed pack ID used to query the API |
-| `has_resource_pack` | Smithed only | `bool` | Whether to also download the resource pack (default: `false`) |
-| `modrinth_slug` | Modrinth only | `str` | Modrinth project slug used to query the API |
-| `static_urls` | Static only | `dict` | Maps `"((mc_ver), (dep_ver))"` string keys to download URLs |
-| `version` | Static only | `list[int]` | Resolved automatically from `static_urls` at build time |
-
-### Real-world Example: SimplEnergy
-
-[SimplEnergy](https://github.com/Stoupy51/SimplEnergy) uses a single Smithed dependency:
+[SimplEnergy](https://github.com/Stoupy51/SimplEnergy) declares one Smithed dependency:
 
 ```yaml
-# Excerpt from SimplEnergy/beet.yml
 meta:
   stewbeet:
     load_dependencies:
@@ -183,55 +154,49 @@ meta:
         smithed_id: "energy"
 ```
 
-At build time, StewBeet fetches the latest `DatapackEnergy` version compatible with the configured Minecraft version and merges it into the output automatically.
+## Runtime behaviour
 
----
+A pack with at least one dependency, official or custom, loads in this order:
 
-## Runtime Behaviour
+1. Lantern Load runs each dependency's `#<dep>:load` tag, and the libraries publish their versions to the `load.status` scoreboard.
+2. `check_dependencies` sets `#dependency_error <ns>.data` to 1 when a version score is too old.
+3. `valid_dependencies` waits for a player, reads their `DataVersion` and compares it with the oldest Minecraft version the pack supports (the lowest release of `mc_supports`). It then sends a `tellraw @a` with a clickable link for each failing library, and calls `confirm_load` only when every check passes.
 
-When the world loads, the generated functions run in this sequence:
+A pack with no dependency has no check to run: its load function calls `confirm_load` directly, without waiting for a player.
 
-1. Lantern Load triggers each dependency's `#dep:load` tag so libraries publish their version scores to `load.status`.
-2. **`check_dependencies`**: sets `#dependency_error ns.data` flag if any version score is too old.
-3. **`valid_dependencies`**: waits for a player entity, reads `DataVersion` to verify the Minecraft version (against the minimum from `mc_supports`), then sends `tellraw @a` with clickable error links if anything fails. Calls `confirm_load` only when all checks pass.
+![Error messages listed in chat when dependencies are missing](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.dependencies.ingame_errors.jpg)
 
-**In-game error messages when dependencies are missing:**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.dependencies.ingame_errors.jpg">
+![The generated check_dependencies function](https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.dependencies.check_function.jpg)
 
-**Generated `check_dependencies` function:**<br>
-<img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/finalyze.dependencies.check_function.jpg">
-
----
-
-## Generated Files
+## Generated files
 
 | File | Type | Description |
 |------|------|-------------|
-| `minecraft:load` tag | Tag | Entry point: triggers `#load:_private/load` |
-| `load:load` tag | Tag | Points to `#ns:load` |
-| `ns:load` tag | Tag | Calls `[#ns:enumerate, #ns:resolve]` |
-| `ns:enumerate` tag | Tag | Prepended with `#ns:dependencies` |
-| `ns:dependencies` tag | Tag | Lists `#dep:load` for every dependency |
+| `minecraft:load` tag | Tag | Entry point: runs `#load:_private/load` |
+| `load:load` tag | Tag | Points to `#<ns>:load` |
+| `<ns>:load` tag | Tag | Runs `#<ns>:enumerate` then `#<ns>:resolve` |
+| `<ns>:enumerate` tag | Tag | Starts with `#<ns>:dependencies`, written when there is a dependency |
+| `<ns>:dependencies` tag | Tag | Lists `#<dep>:load` for every dependency, and `#bs.load:load` for Bookshelf modules |
 | `load:_private/init` | Function | Resets the `load.status` scoreboard |
-| `ns:vX.Y.Z/load/secondary` | Function | Registers `ns.data` scoreboard, calls check/valid |
-| `ns:vX.Y.Z/load/check_dependencies` | Function | Sets `#dependency_error` via scoreboard version checks |
-| `ns:vX.Y.Z/load/valid_dependencies` | Function | Waits for player, checks `DataVersion`, shows errors |
-| `ns:vX.Y.Z/load/confirm_load` | Function | Called only when all checks pass |
-| `ns:vX.Y.Z/load/tick_verification` | Function | Routes tick function only when the correct version is loaded |
+| `<ns>:v<version>/load/secondary` | Function | Registers the `<ns>.data` scoreboard, then runs the checks or confirms the load |
+| `<ns>:v<version>/load/check_dependencies` | Function | Sets `#dependency_error` from the version scores |
+| `<ns>:v<version>/load/valid_dependencies` | Function | Waits for a player, checks `DataVersion`, shows the errors |
+| `<ns>:v<version>/load/confirm_load` | Function | Runs only when every check passes |
+| `<ns>:v<version>/load/tick_verification` | Function | Runs the pack's tick function only when its own version scores match, written when the pack has a tick function |
 
 ## Glossary
 
 | Term | Meaning |
 |------|---------|
-| **`load_dependencies`** | A `beet.yml` metadata dict where you declare external libraries to auto-download and version-check at runtime. |
-| **Source type** | How to resolve and download a library: `"smithed"` (Smithed API), `"modrinth"` (Modrinth API), or `"static"` (pinned zip URL per MC version). |
-| **Official library** | A pre-registered library in StewBeet's `OFFICIAL_LIBS` registry, detected automatically from function usage: no configuration needed. |
-| **Lantern Load** | A community standard for datapack loading order; StewBeet sets it up automatically. |
-| **`DataVersion`** | An entity NBT field used to detect the current Minecraft version at runtime; compared against the minimum from `mc_supports`. |
+| `load_dependencies` | A `meta.stewbeet` dict in `beet.yml` where you declare libraries to download and version-check at runtime. |
+| Source | How a library is resolved: `"smithed"` (Smithed API) or `"modrinth"` (Modrinth API). |
+| Official library | A library registered in StewBeet's `OFFICIAL_LIBS`, detected from your functions with no configuration. |
+| Lantern Load | A community standard for datapack loading order, which StewBeet sets up for you. |
+| `DataVersion` | An entity NBT field that gives the running Minecraft version, compared with the oldest version in `mc_supports`. |
 
 ## Next steps
 
-- [finalyze.dependencies](../plugins/finalyze.dependencies.md): the plugin that performs the checks.
-- [Configuring the build](../3_beet_config/en.md): where load_dependencies is declared.
-- [Shipping releases](../6_continuous_delivery/en.md): shipping a pack that depends on libraries.
+- [Configuring the build](../3_beet_config/en.md#load_dependencies): where `load_dependencies` goes in `beet.yml`.
+- [finalyze.dependencies](../plugins/finalyze.dependencies.md): the plugin that writes the checks.
+- [Publishing releases](../6_continuous_delivery/en.md): ship a pack that depends on these libraries.
 

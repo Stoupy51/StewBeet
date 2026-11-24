@@ -32,7 +32,7 @@ The execution position stays the caller's: `execute as <uuid>` changes `@s`, not
 execute unless items entity @s contents *[minecraft:item_model="ns:machine_on"] run data modify entity @s item.components."minecraft:item_model" set value "ns:machine_on"
 ```
 
-A value the game moves on its own every tick, like a furnace's `cooking_time_spent`, never equals the one written the tick before. Write it when what the player sees would change instead: Furnace NBT Recipes writes it once the progress arrow would show another of its 24 pixels.
+A value the game moves on its own every tick, like a furnace's `cooking_time_spent`, never equals the one written the tick before. Write it when what the player sees would change instead, such as once a progress arrow would show another pixel.
 
 ### Test items with `if items`, not by copying their NBT
 
@@ -75,4 +75,9 @@ The same test compares two compounds exactly: copy one into a temporary path, th
 ### Order a chain of returns by frequency
 
 In a function made of `execute if ... run return <value>` lines, put the most frequent case first, and check that each line tests the right target (`block ~ ~ ~` versus `entity @s`): a line that can never match makes every call run the whole chain.
+
+## Next steps
+
+- [Functions and files](../2_writing_to_files/en.md): `write_function` and the other helpers the examples use.
+- [Testing with Ward](../11_testing/en.md): check a change like these on a headless server.
 

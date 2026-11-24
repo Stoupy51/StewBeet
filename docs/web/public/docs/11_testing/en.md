@@ -23,7 +23,7 @@ Use a namespace of its own, `<ns>_test`, so the command below runs your tests on
 
 ### A pack that waits for a player
 
-A StewBeet pack only loads once a player is online: `valid_dependencies` reads the game version from `@p` and reschedules itself while nobody is there.
+A StewBeet pack that has dependencies only loads once a player is online: `valid_dependencies` reads the game version from `@p` and reschedules itself while nobody is there.
 A Ward world has no player, so `#<ns>.loaded` never reaches 1 unless a test environment spawns a [dummy](https://github.com/mcbookshelf/ward/blob/main/docs/dummies.md) that stays for the whole run:
 
 ```json
@@ -64,7 +64,7 @@ File({"": room}, gzipped=True).save("tests/data/<ns>_test/structure/room.nbt")
 Build without the copy to your world: `build_copy_destinations` would otherwise overwrite the datapack of the world you play in.
 
 ```sh
-beet -s "meta.stewbeet.build_copy_destinations.datapack=null" -s "meta.stewbeet.build_copy_destinations.resource_pack=null" build
+uv run stewbeet -s "meta.stewbeet.build_copy_destinations.datapack=null" -s "meta.stewbeet.build_copy_destinations.resource_pack=null" build
 uvx "mcward[cli]" test -p build/<Name>_datapack_with_libs.zip -p tests -v 26.3 "<ns>_test:*"
 ```
 
@@ -88,4 +88,9 @@ A function that does not parse is not loaded, and Ward lists it before the resul
 ### Checking that a test catches something
 
 A test proves something only once it has failed. Break the line it guards in the built zip (a copy, the project stays untouched), run the suite on that zip, and check that this test, and no unrelated one, turns red.
+
+## Next steps
+
+- [Datapack libraries](../5_dependencies/en.md#runtime-behaviour): the load sequence a test waits for.
+- [Publishing releases](../6_continuous_delivery/en.md): ship the zip your tests ran against.
 
