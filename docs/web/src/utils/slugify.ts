@@ -5,9 +5,11 @@
  * (which stores them in the search index). Both must agree or deep links break.
  */
 
-/** Convert a heading's plain text to its anchor id. */
+/** Convert a heading's plain text to its anchor id, accents folded so French headings keep readable ids (`é` -> `e`). */
 export function slugify(text: string): string {
     return text
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
         .toLowerCase()
         .replace(/[^\w\s-]/g, '')
         .replace(/\s+/g, '-');
