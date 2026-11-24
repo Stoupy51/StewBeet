@@ -1,0 +1,9 @@
+{
+	"version": 3,
+	"file": "root.mcfunction",
+	"sources": [
+		"src/link.py"
+	],
+	"names": [],
+	"mappings": "AAY8B;;AAC9B;AACA;AACA;AAW8B"
+}

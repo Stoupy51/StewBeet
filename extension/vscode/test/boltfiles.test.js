@@ -81,27 +81,20 @@ test("a build output path is recognised whatever the slashes", () => {
 test("a map beside a file says a build wrote it, with nothing configured", () => {
   // Generated functions name no map, so the sidecar is the signal that survives when
   // `buildOutput` is empty. Without it a generated file could be switched away from Spyglass.
-  const generated = path.join(ROOT, "..", "..", "python_package", "tests",
-    "plugin_22_source_maps", "build", "datapack", "data", "tns", "function", "root.mcfunction");
-  assert.ok(fs.existsSync(`${generated}.map`), "the fixture build must carry its sidecar");
+  const generated = path.join(__dirname, "fixtures", "sidecar", "root.mcfunction");
+  assert.ok(fs.existsSync(`${generated}.map`), "the fixture must carry its sidecar");
   assert.ok(isBuildOutput(generated, []), "a file with a sidecar map is output, whatever buildOutput says");
 });
 
 // The corpus, which is what the precision claim rests on
 
 test("no generated function in this repository is read as bolt", () => {
-  const tests = path.join(ROOT, "..", "..", "python_package", "tests");
-  /** @param {string} dir @returns {string[]} */
-  const walk = dir => (fs.existsSync(dir) ? fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
-    const full = path.join(dir, entry.name);
-    return entry.isDirectory() ? walk(full) : (entry.name.endsWith(".mcfunction") ? [full] : []);
-  }) : []);
+  // Every distinct function the python_package/tests builds write, keyed by its path there
+  /** @type {Record<string, string>} */
+  const generated = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures", "generated_functions.json"), "utf8"));
+  assert.ok(Object.keys(generated).length > 100, "expected a real corpus");
 
-  // Only what a build wrote: the fixture sources under src/ are bolt on purpose.
-  const generated = walk(tests).filter(file => file.replace(/\\/g, "/").includes("/build/"));
-  assert.ok(generated.length > 100, `expected a real corpus, found ${generated.length} generated functions`);
-
-  const wrong = generated.filter(file => looksLikeBolt(fs.readFileSync(file, "utf8")));
+  const wrong = Object.keys(generated).filter(file => looksLikeBolt(generated[file]));
   assert.deepEqual(wrong, [], "a false positive here takes a vanilla file away from Spyglass");
 });
 
