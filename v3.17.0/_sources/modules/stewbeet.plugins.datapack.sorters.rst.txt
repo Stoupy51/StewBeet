@@ -1,0 +1,34 @@
+🔀 sorters
+==================
+
+.. automodule:: stewbeet.plugins.datapack.sorters
+
+constants
+------------------
+
+.. automodule:: stewbeet.plugins.datapack.sorters.constants
+
+extend_datapack
+------------------------------
+
+.. automodule:: stewbeet.plugins.datapack.sorters.extend_datapack
+
+match
+----------
+
+.. automodule:: stewbeet.plugins.datapack.sorters.match
+
+quick_sort
+--------------------
+
+.. automodule:: stewbeet.plugins.datapack.sorters.quick_sort
+
+selection_sort
+----------------------------
+
+.. automodule:: stewbeet.plugins.datapack.sorters.selection_sort
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.datapack.sorters.silent

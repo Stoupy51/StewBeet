@@ -31,12 +31,12 @@
     aria-haspopup="true"
     aria-expanded="false"
     data-url="https://stoupy51.github.io/stewbeet/switcher.json"
-    data-current="3.16.1"
+    data-current="3.17.0"
   >
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
       <path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"></path>
     </svg>
-    <span>3.16.1</span>
+    <span>3.17.0</span>
   </button>
   <ul role="menu" aria-hidden="true"></ul>
 </div>
@@ -440,6 +440,45 @@ Files come in sorted order, so a pack loads the same way on every file system.</
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.plugins.initialize.beet_patches.timed_urlopen">
+<span class="sig-name descname"><span class="pre">timed_urlopen</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Request</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/initialize/beet_patches.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.initialize.beet_patches.timed_urlopen" title="Link to this definition">#</a></dt>
+<dd><p>Drop-in replacement for the <code class="docutils literal notranslate"><span class="pre">urlopen</span></code> of <code class="docutils literal notranslate"><span class="pre">beet.core.cache</span></code>, which passes no timeout and so waits forever on a silent server.</p>
+<p>A timeout raises <code class="docutils literal notranslate"><span class="pre">TimeoutError</span></code>, which the library downloader retries like any other transient failure.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stewbeet.plugins.initialize.beet_patches.discarding_empty_download">
+<span class="sig-name descname"><span class="pre">discarding_empty_download</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">download</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/initialize/beet_patches.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.initialize.beet_patches.discarding_empty_download" title="Link to this definition">#</a></dt>
+<dd><p>Wrap <code class="docutils literal notranslate"><span class="pre">Cache.download</span></code>, which serves the empty file an interrupted download leaves behind as a valid entry.</p>
+<p>beet creates the destination before fetching, so a build killed or timed out mid-download leaves a 0-byte file
+that every later build reads as the content, failing on a bogus parsing error.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="nc">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmp</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">source</span> <span class="o">=</span> <span class="nc">Path</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="s2">"lib.zip"</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">_</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="nf">write_bytes</span><span class="p">(</span><span class="sa">b</span><span class="s2">"content"</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">cache</span> <span class="o">=</span> <span class="nc">Cache</span><span class="p">(</span><span class="nc">Path</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="s2">"cache"</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="n">cache</span><span class="o">.</span><span class="nf">get_path</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="nf">as_uri</span><span class="p">())</span><span class="o">.</span><span class="nf">touch</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="nf">discarding_empty_download</span><span class="p">(</span><span class="nc">Cache</span><span class="o">.</span><span class="n">download</span><span class="p">)(</span><span class="n">cache</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="nf">as_uri</span><span class="p">())</span><span class="o">.</span><span class="nf">read_bytes</span><span class="p">()</span>
+<span class="go">b'content'</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="stewbeet.plugins.initialize.beet_patches.same_pixels">
 <span class="sig-name descname"><span class="pre">same_pixels</span></span><span class="sig-paren">(</span>
 
@@ -771,6 +810,8 @@ skipped so the font never points at a missing texture.</p>
 <li><a class="reference internal" href="#module-stewbeet.plugins.initialize.beet_patches">beet_​patches</a><ul>
 <li><a class="reference internal" href="#stewbeet.plugins.initialize.beet_patches.patches_applied"><code class="docutils literal notranslate"><span class="pre">patches_​applied</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.initialize.beet_patches.fast_list_files"><code class="docutils literal notranslate"><span class="pre">fast_​list_​files()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.initialize.beet_patches.timed_urlopen"><code class="docutils literal notranslate"><span class="pre">timed_​urlopen()</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.initialize.beet_patches.discarding_empty_download"><code class="docutils literal notranslate"><span class="pre">discarding_​empty_​download()</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.initialize.beet_patches.same_pixels"><code class="docutils literal notranslate"><span class="pre">same_​pixels()</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.initialize.beet_patches.reuse_unchanged_pngs"><code class="docutils literal notranslate"><span class="pre">reuse_​unchanged_​pngs()</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.initialize.beet_patches.reuse_unchanged_png_bytes"><code class="docutils literal notranslate"><span class="pre">reuse_​unchanged_​png_​bytes()</span></code></a></li>
@@ -868,5 +909,5 @@ skipped so the font never points at a missing texture.</p>
   <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
   <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
   <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle section navigation">
-  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=8a241a5b"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=47abbe79"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
 </html>

@@ -1,0 +1,40 @@
+🔤 fonts
+==============
+
+.. automodule:: stewbeet.core.utils.fonts
+
+allocator
+------------------
+
+.. automodule:: stewbeet.core.utils.fonts.allocator
+   :members: GlyphAllocator, get_font
+
+colors
+------------
+
+.. automodule:: stewbeet.core.utils.fonts.colors
+   :members: HUE_BUCKETS, MIN_SATURATION, MIN_VALUE, NO_RECOLOR_VALUES, Pixel, get_dominant_color, get_pixels, parse_color, recolor_image
+
+image_utils
+----------------------
+
+.. automodule:: stewbeet.core.utils.fonts.image_utils
+   :members: PNG_INDEX_NAME, add_border, careful_resize, ensure_rgba_color, flush_png_indexes, is_png_recorded, lighten_color, pixels_digest, record_png, save_png, source_key
+
+item_images
+----------------------
+
+.. automodule:: stewbeet.core.utils.fonts.item_images
+   :members: DEFAULT_ISO_RENDERS_PATH, build_model_resolver_queue, collect_used_vanilla_items, copy_painting_textures, download_item, download_vanilla_textures, ensure_item_images, generate_all_iso_renders, iso_renders_path, item_image_path, resolve_item_image, run_model_resolver
+
+providers
+------------------
+
+.. automodule:: stewbeet.core.utils.fonts.providers
+   :members: FONT_MAX_LEVEL, iter_fonts, merge_font_providers, uses_font, validate_font_providers, write_font_from_allocator
+
+splicing
+----------------
+
+.. automodule:: stewbeet.core.utils.fonts.splicing
+   :members: MAX_GLYPH_SIZE, SpliceLayout, SpliceTile, glyph_advance, opaque_width, plan_splice

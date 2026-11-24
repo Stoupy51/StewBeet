@@ -31,12 +31,12 @@
     aria-haspopup="true"
     aria-expanded="false"
     data-url="https://stoupy51.github.io/stewbeet/switcher.json"
-    data-current="3.16.1"
+    data-current="3.17.0"
   >
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
       <path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"></path>
     </svg>
-    <span>3.16.1</span>
+    <span>3.17.0</span>
   </button>
   <ul role="menu" aria-hidden="true"></ul>
 </div>
@@ -435,6 +435,12 @@
 </dd></dl>
 
 <dl class="py data">
+<dt class="sig sig-object py" id="stewbeet.core.constants.DOWNLOAD_TIMEOUT">
+<span class="sig-name descname"><span class="pre">DOWNLOAD_TIMEOUT</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10.0</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.constants.DOWNLOAD_TIMEOUT" title="Link to this definition">#</a></dt>
+<dd><p>Seconds a download may stay silent, while connecting or between two reads, before it fails instead of hanging the build.</p>
+</dd></dl>
+
+<dl class="py data">
 <dt class="sig sig-object py" id="stewbeet.core.constants.CUSTOM_BLOCK_HEAD_CUBE_RADIUS">
 <span class="sig-name descname"><span class="pre">CUSTOM_BLOCK_HEAD_CUBE_RADIUS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(16,</span> <span class="pre">16,</span> <span class="pre">16)</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/core/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.core.constants.CUSTOM_BLOCK_HEAD_CUBE_RADIUS" title="Link to this definition">#</a></dt>
 <dd><p>Size of the region to check around the player when placing a CUSTOM_BLOCK_HEAD.</p>
@@ -622,6 +628,7 @@ A unit mecha assembled in memory never had a file and keeps none.</p>
 <li><a class="reference internal" href="#stewbeet.core.constants.FORCELOAD_BLOCK"><code class="docutils literal notranslate"><span class="pre">FORCELOAD_​BLOCK</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.core.constants.FACES"><code class="docutils literal notranslate"><span class="pre">FACES</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.core.constants.SIDES"><code class="docutils literal notranslate"><span class="pre">SIDES</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.core.constants.DOWNLOAD_TIMEOUT"><code class="docutils literal notranslate"><span class="pre">DOWNLOAD_​TIMEOUT</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.core.constants.CUSTOM_BLOCK_HEAD_CUBE_RADIUS"><code class="docutils literal notranslate"><span class="pre">CUSTOM_​BLOCK_​HEAD_​CUBE_​RADIUS</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.core.constants.CUSTOM_BLOCKS_FOLDER"><code class="docutils literal notranslate"><span class="pre">CUSTOM_​BLOCKS_​FOLDER</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.core.constants.ITEMS_LOOT_FOLDER"><code class="docutils literal notranslate"><span class="pre">ITEMS_​LOOT_​FOLDER</span></code></a></li>
@@ -713,5 +720,5 @@ A unit mecha assembled in memory never had a file and keeps none.</p>
   <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
   <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
   <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle section navigation">
-  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=8a241a5b"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=47abbe79"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
 </html>

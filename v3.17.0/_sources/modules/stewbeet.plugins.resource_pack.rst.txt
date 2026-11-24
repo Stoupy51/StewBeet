@@ -1,0 +1,9 @@
+resource_pack
+==========================
+
+.. toctree::
+   :maxdepth: 1
+
+   stewbeet.plugins.resource_pack.check_power_of_2
+   stewbeet.plugins.resource_pack.item_models
+   stewbeet.plugins.resource_pack.sounds

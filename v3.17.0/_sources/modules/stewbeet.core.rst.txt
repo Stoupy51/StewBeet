@@ -1,0 +1,30 @@
+🧠 core
+============
+
+.. automodule:: stewbeet.core
+
+.. toctree::
+   :maxdepth: 1
+
+   stewbeet.core.cls
+   stewbeet.core.definitions_helper
+   stewbeet.core.migrate
+   stewbeet.core.utils
+
+constants
+------------------
+
+.. automodule:: stewbeet.core.constants
+   :members: BLOCKS_WITH_INTERFACES, CATEGORY, COMMON_SIGNAL, COMMON_SIGNAL_HIDDEN, CUSTOM_BLOCK_ALTERNATIVE, CUSTOM_BLOCK_HEAD, CUSTOM_BLOCK_HEAD_CUBE_RADIUS, CUSTOM_BLOCK_VANILLA, CUSTOM_BLOCKS_FOLDER, CUSTOM_ITEM_VANILLA, DOWNLOAD_VANILLA_ASSETS_RAW, DOWNLOAD_VANILLA_ASSETS_SOURCE, DOWNLOAD_VANILLA_ASSETS_SPECIAL_RAW, EXTERNAL_RECIPES_FOLDER, FACES, FORCELOAD_BLOCK, GROWING_SEED, ITEMS_LOOT_FOLDER, LATEST_MC_VERSION, MORE_ASSETS_PACK_FORMATS, MORE_DATA_PACK_FORMATS, MORE_DATA_VERSIONS, NO_SILK_TOUCH_DROP, NOT_COMPONENTS, OVERRIDE_MODEL, PAINTING_DATA, PLAYER_HEAD_FOLDER, RESULT_OF_CRAFTING, SEEDS_FOLDER, SIDES, SMITHED_CRAFTER_COMMAND, USED_FOR_CRAFTING, VANILLA_BLOCK, WIKI_COMPONENT, Conventions, ConventionTags
+
+placeholder_context
+--------------------------------------
+
+.. automodule:: stewbeet.core.placeholder_context
+   :members: PLACEHOLDER_CTX, create_placeholder_context
+
+source_paths
+------------------------
+
+.. automodule:: stewbeet.core.source_paths
+   :members: origin_path, remember_source_path, restore_filenames

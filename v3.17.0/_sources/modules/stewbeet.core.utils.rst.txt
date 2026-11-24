@@ -1,0 +1,49 @@
+utils
+==========
+
+.. toctree::
+   :maxdepth: 1
+
+   stewbeet.core.utils.fonts
+   stewbeet.core.utils.io
+   stewbeet.core.utils.text_component
+
+equation
+----------------
+
+.. automodule:: stewbeet.core.utils.equation
+
+libs
+--------
+
+.. automodule:: stewbeet.core.utils.libs
+
+loot_table
+--------------------
+
+.. automodule:: stewbeet.core.utils.loot_table
+
+models
+------------
+
+.. automodule:: stewbeet.core.utils.models
+
+persistent_entities
+--------------------------------------
+
+.. automodule:: stewbeet.core.utils.persistent_entities
+
+post_effects
+------------------------
+
+.. automodule:: stewbeet.core.utils.post_effects
+
+sounds
+------------
+
+.. automodule:: stewbeet.core.utils.sounds
+
+versions
+----------------
+
+.. automodule:: stewbeet.core.utils.versions

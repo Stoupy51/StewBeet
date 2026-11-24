@@ -1,0 +1,19 @@
+🗺️ mecha
+================
+
+.. automodule:: stewbeet.plugins.source_maps.mecha
+
+attribute
+------------------
+
+.. automodule:: stewbeet.plugins.source_maps.mecha.attribute
+
+compiled
+----------------
+
+.. automodule:: stewbeet.plugins.source_maps.mecha.compiled
+
+detect
+------------
+
+.. automodule:: stewbeet.plugins.source_maps.mecha.detect
