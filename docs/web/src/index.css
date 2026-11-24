@@ -151,7 +151,7 @@
 
 /*
  * The stack figure of the how_it_fits page builds itself up once, from beet to the facts. Then a spark
- * runs around StewBeet's frame, the current it feeds into beet; reduced motion shows the frame still.
+ * fades in and runs around StewBeet's frame, the current it feeds into beet; reduced motion shows the frame still.
  */
 @keyframes stk-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 @keyframes stk-fade { from { opacity: 0; } to { opacity: 1; } }
@@ -160,7 +160,7 @@
 @media (prefers-reduced-motion: no-preference) {
   .stack-figure .stk-a { animation: stk-rise 500ms cubic-bezier(0.16, 1, 0.3, 1) var(--d) both; }
   .stack-figure .stk-fade { animation-name: stk-fade; }
-  .stack-figure .stk-spark { display: block; filter: drop-shadow(0 0 4px currentColor); animation: stk-current 3.2s linear 0.8s infinite both; }
+  .stack-figure .stk-spark { display: block; filter: drop-shadow(0 0 4px currentColor); animation: stk-current 3.2s linear 3s infinite, stk-fade 600ms ease-out 3s both; }
 }
 
 .markdown-body :is(h1, h2, h3, h4, h5, h6) {

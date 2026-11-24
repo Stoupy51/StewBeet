@@ -11,8 +11,8 @@
 [data-play] .stk-drop { animation-name: stk-drop; animation-duration: 700ms; }
 [data-play] .stk-fade { animation-name: stk-fade; }
 .stk-spark, .stk-flow { display: none; }
-[data-play] .stk-spark { display: inline; filter: drop-shadow(0 0 4px currentColor); animation: stk-current 3.2s linear 2.6s infinite both; }
-[data-play] .stk-flow { display: inline; animation: stk-flow 0.9s linear 2.6s infinite both; }
+[data-play] .stk-spark { display: inline; filter: drop-shadow(0 0 4px currentColor); animation: stk-current 3.2s linear 3.6s infinite, stk-fade 600ms ease-out 3.6s both; }
+[data-play] .stk-flow { display: inline; animation: stk-flow 0.8s linear 3.6s infinite, stk-fade 600ms ease-out 3.6s both; }
 @keyframes stk-current { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
 @keyframes stk-flow { from { stroke-dashoffset: 12; } to { stroke-dashoffset: 0; } }
 @media (prefers-reduced-motion: reduce) { [data-play] .stk-a { animation: none; } [data-armed]:not([data-play]) .stk-a { opacity: 1; } [data-play] .stk-spark, [data-play] .stk-flow { animation: none; display: none; } }
