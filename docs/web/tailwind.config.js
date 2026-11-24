@@ -16,6 +16,7 @@ const THEMED = {
   border: ['#272930', '#e3e4e8'],
   link: ['#ff6b7d', '#b81d39'],
   generated: ['#7fd35b', '#2b7a19'],
+  electric: ['#2e9bff', '#0a6fd6'],
   'code-surface': ['#15171b', '#ffffff'],
   'code-border': ['#2a2d34', '#e3e4e8'],
   'code-text': ['#e6e7ea', '#1f2328'],

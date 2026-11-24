@@ -28,21 +28,14 @@ export const STACK_PALETTES = {
     dark: {
         background: '#141518', panel: '#0c0d0f', border: '#383b42',
         strong: '#f2f3f5', body: '#b8bcc4', muted: '#a3a7b0',
-        stewbeet: '#ff6b7d', stewbeetTint: 'rgba(255, 107, 125, 0.08)',
+        stewbeet: '#2e9bff', stewbeetTint: 'rgba(46, 155, 255, 0.08)',
         team: '#7fd35b', teamTint: 'rgba(127, 211, 91, 0.06)',
     },
     light: {
         background: '#f7f7f8', panel: '#ffffff', border: '#d0d2d7',
         strong: '#111214', body: '#3d4047', muted: '#565964',
-        stewbeet: '#b81d39', stewbeetTint: 'rgba(184, 29, 57, 0.08)',
+        stewbeet: '#0a6fd6', stewbeetTint: 'rgba(10, 111, 214, 0.08)',
         team: '#2b7a19', teamTint: 'rgba(43, 122, 25, 0.06)',
-    },
-    /** Follows the page's theme switch through the variables tailwind.config.js defines. */
-    page: {
-        background: 'rgb(var(--ink-900))', panel: 'rgb(var(--ink-950))', border: 'rgb(var(--ink-700))',
-        strong: 'rgb(var(--ink-50))', body: 'rgb(var(--ink-300))', muted: 'rgb(var(--ink-400))',
-        stewbeet: 'rgb(var(--beet-400))', stewbeetTint: 'rgb(var(--beet-400) / 0.08)',
-        team: 'rgb(var(--leaf-400))', teamTint: 'rgb(var(--leaf-400) / 0.06)',
     },
 } as const satisfies Record<string, StackPalette>;
 
@@ -149,7 +142,12 @@ const STYLE = `
 [data-play] .stk-a { animation: stk-rise 600ms cubic-bezier(0.2, 0.8, 0.2, 1) var(--d) both; }
 [data-play] .stk-drop { animation-name: stk-drop; animation-duration: 700ms; }
 [data-play] .stk-fade { animation-name: stk-fade; }
-@media (prefers-reduced-motion: reduce) { [data-play] .stk-a { animation: none; } [data-armed]:not([data-play]) .stk-a { opacity: 1; } }
+.stk-spark, .stk-flow { display: none; }
+[data-play] .stk-spark { display: inline; filter: drop-shadow(0 0 4px currentColor); animation: stk-current 3.2s linear 2.6s infinite both; }
+[data-play] .stk-flow { display: inline; animation: stk-flow 0.9s linear 2.6s infinite both; }
+@keyframes stk-current { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+@keyframes stk-flow { from { stroke-dashoffset: 12; } to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) { [data-play] .stk-a { animation: none; } [data-armed]:not([data-play]) .stk-a { opacity: 1; } [data-play] .stk-spark, [data-play] .stk-flow { animation: none; display: none; } }
 `;
 
 export interface StackDiagramOptions {
@@ -188,7 +186,9 @@ ${step(1.4, `<rect x="48" y="290" width="704" height="258" fill="none" stroke="$
     + pill(72, 290, text.team, p.team, p.background, 14), 'stk-fade')}
 ${step(1.9, box(60, 146, 680, 108, 'StewBeet', text.stewbeet, p.stewbeet, p.stewbeetTint, p)
     + pill(740 - 24 - Math.round(text.stewbeetTag.length * 14 * 0.52 + 24), 176, text.stewbeetTag, p.stewbeet, p.panel, 14)
+    + `<rect class="stk-spark" color="${p.stewbeet}" x="60" y="146" width="680" height="108" pathLength="100" fill="none" stroke="${p.stewbeet}" stroke-width="3" stroke-dasharray="6 94" stroke-linecap="round"/>`
     + `<path d="M400 258 v26 m-6 -6 l6 6 l6 -6" fill="none" stroke="${p.stewbeet}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`
+    + `<path class="stk-flow" d="M400 258 v24" fill="none" stroke="${p.stewbeet}" stroke-width="3" stroke-dasharray="4 8" stroke-linecap="round"/>`
     + `<text x="414" y="276" font-size="14" fill="${p.muted}">${escapeXml(text.plugsInto)}</text>`, 'stk-drop')}
 <line x1="780" y1="146" x2="780" y2="548" stroke="${p.border}"/>
 ${step(2.1, `<text x="812" y="170" font-size="13" font-weight="600" letter-spacing="1.5" fill="${p.muted}">${escapeXml(text.factsTitle)}</text>`, 'stk-fade')}

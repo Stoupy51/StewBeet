@@ -22,7 +22,8 @@ Minecraft datapacks, generated from Python. Declare an item or a block once, and
 StewBeet is a set of plugins for [beet](https://github.com/mcbeet/beet), the build tool of the mcbeet team. Every beet plugin, and [bolt](https://github.com/mcbeet/bolt) and [mecha](https://github.com/mcbeet/mecha), keep working in a StewBeet project.
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/web/public/img/stack/stewbeet-stack.en.light.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/web/public/img/stack/stewbeet-stack.en.light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/web/public/img/stack/stewbeet-stack.en.dark.svg">
   <img alt="beet runs the build, and bolt and mecha plug into it, all three made by the beet team. StewBeet is a separate project that runs inside beet as plugins." src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/web/public/img/stack/stewbeet-stack.en.dark.png">
 </picture>
 

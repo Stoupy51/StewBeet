@@ -216,7 +216,12 @@ const DocLink = ({ href, children }: React.AnchorHTMLAttributes<HTMLAnchorElemen
 
 /** One box of the stack figure: a project's name and what it does, in the colour of who makes it. */
 const StackBox = ({ name, lines, team, delay }: { name: string; lines: string[]; team: boolean; delay: number }) => (
-    <span className={`stk-a block p-4 border ${team ? 'border-generated bg-generated/[0.06]' : 'border-link bg-link/[0.08]'}`} style={{ '--d': `${delay}s` } as React.CSSProperties}>
+    <span className={`stk-a relative block p-4 border ${team ? 'border-generated bg-generated/[0.06]' : 'border-electric bg-electric/[0.08]'}`} style={{ '--d': `${delay}s` } as React.CSSProperties}>
+        {!team && (
+            <svg className="stk-spark absolute -inset-px w-[calc(100%+2px)] h-[calc(100%+2px)] overflow-visible pointer-events-none text-electric" aria-hidden="true">
+                <rect width="100%" height="100%" pathLength={100} fill="none" stroke="currentColor" strokeWidth={3} strokeDasharray="6 94" strokeLinecap="round" />
+            </svg>
+        )}
         <span className="block text-lg font-bold text-text">{name}</span>
         <span className="block mt-1 text-[0.9375rem] leading-normal text-text-muted">{lines.join(' ')}</span>
     </span>
@@ -248,7 +253,7 @@ const StackDiagram = () => {
             <span className="stk-a stk-fade block mt-2 text-center text-sm text-text-muted" style={{ '--d': '1.5s' } as React.CSSProperties}>{text.output}</span>
             <span className="grid gap-3 mt-5 pt-4 border-t border-border sm:grid-cols-3">
                 {text.facts.map((lines, index) => (
-                    <span key={index} className={`stk-a stk-fade block pl-3 border-l-[3px] text-[0.9375rem] leading-normal ${index === 1 ? 'border-link' : 'border-generated'}`} style={{ '--d': `${1.8 + index * 0.2}s` } as React.CSSProperties}>
+                    <span key={index} className={`stk-a stk-fade block pl-3 border-l-[3px] text-[0.9375rem] leading-normal ${index === 1 ? 'border-electric' : 'border-generated'}`} style={{ '--d': `${1.8 + index * 0.2}s` } as React.CSSProperties}>
                         {code(lines.join(' '))}
                     </span>
                 ))}

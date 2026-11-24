@@ -20,6 +20,8 @@ colors:
   link-dark: "#ff6b7d"
   generated: "#2b7a19"
   generated-dark: "#7fd35b"
+  electric: "#0a6fd6"
+  electric-dark: "#2e9bff"
   code-surface: "#ffffff"
   code-surface-dark: "#15171b"
   code-border: "#e3e4e8"
@@ -117,7 +119,7 @@ The signature is a 16 px pixel grid visible in the page margins, behind a conten
 
 ## Colors
 
-The light page is pure white and the dark page a neutral near-black: no cream, no brown tint, grey neutrals only. Beet red is the only accent, kept for the one primary button of a screen and for links; white on `primary` is 5.9:1, and a pressed or hovered button darkens to `primary-hover`. Leaf green marks generated output and success. Code follows the page: a white panel framed by its border in the light theme, a raised near-black one in the dark theme, highlighted with VS Code's Light+ and Dark+. A light page with dark code blocks makes the eye adapt at every block, and dark text on a light background reads better.
+The light page is pure white and the dark page a neutral near-black: no cream, no brown tint, grey neutrals only. Beet red is the only accent, kept for the one primary button of a screen and for links; white on `primary` is 5.9:1, and a pressed or hovered button darkens to `primary-hover`. Leaf green marks generated output and success. Electric blue is StewBeet itself in the beet, bolt and mecha diagram, with a spark running along its frame and down into beet; the light value keeps 4.9:1 on white. Code follows the page: a white panel framed by its border in the light theme, a raised near-black one in the dark theme, highlighted with VS Code's Light+ and Dark+. A light page with dark code blocks makes the eye adapt at every block, and dark text on a light background reads better.
 
 Each docs section has a color taken from Minecraft's text colors and darkened for the light theme, all at 4.5:1 or more: Start here green, Guides blue, Plugins gold, Contrib magenta, Reference purple, Understand cyan. A section's color appears wherever the section does: its sidebar label with an 8 px square, the current page marker, the breadcrumb, the docs home and the search results.
 
