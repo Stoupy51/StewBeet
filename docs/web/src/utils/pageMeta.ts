@@ -53,6 +53,11 @@ export const STATIC_ROUTE_META: Record<string, PageMeta> = {
         description: 'Every public datapack and library built with StewBeet, with its source: community projects first, then the packs and libraries of its author.',
         path: '/showcase',
     },
+    '/media': {
+        title: 'Media | StewBeet',
+        description: 'Images and videos of StewBeet to share: the beet, bolt, mecha and StewBeet diagram as a GIF for Discord, the in-game manual, the VS Code extension and the logo.',
+        path: '/media',
+    },
     '/credits': {
         title: 'Standing on giants | StewBeet',
         description:

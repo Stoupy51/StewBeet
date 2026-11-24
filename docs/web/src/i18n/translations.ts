@@ -61,6 +61,11 @@ export const translations = {
         },
 
         // Copy buttons
+        media: {
+            title: 'Media',
+            lead: 'Images and videos to send to someone. The name of a format opens it, the button copies its link: a GIF or an MP4 link plays inside Discord.',
+        },
+
         copy: {
             action: 'Copy',
             copied: 'Copied',
@@ -369,6 +374,7 @@ export const translations = {
             resources: 'Resources',
             vscode: 'VS Code extension',
             credits: 'Credits',
+            media: 'Media',
             reportBug: 'Report a bug',
             telemetry: 'Telemetry',
             license: 'MIT licensed',
@@ -531,6 +537,11 @@ export const translations = {
         },
 
         // Copy buttons
+        media: {
+            title: 'Media',
+            lead: "Des images et des vidéos à envoyer. Le nom d'un format l'ouvre, le bouton copie son lien : un lien GIF ou MP4 se joue dans Discord.",
+        },
+
         copy: {
             action: 'Copier',
             copied: 'Copié',
@@ -837,6 +848,7 @@ export const translations = {
             resources: 'Ressources',
             vscode: 'Extension VS Code',
             credits: 'Remerciements',
+            media: 'Media',
             reportBug: 'Signaler un bug',
             telemetry: 'Télémétrie',
             license: 'Licence MIT',

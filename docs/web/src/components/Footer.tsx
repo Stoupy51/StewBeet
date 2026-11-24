@@ -39,6 +39,7 @@ export const Footer = memo(({ wide = false }: { wide?: boolean }) => {
             links: [
                 { label: 'PyPI', url: 'https://pypi.org/project/stewbeet/' },
                 { label: 'PlanetMinecraft', url: 'https://www.planetminecraft.com/data-pack/python-datapack/' },
+                { label: t('footer.media'), url: '/media', internal: true },
                 { label: t('footer.credits'), url: '/credits', internal: true },
                 { label: t('footer.telemetry'), url: '/telemetry', internal: true },
             ],

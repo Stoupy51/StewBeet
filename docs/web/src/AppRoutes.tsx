@@ -8,6 +8,7 @@ const DocumentationPage = lazy(() => import('./components/DocumentationPage').th
 const MarkdownToBBCodePage = lazy(() => import('./components/MarkdownToBBCodePage').then(m => ({ default: m.MarkdownToBBCodePage })));
 const ToolsPage = lazy(() => import('./components/ToolsPage').then(m => ({ default: m.ToolsPage })));
 const ShowcasePage = lazy(() => import('./components/ShowcasePage').then(m => ({ default: m.ShowcasePage })));
+const MediaPage = lazy(() => import('./components/MediaPage').then(m => ({ default: m.MediaPage })));
 const CreditsPage = lazy(() => import('./components/CreditsPage').then(m => ({ default: m.CreditsPage })));
 const TelemetryPage = lazy(() => import('./components/TelemetryPage').then(m => ({ default: m.TelemetryPage })));
 // Lazy above all else: this route is the only one that pulls in CodeMirror.
@@ -30,6 +31,7 @@ export function AppRoutes() {
                 <Route path="/tools/auto_headers" element={<AutoHeadersPage />} />
                 <Route path="/tools/bbcode" element={<MarkdownToBBCodePage />} />
                 <Route path="/showcase" element={<ShowcasePage />} />
+                <Route path="/media" element={<MediaPage />} />
                 <Route path="/credits" element={<CreditsPage />} />
                 <Route path="/telemetry" element={<TelemetryPage />} />
                 <Route path="*" element={<NotFoundPage />} />
