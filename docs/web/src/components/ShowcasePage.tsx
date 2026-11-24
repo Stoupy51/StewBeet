@@ -24,6 +24,7 @@ const ProjectCard = ({ project }: { project: ShowcaseProject }) => {
                     <span className="font-bold group-hover:text-link transition-colors">{project.name}</span>
                     <span className="text-sm text-text-muted">{project.owner}</span>
                     {project.summary && <span className="mt-2 text-[0.9375rem] text-pretty">{project.summary[language]}</span>}
+                    {project.quote && <span className="mt-2 pl-3 border-l-2 border-generated text-[0.9375rem] italic text-text-muted text-pretty">{project.quote[language]}</span>}
                     {stats && (
                         <span className="mt-2 text-[0.8125rem] text-text-muted">
                             {t('builtWith.filesFrom')

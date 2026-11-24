@@ -22,6 +22,8 @@ export interface ShowcaseProject extends Entry {
     /** A library other packs call. */
     library?: boolean;
     summary?: Record<Language, string>;
+    /** The author's own words about building it, with their consent. */
+    quote?: Record<Language, string>;
     stats?: { sourceLines: number; functions: number; jsonFiles: number; textures: number };
 }
 
@@ -33,6 +35,7 @@ export const SHOWCASE: ShowcaseProject[] = [
     {
         name: 'Headconomics', owner: 'RacoonJohn', url: 'https://github.com/RacoonJohn/Headconomics', icon: 'headconomics', community: true,
         summary: { en: 'Turns player heads into an economy, with a digital wallet and transfer vouchers.', fr: 'Fait des têtes de joueurs une économie, avec un portefeuille et des bons de transfert.' },
+        quote: { en: 'Programming Headconomics took me about one evening, thanks to StewBeet.', fr: "La programmation de Headconomics m'a pris une soirée, grâce à StewBeet." },
     },
     {
         name: 'Crazy Adventure', owner: 'VGreluchon', url: 'https://github.com/VGreluchon/Crazy-Adventure-Datapack', icon: 'crazy_adventure', community: true,
