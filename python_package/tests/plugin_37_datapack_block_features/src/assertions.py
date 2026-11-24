@@ -15,9 +15,30 @@ def beet_default(ctx: Context):
 	# The interaction is summoned with the block and gone with it, the item dropping unless a creative player broke it
 	assert "summon interaction ~ ~-0.5 ~ {width:1.01f,height:1.01f" in text(f"{ns}:custom_blocks/bf_seat/place_secondary")
 	destroy: str = text(f"{ns}:custom_blocks/bf_seat/destroy")
-	assert f"execute unless score #no_drop {ns}.data matches 1 run loot spawn ~ ~ ~ loot {ns}:i/bf_seat" in destroy
+	assert f'run summon item ~ ~ ~ {{Item:{{id:"minecraft:stone"}},Tags:["{ns}.drop"]}}' in destroy
+	assert f"execute as @e[type=item,tag={ns}.drop,distance=..0.01] run function {ns}:custom_blocks/bf_seat/replace_item" in destroy
+	seat_drop: str = text(f"{ns}:custom_blocks/bf_seat/replace_item")
+	assert f"tag @s remove {ns}.drop" in seat_drop and f"loot replace entity @s contents loot {ns}:i/bf_seat" in seat_drop
 	assert "kill @e[type=interaction" in destroy and "playsound minecraft:block.metal.break" in destroy
 	assert "particle minecraft:item{item:" in destroy
+
+	# Silk touch on an interaction host, without the glass made up for a vanilla host that drops nothing
+	lamp_drop: str = text(f"{ns}:custom_blocks/bf_lamp/replace_item")
+	assert f"loot spawn ~ ~ ~ fish {ns}:custom_blocks/no_silk_touch_drop/bf_lamp" in lamp_drop
+	assert "minecraft:glass" not in text(f"{ns}:custom_blocks/bf_lamp/destroy")
+
+	# The SimplEnergy hooks reach an interaction block: a battery's energy on its item, a wrench turning it, Mechanization's tools
+	assert f"function {ns}:utils/keep_energy" in lamp_drop
+	assert "tag @s add simplenergy.rotatable" in text(f"{ns}:custom_blocks/bf_lamp/place_secondary")
+	assert f"function #{ns}:calls/mechanization/right_click" in text(f"{ns}:custom_blocks/_interaction/used")
+	assert '"#mechanization:calls/right_click"' in ctx.data.function_tags[f"{ns}:calls/mechanization/right_click"].text
+
+	# Clicks run as the display, a left click before the hit counts, and a seat no longer ending the dispatch
+	use: str = text(f"{ns}:custom_blocks/_interaction/use")
+	assert f"execute if entity @s[tag={ns}.bf_lamp] positioned ~ ~0.5 ~ as @n[type=item_display" in use
+	assert "return run" not in use
+	display: str = f"as @n[type=item_display,tag={ns}.custom_block,distance=..0.1] at @s"
+	assert text(f"{ns}:custom_blocks/bf_lamp/hit").startswith(f"execute {display} run function {ns}:custom_blocks/bf_lamp/left_click")
 
 	# Three hits within the timeout, and an iron pickaxe for the item
 	hit: str = text(f"{ns}:custom_blocks/bf_seat/hit")

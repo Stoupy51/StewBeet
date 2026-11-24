@@ -115,7 +115,7 @@ Un hôte escalier prend un `shape` d'angle selon ses voisins, et son display le 
 | `hit_timeout` | `int` | `20` | Ticks entre deux coups comptés. |
 | `sound` | `str` | `minecraft:block.stone` | Groupe de sons, joué en `<sound>.hit` à chaque coup et en `<sound>.break` à la casse. |
 
-Les hôtes sans collision ou impossibles à miner sont `minecraft:barrier`, `minecraft:structure_void` et `minecraft:light[level=N]`. Frapper l'entity casse le block et fait tomber son item, sauf si celui qui casse est en creative. Les commandes lancées quand un joueur utilise l'interaction vont dans `{ns}:custom_blocks/_interaction/use`, exécutées par l'interaction avec le joueur taggé `{ns}.user`.
+Les hôtes sans collision ou impossibles à miner sont `minecraft:barrier`, `minecraft:structure_void` et `minecraft:light[level=N]`. Frapper l'entity casse le block et fait tomber son item, sauf si celui qui casse est en creative. Les functions `right_click` et `left_click` du block tournent quand un joueur l'utilise ou le frappe, voir [Block ticking](../plugins/finalyze.custom_blocks_ticking.fr.md).
 
 ```python
 Block(

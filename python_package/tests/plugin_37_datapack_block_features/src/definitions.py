@@ -43,8 +43,14 @@ def beet_default(ctx: Context):
 		mining=Mining(level="iron"),
 	)
 
-	# An emissive block without collision
-	Block(id="bf_lamp", vanilla_block=VanillaBlock(id="minecraft:light[level=15]", interaction=Interaction()))
+	# An emissive block without collision, turned toward the player and dropping glowstone dust without silk touch
+	Block(
+		id="bf_lamp",
+		vanilla_block=VanillaBlock(id="minecraft:light[level=15]", visual_facing="player", interaction=Interaction()),
+		no_silk_touch_drop=NoSilkTouchDrop(loot_table=LootTable({"pools": [
+			{"rolls": 1, "entries": [{"type": "minecraft:item", "name": "minecraft:glowstone_dust"}]},
+		]})),
+	)
 
 	# A drink giving its mug back, and a crossbow loading bolts only
 	Item(id="bf_mug")

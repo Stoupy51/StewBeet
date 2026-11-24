@@ -1,7 +1,7 @@
 
 # Block ticking
 
-Lance une function de votre block sur chaque exemplaire posé, à chaque tick, seconde ou minute. Écrivez la function et ce plugin la trouve.
+Lance une function de votre block sur chaque exemplaire posé, à chaque tick, seconde ou minute, ou quand un joueur clique dessus. Écrivez la function et ce plugin la trouve.
 
 Il tourne dans les templates `basic` et `extensive` sous le nom `stewbeet.plugins.finalyze.custom_blocks_ticking`, sans configuration. [Source](https://github.com/Stoupy51/StewBeet/blob/main/python_package/stewbeet/plugins/finalyze/custom_blocks_ticking/__init__.py)
 
@@ -28,6 +28,24 @@ scoreboard players add @s energy.storage 5
 
 La function tourne en tant qu'item display du block, à sa position.
 
+## Réagir à un clic
+
+Un block dont l'hôte a une [Interaction](../1_definitions_setup/fr.md#interaction) peut aussi avoir ces functions :
+
+| Function | Tourne | Le joueur |
+|---|---|---|
+| `right_click` | Quand un joueur utilise le block | Tagué `<namespace>.user` |
+| `left_click` | À chaque coup, avant qu'il compte dans `hits`, y compris celui qui le casse | Tagué `<namespace>.breaker` |
+
+```python
+obj = Block.from_id("control_panel")
+write_function(obj.functions.right_click, """
+tellraw @p[tag=my_pack.user] "Panel switched on"
+""")
+```
+
+Elles tournent aussi en tant qu'item display du block, à sa position. Un siège assoit toujours le joueur, et lance aussi son `right_click`.
+
 ## Ce que ce plugin écrit
 
 Pour chaque nom de function qu'un block utilise, ici `second` :
@@ -48,6 +66,8 @@ execute if entity @s[tag=simplenergy.pulverizer] run function simplenergy:custom
 
 - Le tag est donné quand un block est posé. Un block posé avant l'existence de sa function ne la lance pas tant qu'il n'est pas cassé puis reposé.
 - Seule compte une function nommée exactement comme dans le tableau, directement dans le dossier du block.
+- Une function de clic sur un block sans `Interaction` fait échouer le build, car aucun autre hôte ne dit qu'un joueur a cliqué dessus.
+- Utiliser une interaction n'utilise jamais l'item en main : un joueur ne peut donc pas poser de block contre elle.
 - Mille blocks sur `tick` lancent leur function 20 000 fois par seconde. Le guide [Performance](../10_performance/fr.md) montre ce qu'il faut passer sur `second`.
 
 ## Pour continuer

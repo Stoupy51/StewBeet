@@ -115,7 +115,7 @@ A stairs host takes a corner `shape` from its neighbours, and its display follow
 | `hit_timeout` | `int` | `20` | Ticks between two counted hits. |
 | `sound` | `str` | `minecraft:block.stone` | Sound group, played as `<sound>.hit` on each hit and `<sound>.break` on the break. |
 
-Hosts without collision or that cannot be mined are `minecraft:barrier`, `minecraft:structure_void` and `minecraft:light[level=N]`. Hitting the entity breaks the block and drops its item unless the breaker is in creative. Commands run when a player uses the interaction go in `{ns}:custom_blocks/_interaction/use`, run as the interaction with the player tagged `{ns}.user`.
+Hosts without collision or that cannot be mined are `minecraft:barrier`, `minecraft:structure_void` and `minecraft:light[level=N]`. Hitting the entity breaks the block and drops its item unless the breaker is in creative. The block's `right_click` and `left_click` functions run when a player uses or hits it, see [Block ticking](../plugins/finalyze.custom_blocks_ticking.md).
 
 ```python
 Block(

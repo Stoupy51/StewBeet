@@ -117,3 +117,14 @@ class BlockFunctions(ResourceFolder[Function]):
 		""" Ran every minute as the custom block entity. """
 		return self["minute"]
 
+	# Clicks on an interaction host (discovered by plugins.finalyze.custom_blocks_ticking)
+	@property
+	def right_click(self) -> Resource[Function]:
+		""" Ran as the custom block entity when a player uses the block, the player tagged `{ns}.user`. """
+		return self["right_click"]
+
+	@property
+	def left_click(self) -> Resource[Function]:
+		""" Ran as the custom block entity on each hit of a player, before it counts, the player tagged `{ns}.breaker`. """
+		return self["left_click"]
+

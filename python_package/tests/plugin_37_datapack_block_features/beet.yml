@@ -28,6 +28,7 @@ pipeline:
     - "stewbeet.plugins.resource_pack.item_models"
     - "stewbeet.plugins.datapack.loading"
     - "stewbeet.plugins.datapack.custom_blocks"
+    - "src.link"
     - "stewbeet.plugins.datapack.loot_tables"
     - "stewbeet.plugins.finalyze.custom_blocks_ticking"
     - "stewbeet.plugins.finalyze.dependencies"
