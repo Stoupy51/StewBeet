@@ -52,12 +52,10 @@ const codeLensProvider = {
   onDidChangeCodeLenses: onDidChangeEmitter.event,
 
   /** @param {vscode.TextDocument} doc */
-  async provideCodeLenses(doc) {
+  provideCodeLenses(doc) {
     if (!vscode.workspace.getConfiguration(CFG_KEY).get("codeLens", true)) return [];
     if (doc.uri.scheme !== "file") return [];
-
-    const maps = await navigation.findMaps();
-    if (maps.length === 0) return [];
+    if (!mapsIndexed()) return shown.get(doc.uri.toString()) ?? [];
 
     // One lens per `write_*` call, never one per command.
     //
@@ -92,7 +90,9 @@ const codeLensProvider = {
     const orphans = new Map([...origins].filter(([line]) => !covered.has(line) && !placed.has(line)));
     for (const { line, targets } of lensAnchors(orphans, holdsText(doc))) lenses.push(lensFor(line, targets));
 
-    return lenses.sort((a, b) => a.range.start.line - b.range.start.line);
+    lenses.sort((a, b) => a.range.start.line - b.range.start.line);
+    shown.set(doc.uri.toString(), lenses);
+    return lenses;
   },
 };
 
@@ -104,12 +104,10 @@ const boltLensProvider = {
    * A `.bolt` module, or a `.mcfunction` holding bolt, reaches what the build made of it.
    * @param {vscode.TextDocument} doc
    */
-  async provideCodeLenses(doc) {
+  provideCodeLenses(doc) {
     if (!vscode.workspace.getConfiguration(CFG_KEY).get("codeLens", true)) return [];
     if (doc.uri.scheme !== "file") return [];
-
-    const maps = await navigation.findMaps();
-    if (maps.length === 0) return [];
+    if (!mapsIndexed()) return [];
 
     // A generated file is not a source of anything, so it never appears in the reverse index
     // and this costs one lookup before returning nothing.
@@ -119,6 +117,28 @@ const boltLensProvider = {
     return lensAnchors(origins, holdsText(doc)).map(({ line, targets }) => lensFor(line, targets));
   },
 };
+
+/** The map search the lenses were last computed against. @type {Promise<string[]> | null} */
+let searched = null;
+
+/** The Python lenses last computed for each document, shown again while a rebuild reindexes the maps so the code under them does not jump. */
+const shown = new Map();
+
+/**
+ * Whether the maps are indexed, starting the search when none runs and asking for the lenses again once it lands.
+ *
+ * No provider waits for it. VS Code shows none of a file's lenses until every provider has answered, and indexing
+ * the thousands of maps of a large pack is slow while Spyglass keeps the extension host busy, so waiting would hide
+ * the header lens of a generated file too, the one lens that needs no index at all.
+ */
+function mapsIndexed() {
+  const search = navigation.findMaps();
+  if (search !== searched) {
+    searched = search;
+    search.then(refreshCodeLenses);
+  }
+  return navigation.knownMaps().length > 0;
+}
 
 /** Ask VS Code for the lenses again, for when a build changed what the blocks produce. */
 function refreshCodeLenses() {
@@ -136,6 +156,7 @@ function registerCodeLenses(context) {
     vscode.workspace.onDidChangeConfiguration(e => {
       if (e.affectsConfiguration(`${CFG_KEY}.codeLens`)) refreshCodeLenses();
     }),
+    vscode.workspace.onDidCloseTextDocument(doc => shown.delete(doc.uri.toString())),
     onDidChangeEmitter,
   );
 }

@@ -70,28 +70,48 @@
           ]
         },
         {
-          "captures": {
+          "comment": "Only a triple-quoted string reaches #root, and only its triple quote ends it, so the comment runs to the end of the line whatever quotes it holds. Inline strings use #comments_inline. An interpolation inside it is Python filling in the comment, so it keeps the colours it has in a command.",
+          "begin": "^\\s*#(?!\\{)",
+          "beginCaptures": {
             "0": {
               "name": "comment.line.mcfunction"
             }
           },
-          "comment": "Only a triple-quoted string reaches #root, and only its triple quote ends it, so the comment runs to the end of the line whatever quotes it holds. Inline strings use #comments_inline.",
-          "match": "^\\s*#(?!\\{)(?:(?!\"\"\"|''')(?:[^\\\\\n]|\\\\[^n]))*",
-          "name": "meta.comments"
+          "end": "(?=$|\"\"\"|'''|\\\\n)",
+          "name": "meta.comments",
+          "patterns": [
+            {
+              "include": "#comment_interpolation"
+            },
+            {
+              "match": "(?:(?!\"\"\"|'''|\\\\n)[^{\\\\])+|\\\\[^n]|\\{",
+              "name": "comment.line.mcfunction"
+            }
+          ]
         }
       ]
     },
     "comments_inline": {
       "patterns": [
         {
-          "captures": {
+          "comment": "Stops before the quote that closes the Python string it sits in, otherwise the comment eats that quote and everything after it (same convention as #say-inline). Three tails end a string: an inline write_* call closing on this line, an entry of a list of commands, and the last entry of one. The tail of the first must look like a Python argument list, so prose such as 'or \"name\" field)' keeps its quotes. An interpolation inside it keeps the colours it has in a command.",
+          "begin": "#(?!\\{)",
+          "beginCaptures": {
             "0": {
               "name": "comment.line.mcfunction"
             }
           },
-          "comment": "Stops before the quote that closes the Python string it sits in, otherwise the comment eats that quote and everything after it (same convention as #say-inline). Three tails end a string: an inline write_* call closing on this line, an entry of a list of commands, and the last entry of one. The tail of the first must look like a Python argument list, so prose such as 'or \"name\" field)' keeps its quotes.",
-          "match": "#(?!\\{)(?:(?![\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)(?![\"'][ \\t]*,?[ \\t]*$)(?![\"'][ \\t]*[,\\]])(?:[^\\\\\n]|\\\\[^n]))*",
-          "name": "meta.comments"
+          "end": "(?=[\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)|(?=[\"'][ \\t]*,?[ \\t]*$)|(?=[\"'][ \\t]*[,\\]])|(?=$|\\\\n)",
+          "name": "meta.comments",
+          "patterns": [
+            {
+              "include": "#comment_interpolation"
+            },
+            {
+              "match": "(?:(?![\"'](?:[ \\t]*,[ \\t]*[^\\n()]*)?[ \\t]*\\)[ \\t]*$)(?![\"'][ \\t]*,?[ \\t]*$)(?![\"'][ \\t]*[,\\]])[^{\\\\\\n])+|\\\\[^n]|\\{",
+              "name": "comment.line.mcfunction"
+            }
+          ]
         }
       ]
     },
@@ -865,6 +885,21 @@
           "include": "#selectors"
         }
       ]
+    },
+    "comment_interpolation": {
+      "comment": "A Python interpolation inside a comment, ex: the `{calls}` of `# Run each device{calls}`. A doubled brace is a literal one.",
+      "match": "(?<!\\{)(\\{)([A-Za-z_][\\w.]*(?:\\([^(){}\\n]*\\)|\\[[^\\[\\]{}\\n]*\\])*)(\\})(?!\\})",
+      "captures": {
+        "1": {
+          "name": "punctuation.mcfunction"
+        },
+        "2": {
+          "name": "variable.other.mcfunction"
+        },
+        "3": {
+          "name": "punctuation.mcfunction"
+        }
+      }
     }
   },
   "comment": "Patched mcfunction grammar for StewBeet embedded use: property.paren removed to avoid eating closing ) of write_* calls; triple-quoted string rules added so nested Python f-strings inside {interpolations} pair up correctly; comment patterns consume quotes so a \" in a comment line cannot open a runaway string."

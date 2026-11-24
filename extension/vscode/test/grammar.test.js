@@ -91,10 +91,17 @@ test("every bolt rule that opens a block can close it on the same line", () => {
 
 // Comment patterns must swallow quotes (TODO example 2)
 
+/** What a comment rule covers on one line, as one regex: its opening `#`, then interpolations and comment text until the text stops. */
+function commentRegex(rule) {
+  const [interpolation, text] = rule.patterns;
+  assert.equal(interpolation.include, "#comment_interpolation");
+  return new RegExp(`${rule.begin}(?:${embedded.repository.comment_interpolation.match}|${text.match})*`);
+}
+
 test("line comment pattern consumes a double quote", () => {
-  const pattern = embedded.repository.comments.patterns.find(p => p.match && p.match.includes("^\\s*#(?!\\{)"));
+  const pattern = embedded.repository.comments.patterns.find(p => p.begin === "^\\s*#(?!\\{)");
   assert.ok(pattern, "line comment pattern not found");
-  const re = new RegExp(pattern.match);
+  const re = commentRegex(pattern);
   const line = '# Increment "down count';
   const m = line.match(re);
   assert.ok(m);
@@ -102,9 +109,9 @@ test("line comment pattern consumes a double quote", () => {
 });
 
 test("inline comment pattern consumes a double quote", () => {
-  const pattern = embedded.repository.comments_inline.patterns.find(p => p.match);
+  const pattern = embedded.repository.comments_inline.patterns[0];
   assert.ok(pattern, "inline comment pattern not found");
-  const re = new RegExp(pattern.match);
+  const re = commentRegex(pattern);
   const line = '# has "quotes" inside';
   const m = line.match(re);
   assert.ok(m);
@@ -112,8 +119,8 @@ test("inline comment pattern consumes a double quote", () => {
 });
 
 test("line comment pattern still stops at a literal \\n escape", () => {
-  const pattern = embedded.repository.comments.patterns.find(p => p.match && p.match.includes("^\\s*#(?!\\{)"));
-  const re = new RegExp(pattern.match);
+  const pattern = embedded.repository.comments.patterns.find(p => p.begin === "^\\s*#(?!\\{)");
+  const re = commentRegex(pattern);
   const m = "# hello \\nworld".match(re);
   assert.ok(m);
   assert.equal(m[0], "# hello ");
@@ -126,8 +133,8 @@ test("line comment pattern still stops at a literal \\n escape", () => {
 // comment pattern ran to end of line regardless of the Python string ending.
 
 const COMMENT_PATTERNS = () => [
-  ["line", embedded.repository.comments.patterns.find(p => p.match && p.match.includes("^\\s*#(?!\\{)"))],
-  ["inline", embedded.repository.comments_inline.patterns.find(p => p.match)],
+  ["line", embedded.repository.comments.patterns.find(p => p.begin === "^\\s*#(?!\\{)")],
+  ["inline", embedded.repository.comments_inline.patterns[0]],
 ];
 
 test("the inline comment pattern stops before the quote closing an inline write_* call", () => {
@@ -141,7 +148,7 @@ test("the inline comment pattern stops before the quote closing an inline write_
     // Quotes inside the comment must not be mistaken for the closing quote.
     [`# Override with 'name' or "name" field")`, `# Override with 'name' or "name" field`],
   ];
-  const re = new RegExp(COMMENT_PATTERNS()[1][1].match);
+  const re = commentRegex(COMMENT_PATTERNS()[1][1]);
   for (const [line, expected] of cases) {
     const m = line.match(re);
     assert.ok(m, `no match in ${JSON.stringify(line)}`);
@@ -151,7 +158,7 @@ test("the inline comment pattern stops before the quote closing an inline write_
 
 test("a comment line in a triple-quoted block runs past a quote before a parenthesis", () => {
   // Only a triple quote ends a block, so `")` there is the author's prose.
-  const re = new RegExp(COMMENT_PATTERNS()[0][1].match);
+  const re = commentRegex(COMMENT_PATTERNS()[0][1]);
   for (const line of [
     '# Swap weapon if same as before (26 chars long = "minecraft:poisonous_potato")',
     "# Toggle 'debug')",
@@ -175,7 +182,7 @@ test("comment patterns still run to end of line inside a multiline block", () =>
     '# Store as "value" (integer)',
   ];
   for (const [name, pattern] of COMMENT_PATTERNS()) {
-    const re = new RegExp(pattern.match);
+    const re = commentRegex(pattern);
     for (const line of cases) {
       const m = line.match(re);
       assert.ok(m, `${name}: no match in ${JSON.stringify(line)}`);

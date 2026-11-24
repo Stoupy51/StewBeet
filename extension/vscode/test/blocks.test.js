@@ -520,6 +520,22 @@ test("a function assigned a list of commands holds one block per entry", () => {
   assert.deepEqual(commandsOf(source), ["say one", "say two"]);
 });
 
+test("trplnr: a list opened on the line after Function( is still its commands, past entries that are not literals", () => {
+  const source = [
+    "pack.functions[file.PROJECTILE_TICK_FUNCTION_PATH] = Function(",
+    "\t[",
+    '\t\tf"schedule function {file.PROJECTILE_TICK_FUNCTION_PATH} 1t replace",',
+    "\t\t*(components.OnTickFunction.get_function_code(definition.on_tick_function)),",
+    '\t\tf"execute as @e[type=item_display,tag={tag}] at @s run function {path}",',
+    "\t]",
+    ")",
+  ].join("\n");
+  assert.deepEqual(commandsOf(source), [
+    "schedule function {file.PROJECTILE_TICK_FUNCTION_PATH} 1t replace",
+    "execute as @e[type=item_display,tag={tag}] at @s run function {path}",
+  ]);
+});
+
 test("lines.append and lines.extend write onto that same list", () => {
   assert.deepEqual(commandsOf('ctx.data.functions["ns:a"].lines.append("say one")'), ["say one"]);
   assert.deepEqual(commandsOf('ctx.data.functions["ns:a"].lines.extend(["say one", "say two"])'),

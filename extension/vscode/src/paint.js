@@ -166,7 +166,8 @@ function paintBlock({ vsctm, python }, lines, open, content, end) {
  */
 function reachedByGrammar({ vsctm, python }, lines, content) {
   let state = vsctm.INITIAL;
-  for (let line = 0; line <= content.line + 1 && line < lines.length; line++) {
+  // Blank lines tell nothing, so a block opening on `f"""` and an empty line is judged by its first command.
+  for (let line = 0; line < lines.length; line++) {
     const { tokens, ruleStack } = python.tokenizeLine(lines[line], state);
     state = ruleStack;
     const first = tokens.find((/** @type {{ startIndex:number, endIndex:number }} */ token) =>

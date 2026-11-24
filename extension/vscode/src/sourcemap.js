@@ -500,12 +500,16 @@ function opaqueStarts(sourcePath) {
   return found;
 }
 
+/** How long indexing holds the extension host before handing it back. Yielding after every map would cost a pack of
+ *  3500 maps 3500 turns of an event loop that Spyglass keeps busy. */
+const INDEX_SLICE_MS = 10;
+
 /** The index `indexMaps` is filling, which `clearCache` or a newer call abandons. @type {Map<string, SourceView> | null} */
 let indexing = null;
 
 /**
- * Build the reverse index of the maps a search found, handing the extension host back before each
- * map: reading a pack's thousands of maps in one go blocks the editor for a second after each build.
+ * Build the reverse index of the maps a search found, handing the extension host back every INDEX_SLICE_MS:
+ * reading a pack's thousands of maps in one go blocks the editor for a second after each build.
  *
  * Nested by file rather than keyed by a `file:line` string so that asking about one file is a
  * lookup instead of a walk over every mapped line in the project. A pack of two thousand
@@ -522,9 +526,13 @@ async function indexMaps(mapPaths) {
     return view;
   };
 
+  let sliceStart = Date.now();
   for (const mapPath of mapPaths) {
-    await new Promise(resolve => setImmediate(resolve));
-    if (indexing !== index) return;
+    if (Date.now() - sliceStart > INDEX_SLICE_MS) {
+      await new Promise(resolve => setImmediate(resolve));
+      if (indexing !== index) return;
+      sliceStart = Date.now();
+    }
     const map = load(mapPath);
     if (!map) continue;
     const generatedPath = mapPath.slice(0, -".map".length);

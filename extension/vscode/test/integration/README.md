@@ -37,6 +37,14 @@ SB_TESTS=sweep SB_WORKSPACE=d:/advanced_desktop/projects/MC_Guns_System node tes
 
 Opens every Python file under `src/` that could hold a block and lists each diagnostic the relay puts on it in `result.json`, with the line it sits on. A pack that builds cleanly has few real mistakes, so most of the list is the extension misreading its input. `SB_FILES` narrows the run to a comma-separated list of paths relative to the workspace. A whole pack takes about forty minutes.
 
+## Lenses on a large pack
+
+```sh
+SB_TESTS=lenses SB_WORKSPACE=d:/advanced_desktop/projects/Switch SB_GUARD= SB_FILES=build/datapack/data/switch/function/modes/tnt_run/dash/use.mcfunction,src/datapack/modes/tnt_run/main.py node test/integration/run.js
+```
+
+VS Code shows none of a file's lenses until every provider has answered. On a pack of 3500 maps with Spyglass busy, a provider waiting for the map index hides even the header lens of a generated file, which needs no index. This checks that header lens answers within a second while the maps are reindexed, and that every listed file has its lenses once the index is built.
+
 ## Why it exists
 
 It is the regression guard for the assumption the whole design rests on: **Spyglass's document selector carries no scheme filter**, so it attaches to the virtual documents this extension serves. If a future Spyglass release adds one, every provider silently stops answering and nothing else notices.

@@ -279,6 +279,21 @@ tokenizerTest(
 );
 
 tokenizerTest(
+  "SimplEnergy balancing.py: an interpolation in a comment is Python, and a doubled brace is the comment's",
+  'c: McFunction = f"""\n# For each balancing device, run the main function{device_main_calls}\n# literal {{escaped}} text\n"""\nwrite_function("ns:x", f"# run {inline} now")\n',
+  lines => {
+    for (const name of ["device_main_calls", "inline"]) {
+      const scopes = scopesOf(lines, name) ?? [];
+      assert.ok(scopes.includes("variable.other.mcfunction") && !scopes.some(s => s.startsWith("comment")),
+        `${name} is coloured as in a command, not as the comment: ${scopes.join(" ")}`);
+    }
+    assert.ok(lines[4].find(t => t.text.trim() === "now")?.scopes.includes("comment.line.mcfunction"), "the comment resumes after the interpolation");
+    assert.ok(scopesOf(lines, "escaped text") === null && lines[2].every(t => t.scopes.includes("comment.line.mcfunction")),
+      "`{{escaped}}` is a literal brace pair, so the whole line stays a comment");
+  },
+);
+
+tokenizerTest(
   "a say ending in a quote and a parenthesis keeps the block open",
   'write_function("ns:x", """\nsay hi ("there")\nfunction ns:after\n""")\n',
   lines => {

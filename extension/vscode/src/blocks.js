@@ -536,23 +536,10 @@ function findBeetWrites(text) {
     pattern.lastIndex = 0;
     let m;
     while ((m = pattern.exec(text)) !== null) {
-      const callStart = m.index;
-      let at = m.index + m[0].length;
-
-      // A list literal holds one block per entry; anything else holds at most one.
-      const list = text[at] === "[";
-      if (list) at++;
-
-      for (;;) {
-        while (at < text.length && (text[at] === " " || text[at] === "\t" || text[at] === "\n"
-          || text[at] === "\r" || text[at] === ",")) at++;
-
-        const literal = readLiteral(text, at, true);
-        if (!literal) break;
-        blocks.push({ ...literal, callStart });
-        at = literal.end;
-        if (!list) break;
-      }
+      // A list literal holds one block per entry, wherever the `[` sits; anything else holds at most one.
+      const at = skipSpace(text, m.index + m[0].length);
+      const found = text[at] === "[" ? readListEntries(text, at) : literalAt(text, at, true);
+      for (const literal of found) blocks.push({ ...literal, callStart: m.index });
     }
   }
   return blocks;

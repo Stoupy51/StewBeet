@@ -69,6 +69,27 @@ test("MC_Guns_System place.py: what a name is grown with in a loop, and the lite
   assert.deepEqual(kill && { to: kill.to, ...styleOf(kill.metadata, engine.colorMap) }, { to: 4, color: "#FF0000", fontStyle: 1 });
 });
 
+test("SimplEnergy batteries.py: a block grown with += whose first line is empty is painted", async (t) => {
+  const engine = await redCommands();
+  if (!engine) return t.skip("no VS Code install found to read MagicPython from");
+  const text = [
+    '\tcontent: McFunction = f"""',
+    "say start",
+    '"""',
+    '\tcontent += f"""',
+    "",
+    "# Apply the new lore to the item",
+    "function {ns}:calls/update_energy_lore/macro with storage {ns}:temp macro",
+    '"""',
+    '\twrite_function(f"{ns}:calls/update_energy_lore/main", content)',
+  ].join("\n");
+
+  const paints = paintsOf(engine.tokenizer, text, findBlockOffsets(text));
+  const call = paints.find(paint => paint.line === 6 && paint.from === 0);
+  assert.deepEqual(call && { to: call.to, ...styleOf(call.metadata, engine.colorMap) }, { to: 8, color: "#FF0000", fontStyle: 1 },
+    "the empty line after the quote says nothing about whether the grammar reached the block");
+});
+
 test("a theme file may carry comments and trailing commas", () => {
   assert.deepEqual(parseJsonc('{ "a": [1, 2,], // note\n "b": "x//y,]", /* c */ }'), { a: [1, 2], b: "x//y,]" });
 });
