@@ -69,7 +69,7 @@ export const DOC_PAGES: DocPage[] = [
     guide('9_migration', 'migrate', 'start', 'Migrate an existing pack', 'Migrer un pack existant'),
     guide('8_editor', 'editor', 'start', 'VS Code editor', 'Éditeur VS Code'),
 
-    { slug: 'items_and_blocks', src: { en: 'items_and_blocks/en.md' }, title: { en: 'Items and blocks', fr: 'Items et blocks' }, section: 'guides' },
+    guide('items_and_blocks', 'items_and_blocks', 'guides', 'Items and blocks', 'Items et blocks'),
     guide('2_writing_to_files', 'writing_files', 'guides', 'Functions and files', 'Fonctions et fichiers'),
     guide('2_writing_to_files/cookbook', 'cookbook', 'guides', 'Cookbook', 'Cookbook'),
     guide('5_dependencies', 'libraries', 'guides', 'Datapack libraries', 'Bibliothèques de datapacks'),
