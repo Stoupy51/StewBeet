@@ -64,7 +64,7 @@ class Item(StMapping):
 	>>> obj = Item(
 	...     id="stardust_ingot",
 	...     base_item="minecraft:raw_iron",
-	...     manual_category="materials",
+	...     manual_category="material",
 	...     recipes=[
 	...         CraftingShapedRecipe(
 	...             shape=["###","#F#","###"], ingredients={"#":Ingr("stardust_fragment"),"F":Ingr("minecraft:iron_ingot")}
@@ -80,6 +80,11 @@ class Item(StMapping):
 	>>> also_obj = Item.from_id("stardust_ingot")
 	>>> obj is also_obj
 	True
+
+	A plain list assigned later is normalized like the one given at creation:
+	>>> obj.recipes = [CraftingShapedRecipe(shape=["##"], ingredients={"#": Ingr("stardust_fragment")})]
+	>>> type(obj.recipes).__name__
+	'RecipeList'
 
 	## Resource locations (namespace falls back to "your_namespace" outside a build)
 	>>> obj.loot_table
@@ -145,6 +150,12 @@ class Item(StMapping):
 	""" Where this definition was declared, captured by the source_maps plugin so content a plugin generates
 	from it maps back to the declaration instead of to the plugin. None unless that plugin is active. """
 
+	def __setattr__(self, name: str, value: Any) -> None:
+		""" Wrap any list assigned to `recipes`, at creation or later, so its recipes get their group and tag expansion. """
+		if name == "recipes" and not isinstance(value, RecipeList):
+			value = RecipeList(self.id, value)
+		object.__setattr__(self, name, value)
+
 	# Register item in memory
 	def __post_init__(self) -> None:
 		# Captured here because this is the only moment the declaring frame is still on the stack.
@@ -162,14 +173,11 @@ class Item(StMapping):
 				"Please remove the namespace from the ID or use ExternalItem if that's what you meant."
 			)
 			self.id = self.id.split(":")[-1]
+			self.recipes = list(self.recipes)
 
 		# Warnings
 		if self.wiki_buttons and not self.manual_category:
 			stp.warning(f"Item '{self.id}' has wiki_buttons but no manual_category. It won't be displayed in the ingame manual.")
-
-		## Fix some fields
-		# Convert recipes to RecipeList for automatic normalization
-		self.recipes = RecipeList(self.id, self.recipes)
 
 		# Fix !component values
 		self.components = {k.replace("minecraft:", ""): v for k, v in self.components.items()}
@@ -182,8 +190,15 @@ class Item(StMapping):
 			self.components.setdefault("enchantment_glint_override", False)
 
 		# Register the item in the global definitions (if not external)
-		if self.id and ":" not in self.id and self.id not in Mem.definitions:
-			Mem.definitions[self.id] = self
+		if not self.id or ":" in self.id:
+			return
+		if self.id in Mem.definitions:
+			stp.warning(
+				f"Item '{self.id}' is already defined, so this second definition is ignored. "
+				f"Change the first one through Item.from_id('{self.id}')."
+			)
+			return
+		Mem.definitions[self.id] = self
 
 	# Resource locations
 	def loot_table_for(self, result_count: int | JsonDict) -> Resource[LootTable]:

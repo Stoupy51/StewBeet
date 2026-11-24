@@ -335,6 +335,11 @@ class StorageEquation(BaseEquation):
 	>>> print(str(equation))
 	# storage ns:storage result = (-$(amount) * 1000) * 0.001000
 	$execute store result storage ns:storage result double 0.001000 run compute default integer {type:"mul",inputs:[-$(amount),1000]}
+
+	>>> # A selector operand goes through the temp score, and rendering twice gives the same text
+	>>> fallback = StorageEquation("ns:storage", "total").set(5) + "@a"
+	>>> str(fallback) == str(fallback) and str(fallback).endswith("run scoreboard players get #temp_result your_namespace.data")
+	True
 	"""
 
 	__slots__ = ("path", "scale", "storage", "storage_type")
@@ -356,9 +361,8 @@ class StorageEquation(BaseEquation):
 	def __str__(self) -> str:
 		if self.uses_compute():
 			return super().__str__()
-		# Add the final command to store the result in storage after all operations
-		self.ops.append(f"execute store result {self.store_target()} run scoreboard players get #temp_result {self.scoreboard}")
-		return super().__str__()
+		store: str = f"execute store result {self.store_target()} run scoreboard players get #temp_result {self.scoreboard}"
+		return f"{super().__str__()}\n{store}"
 
 
 __test__: dict[str, str] = {

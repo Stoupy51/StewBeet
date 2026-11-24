@@ -19,8 +19,7 @@ def add_item_model_component(black_list: list[str] | None = None) -> None:
 	""" Add an item model component to all items in the definitions.
 
 	Args:
-		black_list:       The list of items to ignore.
-		ignore_paintings: Whether to ignore items that are paintings (have PAINTING_DATA).
+		black_list: The list of items to ignore.
 	"""
 	if black_list is None:
 		black_list = []

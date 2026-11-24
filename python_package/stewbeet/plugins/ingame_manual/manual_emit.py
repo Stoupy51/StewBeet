@@ -215,23 +215,20 @@ def create_manual_item(manual: Manual) -> None:
 		return  # dialog-only, no item requested
 
 	ns = manual.config.project_id
+	manual_components: dict[str, object] = {
+		"item_model": f"{ns}:manual",
+		"item_name": manual.config.name,
+		"enchantment_glint_override": False,
+		"max_stack_size": 16,
+		"lore": [{"text": f"by {manual.config.project_author}", "color": "gray", "italic": False}],
+	}
 	manual_already_exists = "manual" in Mem.definitions
-	manual_obj = Item(
-		id="manual",
-		base_item="minecraft:written_book",
-		components={
-			"item_model": f"{ns}:manual",
-			"item_name": manual.config.name,
-			"enchantment_glint_override": False,
-			"max_stack_size": 16,
-			"lore": [{"text": f"by {manual.config.project_author}", "color": "gray", "italic": False}],
-		},
-	)
 	if manual_already_exists:
-		current_def: Item = Item.from_id("manual")
-		current_def.components = super_merge_dict(manual_obj.components, current_def.components)
-		current_def.base_item = manual_obj.base_item
-		Mem.definitions["manual"] = current_def
+		manual_obj: Item = Item.from_id("manual")
+		manual_obj.components = super_merge_dict(manual_components, manual_obj.components)
+		manual_obj.base_item = "minecraft:written_book"
+	else:
+		manual_obj = Item(id="manual", base_item="minecraft:written_book", components=manual_components)
 	add_item_name_and_lore_if_missing(black_list=[item for item in Mem.definitions if item != "manual"])
 	add_private_custom_data_for_namespace(black_list=[item for item in Mem.definitions if item != "manual"])
 

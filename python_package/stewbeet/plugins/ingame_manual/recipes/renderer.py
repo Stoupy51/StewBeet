@@ -160,7 +160,8 @@ class RecipeRenderer:
 			renderer.append_hover(self, craft, hover_text)
 
 		glyph = WIKI_RESULT_OF_CRAFT_FONT if "result" not in craft else self.images.wiki_result_icon(name, craft)
-		button = WikiButtonRender(glyph=glyph, hover=hover_text, priority=craft.get("manual_priority", 1) or 1)
+		priority: int | None = craft.get("manual_priority")
+		button = WikiButtonRender(glyph=glyph, hover=hover_text, priority=1 if priority is None else priority)
 		self.target_button(button, craft, name)
 		return button
 

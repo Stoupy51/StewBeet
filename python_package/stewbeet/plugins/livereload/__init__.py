@@ -58,7 +58,9 @@ def get_local_resource_pack_destinations(ctx: Context) -> list[str]:
 
 def _iter_destinations(ctx: Context, key: str) -> list[str]:
 	""" Return `build_copy_destinations[key]`, resolving local paths to absolute and leaving `sftp://` URLs as-is. """
-	destinations: list[Any] = ctx.meta.get("stewbeet", {}).get("build_copy_destinations", {}).get(key, [])
+	# A key set to null in beet.yml, as the Ward guide recommends, turns the copy off
+	copy_destinations: stp.JsonDict = ctx.meta.get("stewbeet", {}).get("build_copy_destinations") or {}
+	destinations: list[str] = copy_destinations.get(key) or []
 	return [str(dest) if is_sftp_path(dest) else str(Path(dest).resolve()) for dest in destinations]
 
 
