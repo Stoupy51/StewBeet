@@ -125,7 +125,7 @@ The `mc-` colors are the game's and only paint Minecraft elements.
 
 ## Typography
 
-Archivo carries headings and text at its normal width. Headings are weight 700 with normal tracking and a line height of 1.12 to 1.15, never compressed: 52 px on desktop (`display`), 36 px on a phone (`display-phone`). JetBrains Mono sets code, paths, numbers, and the uppercase labels of navigation and code panels. Monocraft, under the OFL 1.1, sets the item tooltip, the small labels and the numbers of the home page and the Showcase, and nothing else. Body text is 16 to 17 px on a phone, lines at most 75 characters.
+Archivo carries headings and text at its normal width. Headings are weight 700 with normal tracking and a line height of 1.12 to 1.15, never compressed: 52 px on desktop (`display`), 36 px on a phone (`display-phone`). JetBrains Mono sets code, paths, numbers, and the uppercase labels of navigation and code panels. Monocraft, under the OFL 1.1, sets the item tooltip, the small labels and the numbers of the home page and the Showcase, and nothing else. Body text is 16 to 17 px on a phone. Doc text runs as wide as the code blocks, about 80 characters a line on a desktop: on screen, reading speed rises up to 95 to 100 characters a line with comprehension unchanged, and readers prefer 60 to 90 (Shaikh and Chaparro 2005, Dyson 2004). The 45 to 75 of print typography is a rule of thumb for books, not a measured optimum.
 
 ## Layout
 

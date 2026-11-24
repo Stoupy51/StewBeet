@@ -150,9 +150,6 @@
   @apply text-text;
 }
 
-.markdown-body :is(p, ul, ol, blockquote, dl, details, .markdown-alert) { max-width: 40rem; }
-/* The stack diagram is drawn at 1200 px: it takes the whole column, or its text gets too small to read. */
-.markdown-body p:has(> .stack-figure) { max-width: none; }
 
 /* The stack figure of the how_it_fits page builds itself up once, from beet to the facts. */
 @keyframes stk-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
