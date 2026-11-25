@@ -7,10 +7,11 @@ from stewbeet import *
 
 # Main entry point
 def beet_default(ctx: Context):
-	# A render inside a command: the same (id, height, ascent) as the lore one, so it must reuse its glyph
+	# A render inside a command: the same (id, height, ascent) as the lore one, so it must reuse its glyph.
+	# The function tag sharing its id, like a project's #<ns>:load, must not hide the function from the scan.
 	write_function(f"{ctx.project_id}:show", """
 tellraw @a ["Look: ",{"render":"steel_ingot","height":8},{"render":"minecraft:stone","color":"red"}]
-""")
+""", tags=[f"{ctx.project_id}:show"])
 
 	# A render nested in a hover_event, and a decoy "height" belonging to a sub-object
 	write_function(f"{ctx.project_id}:hover", """

@@ -17,7 +17,7 @@ __lazy_modules__ = ALWAYS_LAZY
 from collections.abc import Iterator
 from typing import NamedTuple
 
-from beet import Context, TextFileBase
+from beet import Context, NamespaceFile, TextFileBase
 
 from ...__memory__ import Mem
 
@@ -126,9 +126,11 @@ def iter_data_text_files(ctx: Context | None = None) -> Iterator[TextFileBase[st
 	"""
 	if ctx is None:
 		ctx = Mem.ctx
-	files: dict[str, TextFileBase[str] | None] = {}
-	files.update(ctx.data.loot_tables)  # type: ignore[arg-type]
-	files.update(dict(ctx.data.all()))  # type: ignore[arg-type]
+
+	# Keyed by type too: a function and the function tag sharing its id, such as #<ns>:load, are two files
+	files: dict[tuple[str, str], NamespaceFile] = {
+		(path, type(content).__name__): content for path, content in (*ctx.data.loot_tables.items(), *ctx.data.all())
+	}
 	for _, content in sorted(files.items()):
 		if isinstance(content, TextFileBase):
 			yield content
