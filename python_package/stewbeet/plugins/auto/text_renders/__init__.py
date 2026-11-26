@@ -22,13 +22,13 @@ from ....core.__memory__ import Mem
 from ....core.utils.text_component import Replacement, apply_replacements, iter_data_text_files
 from .config import ICON_ID, TextRendersConfig, default_ascent
 from .emit import GlyphEmitter, GlyphKey
-from .scan import RenderRequest, find_requests, qualify
+from .scan import SIBLING_RES, RenderRequest, find_requests, qualify
 
 # Constants
 RENDER_KEY: str = "render"
 """ Text component key this plugin consumes. """
 
-CONSUMED_KEYS: tuple[str, ...] = (RENDER_KEY, "height", "ascent", "resolution")
+CONSUMED_KEYS: tuple[str, ...] = (RENDER_KEY, *SIBLING_RES)
 """ Keys a render node owns; every other key is carried over onto the glyph component. """
 
 
@@ -95,7 +95,10 @@ def resolve_renders(component: TextComponent, config: TextRendersConfig | None =
 	resolution: int = component.get("resolution", emitter.config.default_resolution)
 	item_id: str = qualify(str(component[RENDER_KEY]), emitter.config.project_id, ICON_ID)
 
-	request = RenderRequest(item_id=item_id, height=height, ascent=ascent, resolution=resolution, start=0, end=0, drops=())
+	request = RenderRequest(
+		item_id=item_id, height=height, ascent=ascent, resolution=resolution, start=0, end=0, drops=(),
+		offset=component.get("offset", 0), offset_after=component.get("offset_after"),
+	)
 	glyphs = emitter.emit([request])
 	rest = {key: value for key, value in component.items() if key not in (*CONSUMED_KEYS, "text")}
 	glyph: str | None = glyphs.get(request.glyph_key)

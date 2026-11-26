@@ -10,6 +10,7 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
+from .button_layout import SideGrid
 from .config import ManualConfig
 from .images import BakedText
 from .manual import Manual, Phase
@@ -43,6 +44,7 @@ __all__ = [
 	"PageRef",
 	"Phase",
 	"RawPage",
+	"SideGrid",
 	"TexturePage",
 	"WikiButtonRender",
 	"get_manual",

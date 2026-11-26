@@ -1,7 +1,7 @@
 """ Turning render requests into font glyphs.
 
 One :class:`GlyphAllocator` collects every provider of the build. Each distinct
-``(item id, height, ascent, resolution)`` gets its own glyph character, while the textures backing
+``(item id, height, ascent, resolution, offsets)`` gets its own glyph characters, while the textures backing
 them are written once per ``(item id, stored pixels)``, so several glyphs can share one image.
 
 A render Minecraft cannot fit in a single glyph (more than 256 texture pixels on a side,
@@ -14,6 +14,7 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
+import os
 from dataclasses import dataclass, field
 
 import stouputils as stp
@@ -30,6 +31,7 @@ from ....core.utils.fonts import (
 	merge_font_providers,
 	opaque_width,
 	plan_splice,
+	write_spliced_glyphs,
 )
 from ...initialize.project_images import find_pack_png
 from .config import (
@@ -42,11 +44,11 @@ from .config import (
 	to_resource_path,
 )
 from .confirm import ask_oversized
-from .scan import RenderRequest
+from .scan import IMAGE_SUFFIX, RenderRequest
 
 # Constants
-type GlyphKey = tuple[str, int, int, int]
-""" Identity of a glyph: item id, displayed height, ascent, and texture resolution. """
+type GlyphKey = tuple[str, int, int, int, int, int | None]
+""" Identity of a glyph: item id, displayed height, ascent, texture resolution, offset and offset after. """
 
 
 # Classes
@@ -83,15 +85,26 @@ class GlyphEmitter:
 		so the same image shown at several heights is only written once. It also goes through :func:`to_resource_path`,
 		without which the reserved ``ICON`` id would name a texture Minecraft refuses to load.
 		"""
-		return f"{TEXTURE_FOLDER}/{to_resource_path(f'{item_id.replace(":", "_")}_{stored[0]}x{stored[1]}')}"
+		stem: str = item_id.removesuffix(IMAGE_SUFFIX).replace(":", "_")
+		return f"{TEXTURE_FOLDER}/{to_resource_path(f'{stem}_{stored[0]}x{stored[1]}')}"
 
 	def source_images(self, item_ids: set[str]) -> dict[str, str]:
 		""" Resolve the PNG backing each item, batching the renders and the downloads.
 
-		The reserved ``ICON`` id resolves to the project ``pack.png`` instead of an item.
+		The reserved ``ICON`` id resolves to the project ``pack.png`` instead of an item,
+		and an id ending with ``.png`` to that file under ``textures_folder``, or at the path as written.
 		"""
-		items: set[str] = item_ids - {ICON_ID}
+		pictures: set[str] = {item_id for item_id in item_ids if item_id.endswith(IMAGE_SUFFIX)}
+		items: set[str] = item_ids - {ICON_ID} - pictures
 		sources: dict[str, str] = ensure_item_images(items, self.config.cache_assets) if items else {}
+
+		textures_folder: str = Mem.ctx.meta["stewbeet"]["textures_folder"]
+		for picture in pictures:
+			path: str = next((p for p in (f"{textures_folder}/{picture}", picture) if os.path.isfile(p)), "")
+			if path:
+				sources[picture] = path
+			else:
+				stp.warning(f"A render node asks for the picture '{picture}', found neither under '{textures_folder}' nor as a path")
 
 		if ICON_ID in item_ids:
 			pack_icon: str | None = find_pack_png()
@@ -174,46 +187,15 @@ class GlyphEmitter:
 	) -> str:
 		""" A grid of glyphs showing one image, with the spacing that puts it back together.
 
-		Each row is drawn left to right, a negative space brings the pen back to the left edge before the next one,
-		and the rows hang from decreasing ascents. Every tile is followed by the spacing correcting Minecraft's own advance,
-		so the tiles touch without overlapping.
-
 		Args:
 			item_id: Fully qualified item id, used to name the textures.
 			opened:  Source image, still at its original size.
 			frame:   First frame of an animation strip, or None.
 			layout:  Grid to cut, from :func:`~stewbeet.core.utils.fonts.plan_splice`.
-		Returns:
-			str: The glyph characters to write in the text component, in drawing order.
 		"""
-		namespace: str = self.config.project_id
-		assets = Mem.ctx.assets[namespace]
 		folder: str = f"{self.texture_name(item_id, layout.stored)}_h{layout.height}a{layout.ascent}"
-
-		# Rows always reach down to the baseline, so an image not touching it is padded with transparency
 		source: Image.Image = self.prepare(opened, frame, layout.content)
-		if layout.content != layout.stored:
-			padded: Image.Image = Image.new("RGBA", layout.stored, (0, 0, 0, 0))
-			padded.paste(source, (0, 0))
-			source = padded
-
-		parts: list[str] = []
-		row: int = 0
-		for tile in layout.tiles:
-			if tile.row != row:
-				parts.append(self.allocator.add_space(-layout.width))
-				row = tile.row
-
-			name: str = f"{folder}/r{tile.row}c{tile.column}"
-			image: Image.Image = source.crop(tile.box)
-			assets.textures.setdefault(name, Texture(image))
-			parts.append(self.provider_char(f"{namespace}:{name}.png", tile.ascent, tile.height))
-
-			# Minecraft advances by the visible width of the tile, not by the tile itself
-			padding: int = tile.width - glyph_advance(opaque_width(image), layout.scale)
-			if padding != 0:
-				parts.append(self.allocator.add_space(padding))
-		return "".join(parts)
+		return write_spliced_glyphs(self.allocator, self.config.project_id, folder, source, layout)
 
 	def emit(self, requests: list[RenderRequest]) -> dict[GlyphKey, str]:
 		""" Generate one glyph per distinct request, and write the font.
@@ -238,7 +220,8 @@ class GlyphEmitter:
 			if source is None:
 				continue
 			with Image.open(source) as opened:
-				self.glyphs[key] = self.render_glyph(key, opened)
+				glyph, advance_error = self.render_glyph(key, opened)
+			self.glyphs[key] = self.with_offsets(glyph, advance_error, offset=key[4], offset_after=key[5])
 			Mem.used_textures.add(stp.clean_path(source))
 
 		# Merge only what this call added, so a second emit() never duplicates providers
@@ -247,26 +230,46 @@ class GlyphEmitter:
 			self.written = len(self.allocator.providers)
 		return self.glyphs
 
-	def render_glyph(self, key: GlyphKey, opened: Image.Image) -> str:
-		""" The characters drawing one requested image: one glyph, or a grid of them when too big or floating over the baseline. """
-		item_id, height, ascent, resolution = key
+	def with_offsets(self, glyph: str, advance_error: int, offset: int, offset_after: int | None) -> str:
+		""" A glyph wrapped in the spaces moving the pen before it, and after it when ``offset_after`` is given.
+
+		``advance_error`` is how far Minecraft's own advance ends past the right edge of the picture,
+		so ``offset_after`` counts from that edge whatever the transparent columns of the image are.
+		"""
+		before: str = self.allocator.add_space(offset) if offset else ""
+		after: int = 0 if offset_after is None else offset_after - advance_error
+		return before + glyph + (self.allocator.add_space(after) if after else "")
+
+	def advance_error(self, opened: Image.Image, frame: tuple[int, int, int, int] | None, size: tuple[int, int], height: int) -> int:
+		""" Pixels Minecraft's advance ends past the displayed width of a picture drawn from a texture of ``size`` pixels. """
+		opaque: int = opaque_width(self.prepare(opened, frame, size))
+		return glyph_advance(opaque, size[1] / height) - round(size[0] * height / size[1])
+
+	def render_glyph(self, key: GlyphKey, opened: Image.Image) -> tuple[str, int]:
+		""" The characters drawing one requested image, and how far their advance ends past its right edge.
+
+		One glyph, or a grid of them when too big or floating over the baseline, which advances like the single glyph would.
+		"""
+		item_id, height, ascent, resolution = key[:4]
 		frame: tuple[int, int, int, int] | None = first_frame_box(opened.size)
 		native: tuple[int, int] = (frame[2], frame[3]) if frame else opened.size
 		layout, stored = self.fitted_layout(item_id, native, height, ascent, resolution)
 		if layout is None:
-			return self.single_glyph(item_id, opened, frame, stored, height, ascent)
+			glyph: str = self.single_glyph(item_id, opened, frame, stored, height, ascent)
+			return glyph, self.advance_error(opened, frame, stored, height)
 
 		self.warn_capped(item_id, layout, stored)
 		stored_size: str = f"{layout.stored[0]}x{layout.stored[1]}"
-		if len(layout.tiles) > 1 or layout.content != layout.stored:
-			glyph: str = self.spliced_glyph(item_id, opened, frame, layout)
-			if len(layout.tiles) > 1:
-				stp.debug(f"Cut '{item_id}' into a {layout.columns}x{layout.rows} grid of glyphs, stored at {stored_size}")
-			else:
-				stp.debug(f"Padded '{item_id}' down to the baseline, stored at {stored_size}")
-			return glyph
-		# One tile with nothing to pad is an ordinary glyph, sharing its texture like any other
-		return self.single_glyph(item_id, opened, frame, layout.stored, layout.height, layout.ascent)
+		if len(layout.tiles) > 1:
+			glyph = self.spliced_glyph(item_id, opened, frame, layout)
+			stp.debug(f"Cut '{item_id}' into a {layout.columns}x{layout.rows} grid of glyphs, stored at {stored_size}")
+		elif layout.content != layout.stored:
+			glyph = self.spliced_glyph(item_id, opened, frame, layout)
+			stp.debug(f"Padded '{item_id}' down to the baseline, stored at {stored_size}")
+		else:
+			# One tile with nothing to pad is an ordinary glyph, sharing its texture like any other
+			glyph = self.single_glyph(item_id, opened, frame, layout.stored, layout.height, layout.ascent)
+		return glyph, self.advance_error(opened, frame, layout.content, layout.height)
 
 	def fitted_layout(
 		self, item_id: str, native: tuple[int, int], height: int, ascent: int, resolution: int

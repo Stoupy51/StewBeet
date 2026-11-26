@@ -23,6 +23,24 @@ from typing import Any
 # list[WikiButtonRender] at class-definition time. recipes does not import button_layout, so this does not create an import cycle.
 from .recipes import WikiButtonRender
 
+
+@dataclass(frozen=True, slots=True)
+class SideGrid:
+	""" A second grid drawn left of the main one, on the same lines, holding the first buttons of the page.
+
+	>>> SideGrid(count=6, columns=2, gap=10, lines=4).count
+	6
+	"""
+	count: int
+	""" How many buttons it takes, from the start of the list. """
+	columns: int
+	""" Buttons per row. """
+	gap: int
+	""" Pixels between its right edge and the left edge of the main grid. """
+	lines: int = 0
+	""" Lines of text it starts below the main grid, negative to start above it. """
+
+
 # Where the button grid is placed inside a page's content: a known keyword or a callable
 # ``(content, buttons, manual) -> content``.
 Position = str  # "after_recipe" | "bottom" | "top" | callable
@@ -52,6 +70,11 @@ class ButtonLayout:
 	""" Predicate ``(button) -> bool`` filtering which buttons to keep. """
 	extra_buttons: list[WikiButtonRender] = field(default_factory=list[WikiButtonRender])
 	""" Additional developer-supplied buttons appended before layout. """
+	side_grid: SideGrid | None = None
+	""" A second grid on the left taking the first buttons, the two of them centered together on the page. """
+	offset: tuple[int, int] = (0, 0)
+	""" Pixels moving the grid right and down: x exactly, y in whole lines of text (9 pixels), rounded.
+	A callable ``position`` ignores it. """
 
 	def clone(self) -> ButtonLayout:
 		""" Return a shallow copy (so per-page overrides don't mutate the shared default).
@@ -68,5 +91,7 @@ class ButtonLayout:
 			order=self.order,
 			include=self.include,
 			extra_buttons=list(self.extra_buttons),
+			side_grid=self.side_grid,
+			offset=self.offset,
 		)
 

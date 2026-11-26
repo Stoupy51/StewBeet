@@ -241,6 +241,7 @@ from .utils.fonts import (
 	uses_font as uses_font,
 	validate_font_providers as validate_font_providers,
 	write_font_from_allocator as write_font_from_allocator,
+	write_spliced_glyphs as write_spliced_glyphs,
 )
 from .utils.io import (
 	EXACT_JSON_TYPES as EXACT_JSON_TYPES,

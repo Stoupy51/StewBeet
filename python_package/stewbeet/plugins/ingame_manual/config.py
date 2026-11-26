@@ -12,6 +12,7 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 from dataclasses import dataclass, field
+from typing import Literal
 
 import stouputils as stp
 from beet import Context
@@ -31,6 +32,9 @@ DEFAULT_COMPONENTS_TO_INCLUDE: list[str] = ["item_name", "lore", "custom_name", 
 # Backward-compat hook: set_manual_components() writes here so a later from_meta() picks it up,
 # even when called before the Manual exists.
 COMPONENTS_OVERRIDE: list[str] | None = None
+
+type ItemLayout = Literal["craft", "item", "item+craft"]
+""" What an item page shows: its main recipe (the item in its box when it has none), the box only, or the box left of the recipe. """
 
 
 @dataclass(kw_only=True, slots=True)
@@ -68,6 +72,10 @@ class ManualConfig:
 	max_items_per_row: int = 5
 	max_rows_per_page: int = 5
 	showcase_image: int = 3
+	item_layout: ItemLayout = "craft"
+	""" What every item page shows, unless ``ItemPage.layout`` says otherwise. """
+	item_box_gap: int = 4
+	""" Pixels between the item's box and the recipe in the ``"item+craft"`` layout, negative to draw the recipe over the box. """
 
 	# Content
 	name: str = ""
@@ -142,6 +150,8 @@ class ManualConfig:
 			max_items_per_row=raw.get("max_items_per_row", 5),
 			max_rows_per_page=raw.get("max_rows_per_page", 5),
 			showcase_image=raw.get("showcase_image", 3),
+			item_layout=raw.get("item_layout", "craft"),
+			item_box_gap=raw.get("item_box_gap", 4),
 			name=raw.get("name", ""),
 			first_page_text=raw.get("first_page_text", ""),
 		)

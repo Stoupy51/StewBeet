@@ -19,13 +19,34 @@ Mettez une clé `render` là où irait un `text` :
 
 - `steel_ingot` est un item de votre projet, `minecraft:stone` un item vanilla, `mechanization:tin_ore` un item d'un autre pack.
 - `ICON` est votre `pack.png`.
+- Une valeur finissant par `.png` est une image de votre projet : `beer.png` est lue dans `textures_folder`, et un chemin qui existe tel quel marche aussi.
 - `height` est la hauteur affichée en pixels (`default_height` si omise).
 - `resolution` réduit la texture stockée à cette hauteur sans changer l'affichage. Par défaut, l'image est stockée telle quelle.
 - `ascent` déplace la ligne de base. Par défaut, l'image est centrée sur la ligne de texte.
+- `offset` déplace le stylo de ce nombre de pixels avant l'image. Il peut être négatif.
+- `offset_after` est le nombre de pixels entre le bord droit de l'image et le stylo une fois l'image dessinée. Il peut être négatif. Sans lui, l'avance de Minecraft s'applique.
 
 Toutes les autres clés du node (`color`, `hover_event`, `click_event`) restent sur le glyphe.
 
 <img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.text_renders.example_ingame.jpg" alt="Item pictures drawn inside a tooltip and in chat" width="680" height="363">
+
+## Espace négatif : des images côte à côte
+
+Le texte est dessiné par un stylo qui avance vers la droite. Un glyphe le déplace de la largeur visible de l'image plus un pixel, et un `offset` ou un `offset_after` négatif le fait reculer. C'est ainsi que des images se superposent, se placent à côté du texte sans le pousser, ou composent une mise en page dans une seule ligne.
+
+```json
+[
+  {"render": "steel_ingot", "height": 16},
+  {"render": "raw_steel", "height": 16, "offset": -12, "offset_after": 4},
+  "end"
+]
+```
+
+La seconde image commence 12 pixels en arrière, sur la première, et `end` la suit 4 pixels après son bord droit. `offset_after` compte depuis le bord de l'image, donc les colonnes transparentes d'une image ne le changent pas.
+
+Pour dessiner une image sans déplacer la ligne, renvoyez le stylo en arrière de la largeur de l'image plus un écart, puis en avant de cet écart : `offset` vaut `-(largeur + écart)` et `offset_after` vaut `écart`. La ligne garde sa longueur, donc un dialog qui la centre la laisse où elle était. `ascent` règle alors la hauteur de l'image par rapport à la ligne.
+
+[DynamicBookBreakdown](https://github.com/Stoupy51/DynamicBookBreakdown) montre la même technique avec des espaces de font bruts, sur un livre entier.
 
 ## D'où viennent les images
 
@@ -68,4 +89,5 @@ Dans `meta.stewbeet` :
 ## Pour continuer
 
 - [Manuel en jeu](../7_ingame_manual/fr.md) : partage les PNG d'items et utilise ces glyphes dans les titres de ses dialogs.
+- [DynamicBookBreakdown](https://github.com/Stoupy51/DynamicBookBreakdown) : un cours sur les fonts, l'`ascent`, la `height` et l'avance d'un glyphe, qui explique le découpage et l'espacement utilisés ici.
 

@@ -161,13 +161,15 @@ def register_nav_overrides(manual: Manual) -> None:
 	Each glyph replaces ``BOOK_FONT`` / ``HOME_FONT`` in that page's dialog navigation row,
 	with the same ascent/height as the shared provider so the layout stays put (a home texture should keep
 	the default's 16x16 proportions, since the glyph advance follows the image content).
+	A book texture keeps the width of ``book.png``, so an image taller than wide draws a taller book.
 	"""
 	for page in manual.pages:
 		glyph_suffix: str = page.anchor.replace(":", "_").replace(" ", "_").lower()
 		if page.book_texture is not None:
 			image = load_page_texture(page.book_texture)
+			height: int = round(BOOK_HEIGHT * image.height / image.width)
 			page.book_font = manual.images.register_full_page_glyph(
-				image.convert("RGBA"), f"book_{glyph_suffix}", ascent=BOOK_ASCENT, height=BOOK_HEIGHT
+				image.convert("RGBA"), f"book_{glyph_suffix}", ascent=BOOK_ASCENT, height=height
 			)
 		if page.home_texture is not None:
 			image = load_page_texture(page.home_texture)

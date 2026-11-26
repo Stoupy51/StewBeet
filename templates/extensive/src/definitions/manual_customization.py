@@ -9,6 +9,7 @@ from stewbeet import (
 	Manual,
 	Mem,
 	Phase,
+	SideGrid,
 	TexturePage,
 	get_manual,
 )
@@ -53,6 +54,9 @@ def main() -> None:
 			baked_texts=[
 				BakedText(text="Made with StewBeet", xy=(128, 38), font_size=20, color=(255, 255, 255, 255), align="center"),
 				BakedText(text="ingame_manual v2", xy=(128, 70), font_size=14, color=(180, 180, 210, 255), align="center"),
+				BakedText(
+					text="Steel Ingot book art by yunaorin", xy=(128, 100), font_size=12, color=(180, 180, 210, 255), align="center",
+				),
 			],
 			body=[{"text": "\n\n\n\n\n\n\nThe text above is baked into the page texture.", "color": "black"}],
 			glyph_height=64,
@@ -65,17 +69,69 @@ def main() -> None:
 		after="welcome",
 	)
 
+	# 2b) A texture past 256 pixels, too big for one glyph, is cut into tiles by itself, like book_texture in 3b.
+	#     The displayed width follows the image ratio, here 1024x256 at glyph_height=32 gives 128 pixels.
+	manual.insert_page(
+		TexturePage(
+			anchor="banner",
+			title="Banner",
+			background=Image.new("RGBA", (1024, 256), (30, 30, 46, 255)),
+			baked_texts=[
+				BakedText(text="Wider than 256 pixels", xy=(512, 90), font_size=80, color=(255, 255, 255, 255), align="center"),
+			],
+			body=[{"text": "\n\n\n\n\nThis 1024x256 texture is cut into glyph tiles.", "color": "black"}],
+			glyph_height=32,
+		),
+		after="credits",
+	)
+
 	# 3) Per-item hook: control where wiki buttons appear on every item page.
 	def change_button_layout_for_steel_ingot(page: ItemPage, manual: Manual) -> None:
 		if page.anchor == "item:steel_ingot":
-			page.button_layout = ButtonLayout(columns=4, max_buttons=42, position="after_recipe")
+			# The first 6 buttons go to a 2 column grid on the pink sticky note of the book art (see 3b), the others on the yellow one.
+			# The side grid starts 4 lines lower and 10 pixels left of the main grid, then offset moves both right and down.
+			page.button_layout = ButtonLayout(
+				columns=4, max_buttons=42, position="after_recipe",
+				side_grid=SideGrid(count=6, columns=2, gap=10, lines=4), offset=(7, 36),
+			)
 	manual.on_item_page(change_button_layout_for_steel_ingot)
+
+	# 3b) Per-page layout, overriding item_layout and item_box_gap of beet.yml on a few pages.
+	def change_item_layouts(page: ItemPage, manual: Manual) -> None:
+		if page.anchor == "item:steel_nugget":
+			# Only the box, although the nugget has a craft (still listed in the buttons below)
+			page.layout = "item"
+		elif page.anchor == "item:steel_block":
+			# A negative gap pulls the craft 8 pixels back, over the blank left margin of its grid
+			page.layout = "item+craft"
+			page.box_gap = -8
+		elif page.anchor == "item:steel_ingot":
+			# The box centered on the photo and the craft on the CRAFTING frame of the book below:
+			# both 8 pixels right and 4 lines down, the box 19 pixels left of the craft and 9 pixels higher than it
+			page.layout = "item+craft"
+			page.box_gap = 19
+			page.content_offset = (8, 36)
+			page.box_offset = -9
+
+			# Book art by yunaorin, 5 texture pixels per art pixel, shown at 6 so its CRAFTING frame holds the craft.
+			# The book keeps book.png's 300 pixel width, so this 1200x1320 canvas, cut into tiles, draws it 330 pixels tall.
+			art = Image.open(f"{textures_folder}/manual/book_item.png")
+			book = Image.new("RGBA", (1200, 1320))
+			book.paste(art.resize((art.width * 6 // 5, art.height * 6 // 5), Image.Resampling.NEAREST), (200, 36))
+			page.book_texture = book
+
+			# The art draws its own home tab, so the home button gets an invisible 16x16 texture.
+			# Its one pixel, in the last column with an alpha of 1, keeps the button's width and click.
+			home = Image.new("RGBA", (16, 16))
+			home.putpixel((15, 15), (0, 0, 0, 1))
+			page.home_texture = home
+	manual.on_item_page(change_item_layouts)
 
 	# 4) Phase hook: edit one specific item's page once the default pages exist.
 	#    Hooks run during manual creation, so get_page_for_item() returns a real page here.
 	@manual.on(Phase.PREPARED)
-	def tweak_steel_ingot(m: Manual) -> None: # pyright: ignore[reportUnusedFunction]
-		page = m.get_page_for_item("steel_ingot")
+	def tweak_steel_block(m: Manual) -> None: # pyright: ignore[reportUnusedFunction]
+		page = m.get_page_for_item("steel_block")
 		if page is not None:
 			page.transformers.append(
 				lambda content, _m: [

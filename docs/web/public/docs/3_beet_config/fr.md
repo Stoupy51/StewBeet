@@ -315,6 +315,8 @@ manual:
     max_rows_per_page: 5
     first_page_text: [{"text":"...", "color":"#505050"}]
     showcase_image: 3
+    item_layout: "craft"
+    item_box_gap: 4
     use_dialog: 1
 ```
 
@@ -330,6 +332,8 @@ manual:
 | `max_rows_per_page` | Lignes par page, jusqu'à 7. La grille par défaut est 5x5, donc 25 items par page |
 | `first_page_text` | Texte d'accueil, sous forme de text components |
 | `showcase_image` | `0` désactivé, `1` items du manual seulement, `2` tous les items custom, `3` les deux (recommandé) |
+| `item_layout` | Ce que montre une page d'item : `"craft"`, `"item"` (l'item dans sa boîte) ou `"item+craft"` (la boîte à gauche de la recipe) |
+| `item_box_gap` | Pixels entre la boîte et la recipe de `"item+craft"`, négatif pour dessiner la recipe sur la boîte |
 | `use_dialog` | `1` dialog plus un item `manual` qui l'ouvre (recommandé), `2` dialog seul |
 
 Les images de glyphes générées sont mises en cache dans le dossier `.beet_cache` de beet. Les rendus d'items vivent dans `iso_renders_path`, plus haut.

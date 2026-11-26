@@ -31,14 +31,14 @@ RENDER_RE: re.Pattern[str] = re.compile(
 )
 """ Matches the ``"render": "<item id>"`` fragment of a text component. """
 
-HEIGHT_RE: re.Pattern[str] = re.compile(r'''(?:["']?height["']?)\s*:\s*(\d+)''')
-""" Matches a sibling ``"height": <int>`` fragment. """
+SIBLING_RES: dict[str, re.Pattern[str]] = {
+	key: re.compile(rf'''(?<!\w)["']?{key}["']?\s*:\s*(-?\d+)''')
+	for key in ("height", "ascent", "resolution", "offset", "offset_after")
+}
+""" Matches each integer sibling a render node owns, such as ``"height": <int>``. """
 
-ASCENT_RE: re.Pattern[str] = re.compile(r'''(?:["']?ascent["']?)\s*:\s*(-?\d+)''')
-""" Matches a sibling ``"ascent": <int>`` fragment. """
-
-RESOLUTION_RE: re.Pattern[str] = re.compile(r'''(?:["']?resolution["']?)\s*:\s*(\d+)''')
-""" Matches a sibling ``"resolution": <int>`` fragment. """
+IMAGE_SUFFIX: str = ".png"
+""" A render value ending with it is a picture of the project instead of an item id. """
 
 TEXT_KEY_RE: re.Pattern[str] = re.compile(r'''(?:["']?text["']?)\s*:''')
 """ Matches a sibling ``"text":`` key, which a render node must not carry. """
@@ -51,7 +51,7 @@ class RenderRequest:
 
 	>>> request = RenderRequest(item_id="mypack:steel_ingot", height=16, ascent=7, resolution=64, start=0, end=10, drops=())
 	>>> request.glyph_key
-	('mypack:steel_ingot', 16, 7, 64)
+	('mypack:steel_ingot', 16, 7, 64, 0, None)
 	"""
 	item_id: str
 	""" Fully qualified item id, or the reserved ``ICON``. """
@@ -67,11 +67,15 @@ class RenderRequest:
 	""" Index just past the ``render`` fragment. """
 	drops: tuple[tuple[int, int], ...]
 	""" Spans of the consumed sibling keys, each including one separating comma. """
+	offset: int = 0
+	""" Pixels the pen moves before the glyph, negative to draw over what precedes. """
+	offset_after: int | None = None
+	""" Pixels between the right edge of the picture and the pen once drawn, None to leave Minecraft's own advance. """
 
 	@property
-	def glyph_key(self) -> tuple[str, int, int, int]:
+	def glyph_key(self) -> tuple[str, int, int, int, int, int | None]:
 		""" Identity of the glyph this request needs; equal keys share one provider. """
-		return (self.item_id, self.height, self.ascent, self.resolution)
+		return (self.item_id, self.height, self.ascent, self.resolution, self.offset, self.offset_after)
 
 
 # Functions
@@ -165,7 +169,7 @@ def merge_spans(string: str, spans: list[tuple[int, int]]) -> tuple[tuple[int, i
 
 
 def qualify(item_id: str, project_id: str, icon_id: str) -> str:
-	""" Namespace a bare render id with the project namespace, leaving the reserved icon alone.
+	""" Namespace a bare render id with the project namespace, leaving the reserved icon and an image path alone.
 
 	>>> qualify("steel_ingot", "mypack", "ICON")
 	'mypack:steel_ingot'
@@ -175,8 +179,10 @@ def qualify(item_id: str, project_id: str, icon_id: str) -> str:
 	'mechanization:tin_ore'
 	>>> qualify("ICON", "mypack", "ICON")
 	'ICON'
+	>>> qualify("manual/background.png", "mypack", "ICON")
+	'manual/background.png'
 	"""
-	if item_id == icon_id or ":" in item_id:
+	if item_id == icon_id or ":" in item_id or item_id.endswith(IMAGE_SUFFIX):
 		return item_id
 	return f"{project_id}:{item_id}"
 
@@ -193,41 +199,37 @@ def find_requests(string: str, project_id: str, default_height: int, icon_id: st
 	>>> requests[0].item_id, requests[0].height, requests[0].ascent
 	('mypack:steel_ingot', 8, 7)
 	>>> find_requests('tellraw @a {"render":"minecraft:stone"}', "mypack", 16, "ICON")[0].glyph_key
-	('minecraft:stone', 16, 11, 0)
+	('minecraft:stone', 16, 11, 0, 0, None)
 	"""
 	requests: list[RenderRequest] = []
 	for match in RENDER_RE.finditer(string):
 		start, end = match.span()
 		item_id: str = qualify(match.group("value"), project_id, icon_id)
 
-		# The node's own braces bound the search for the height/ascent/resolution siblings
+		# The node's own braces bound the search for its siblings
 		bounds: tuple[int, int] | None = find_enclosing_object(string, start, end)
-		height: int = default_height
-		ascent: int | None = None
-		resolution: int = default_resolution
+		values: dict[str, int] = {}
 		spans: list[tuple[int, int]] = []
 		if bounds is not None:
 			node: str = string[bounds[0]:bounds[1]]
 			if top_level_search(node, TEXT_KEY_RE) is not None:
 				stp.warning(f"A render node also carries a 'text' key, which the glyph replaces: {node}")
-			if (height_match := top_level_search(node, HEIGHT_RE)) is not None:
-				height = int(height_match.group(1))
-				spans.append((bounds[0] + height_match.start(), bounds[0] + height_match.end()))
-			if (ascent_match := top_level_search(node, ASCENT_RE)) is not None:
-				ascent = int(ascent_match.group(1))
-				spans.append((bounds[0] + ascent_match.start(), bounds[0] + ascent_match.end()))
-			if (resolution_match := top_level_search(node, RESOLUTION_RE)) is not None:
-				resolution = int(resolution_match.group(1))
-				spans.append((bounds[0] + resolution_match.start(), bounds[0] + resolution_match.end()))
+			for key, pattern in SIBLING_RES.items():
+				if (found := top_level_search(node, pattern)) is not None:
+					values[key] = int(found.group(1))
+					spans.append((bounds[0] + found.start(), bounds[0] + found.end()))
 
+		height: int = values.get("height", default_height)
 		requests.append(RenderRequest(
 			item_id=item_id,
 			height=height,
-			ascent=ascent if ascent is not None else default_ascent(height),
-			resolution=resolution,
+			ascent=values.get("ascent", default_ascent(height)),
+			resolution=values.get("resolution", default_resolution),
 			start=start,
 			end=end,
 			drops=merge_spans(string, spans),
+			offset=values.get("offset", 0),
+			offset_after=values.get("offset_after"),
 		))
 	return requests
 
@@ -235,7 +237,9 @@ def find_requests(string: str, project_id: str, default_height: int, icon_id: st
 __test__: dict[str, str] = {
 	"find_requests": """
 	>>> find_requests('tellraw @a {"render":"a","height":10,"resolution":64}', "mypack", 16, "ICON")[0].glyph_key
-	('mypack:a', 10, 8, 64)
+	('mypack:a', 10, 8, 64, 0, None)
+	>>> find_requests('tellraw @a {"render":"a","offset":-4,"offset_after":2}', "mypack", 16, "ICON")[0].glyph_key
+	('mypack:a', 16, 11, 0, -4, 2)
 	""",
 }
 

@@ -56,7 +56,7 @@ from .providers import (
 	validate_font_providers,
 	write_font_from_allocator,
 )
-from .splicing import MAX_GLYPH_SIZE, SpliceLayout, SpliceTile, glyph_advance, opaque_width, plan_splice
+from .splicing import MAX_GLYPH_SIZE, SpliceLayout, SpliceTile, glyph_advance, opaque_width, plan_splice, write_spliced_glyphs
 
 __all__ = [
 	"DEFAULT_ISO_RENDERS_PATH",
@@ -105,5 +105,6 @@ __all__ = [
 	"uses_font",
 	"validate_font_providers",
 	"write_font_from_allocator",
+	"write_spliced_glyphs",
 ]
 

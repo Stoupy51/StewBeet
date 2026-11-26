@@ -299,6 +299,7 @@ from .plugins.ingame_manual.api import (
 	PageRef as PageRef,
 	Phase as Phase,
 	RawPage as RawPage,
+	SideGrid as SideGrid,
 	TexturePage as TexturePage,
 	WikiButtonRender as WikiButtonRender,
 	get_manual as get_manual,

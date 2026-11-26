@@ -20,7 +20,18 @@ from PIL import Image, ImageDraw, ImageFont
 from stouputils.typing import JsonDict
 
 from ...core.cls.recipes.ingredients import Ingr
-from ...core.utils.fonts import add_border, careful_resize, is_png_recorded, lighten_color, record_png, save_png, source_key
+from ...core.utils.fonts import (
+	MAX_GLYPH_SIZE,
+	add_border,
+	careful_resize,
+	is_png_recorded,
+	lighten_color,
+	plan_splice,
+	record_png,
+	save_png,
+	source_key,
+	write_spliced_glyphs,
+)
 from .config import ManualConfig
 from .glyphs import (
 	BORDER_SIZE,
@@ -178,10 +189,9 @@ class GlyphImageBuilder:
 		result_texture = self.load_square_texture(path_id)
 		return result_texture, result_texture.convert("RGBA").split()[3]
 
-	def recipe_image(self, name: str, page_font: str, output_name: str = "") -> None:
+	def recipe_image(self, name: str, page_font: str, ascent: int = 0) -> None:
 		""" Generate the single-item box image (item with no recipe). Per-recipe-type images are
 		produced by each renderer's ``build_image`` under :mod:`..recipes.types`. """
-		output_filename = output_name or name
 		project_id = self.config.project_id
 
 		image_path = f"{self.config.iso_renders_path}/{project_id}/{name}.png"
@@ -202,12 +212,10 @@ class GlyphImageBuilder:
 		else:
 			result_texture = careful_resize(result_texture, SQUARE_SIZE)
 			result_mask = result_texture.convert("RGBA").split()[3]
-		self.glyphs.add_provider(
-			page_font, f"{project_id}:font/page/{output_filename}.png", ascent=0 if not output_name else 6, height=40
-		)
+		self.glyphs.add_provider(page_font, f"{project_id}:font/page/{name}.png", ascent=ascent, height=40)
 		template.paste(result_texture, (2 * factor, 2 * factor), result_mask)
 		template = add_border(template, self.get_border_color(), BORDER_SIZE)
-		save_png(template, f"{self.config.font_cache_path}/page/{output_filename}.png")
+		save_png(template, f"{self.config.font_cache_path}/page/{name}.png")
 
 	def wiki_result_icon(self, name: str, craft: JsonDict) -> str:
 		""" Generate a small recipe-result wiki icon and return its font (or default font). """
@@ -280,10 +288,13 @@ class GlyphImageBuilder:
 		return out
 
 	def register_full_page_glyph(self, image: Image.Image, name: str, ascent: int = 1, height: int = 131) -> str:
-		""" Save a full-page image under font/page/ and register it as a single glyph.
+		""" Save a full-page image under font/page/ and register it as a glyph, or as a grid of glyphs past 256 pixels.
 
-		Returns the glyph character. Used by :class:`~.pages.texture_page.TexturePage`.
+		Returns the characters drawing it. Used by :class:`~.pages.texture_page.TexturePage` and the per-page book and home textures.
 		"""
+		if max(image.size) > MAX_GLYPH_SIZE:
+			layout = plan_splice(image.size, height, ascent)
+			return write_spliced_glyphs(self.glyphs, self.config.project_id, f"font/page/{name}", image.convert("RGBA"), layout)
 		os.makedirs(f"{self.config.font_cache_path}/page", exist_ok=True)
 		dest = f"{self.config.font_cache_path}/page/{name}.png"
 		save_png(image, dest)

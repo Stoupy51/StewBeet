@@ -315,6 +315,8 @@ manual:
     max_rows_per_page: 5
     first_page_text: [{"text":"...", "color":"#505050"}]
     showcase_image: 3
+    item_layout: "craft"
+    item_box_gap: 4
     use_dialog: 1
 ```
 
@@ -330,6 +332,8 @@ manual:
 | `max_rows_per_page` | Rows per page, up to 7. The default grid is 5x5, so 25 items a page |
 | `first_page_text` | Welcome text, as text components |
 | `showcase_image` | `0` off, `1` manual items only, `2` all custom items, `3` both (recommended) |
+| `item_layout` | What an item page shows: `"craft"`, `"item"` (the item in its box) or `"item+craft"` (the box left of the recipe) |
+| `item_box_gap` | Pixels between the box and the recipe of `"item+craft"`, negative to draw the recipe over the box |
 | `use_dialog` | `1` dialog plus a `manual` item that opens it (recommended), `2` dialog only |
 
 Generated glyph images are cached in beet's `.beet_cache` folder. Item renders live in `iso_renders_path`, above.

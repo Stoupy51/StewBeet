@@ -23,7 +23,11 @@ __lazy_modules__ = ALWAYS_LAZY
 import math
 from dataclasses import dataclass
 
+from beet import Texture
 from PIL import Image
+
+from ...__memory__ import Mem
+from .allocator import GlyphAllocator
 
 # Constants
 MAX_GLYPH_SIZE: int = 256
@@ -102,7 +106,7 @@ def split_evenly(total: int, parts: int) -> tuple[int, ...]:
 	return tuple(cuts[index + 1] - cuts[index] for index in range(parts))
 
 
-def glyph_advance(opaque: int, scale: int) -> int:
+def glyph_advance(opaque: int, scale: float) -> int:
 	""" On-screen pixels Minecraft moves the pen by after drawing a bitmap glyph.
 
 	It measures the glyph up to its last non-transparent column, scales that down rounding halves up, then adds one pixel of spacing.
@@ -204,6 +208,45 @@ def plan_splice(native: tuple[int, int], height: int, ascent: int, resolution: i
 		columns=columns,
 		rows=len(cuts) - 1,
 	)
+
+
+def write_spliced_glyphs(allocator: GlyphAllocator, namespace: str, folder: str, image: Image.Image, layout: SpliceLayout) -> str:
+	""" Store the tiles of an image as textures, and return the characters drawing them back together.
+
+	Each row is drawn left to right, a negative space brings the pen back to the left edge before the next one,
+	and the rows hang from decreasing ascents. Every tile is followed by the spacing correcting Minecraft's own advance,
+	so the tiles touch without overlapping. The pen ends where one glyph of the whole image would leave it,
+	after its last opaque column, so a grid lines up like the glyph it replaces.
+
+	Args:
+		folder: Texture folder of the tiles, relative to ``textures/``.
+		image:  The picture in RGBA, resized to ``layout.content`` here when it is not already.
+		layout: Grid to cut, from :func:`plan_splice`.
+	"""
+	resized: Image.Image = image if image.size == layout.content else image.resize(layout.content, Image.Resampling.NEAREST)
+	source: Image.Image = Image.new("RGBA", layout.stored, (0, 0, 0, 0))
+	source.paste(resized, (0, 0))
+	assets = Mem.ctx.assets[namespace]
+	single_glyph_end: int = glyph_advance(opaque_width(source), layout.scale) - layout.width
+
+	parts: list[str] = []
+	row: int = 0
+	for tile in layout.tiles:
+		if tile.row != row:
+			parts.append(allocator.add_space(-layout.width))
+			row = tile.row
+
+		name: str = f"{folder}/r{tile.row}c{tile.column}"
+		crop: Image.Image = source.crop(tile.box)
+		assets.textures.setdefault(name, Texture(crop))
+		parts.append(allocator.register_image(f"{namespace}:{name}.png", tile.ascent, tile.height))
+
+		padding: int = tile.width - glyph_advance(opaque_width(crop), layout.scale)
+		if tile is layout.tiles[-1]:
+			padding += single_glyph_end
+		if padding != 0:
+			parts.append(allocator.add_space(padding))
+	return "".join(parts)
 
 
 __test__: dict[str, str] = {

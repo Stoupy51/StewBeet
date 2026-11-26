@@ -197,28 +197,27 @@ def beet_default(ctx: Context):
 	for index, color in enumerate(quadrants):
 		assert color_of(tile(index // 2, index % 2)) == color, (index, color)
 
-	# Each tile is followed by the spacing correcting Minecraft's own advance, and every row but the
+	# Each tile but the last is followed by the spacing correcting Minecraft's own advance, and every row but the
 	# last by a negative space bringing the pen back to the left edge of the image.
 	def glyph(row: int, column: int) -> str:
 		return by_glyph[(tile(row, column), 16 if row == 0 else 0, 16)]
 
 	expected_string: str = "".join([
 		glyph(0, 0), space_char[-1], glyph(0, 1), space_char[-1], space_char[-32],
-		glyph(1, 0), space_char[-1], glyph(1, 1), space_char[-1],
+		glyph(1, 0), space_char[-1], glyph(1, 1),
 	])
 	big: str = tight(ctx.data[ns].functions["big"].text)
 	assert f'"text":"{expected_string}"' in big, big
 	assert f'"font":"{font}"' in big, big
 
 	# A fully opaque 256px tile displayed 16px wide advances 256/16 + 1 = 17 pixels, so the four
-	# tiles and their corrections add up to exactly the width of the image
-	assert 4 * 17 + 4 * (-1) + (-32) == 32, "the spliced glyphs must advance the width of the image, no more"
+	# tiles and their corrections advance the width of the image plus one, as a single glyph of it would
+	assert 4 * 17 + 3 * (-1) + (-32) == 32 + 1, "the spliced glyphs must advance like one glyph of the image"
 
-	# The floating render is one padded glyph, whose 64px of image advances 64/8 + 1 = 9 pixels
+	# The floating render is one padded glyph, advancing 64/8 + 1 = 9 pixels like the unpadded one: no space follows it
 	floating_glyph: str = by_glyph[(f"{ns}:{TEXTURE_FOLDER}/{ns}_steel_ingot_64x160_h8a20/r0c0.png", 20, 20)]
 	floating: str = tight(ctx.data[ns].functions["floating"].text)
-	assert f'"text":"{floating_glyph}{space_char[-1]}"' in floating, floating
-	assert 9 + (-1) == 8, "the padded glyph must advance the width of the image, no more"
+	assert f'"text":"{floating_glyph}"' in floating, floating
 
 	# The definitions themselves are untouched: the pass only rewrites output
 	assert Item.from_id("ghost_ingot").components["lore"][0][0] == {"render": "does_not_exist"}

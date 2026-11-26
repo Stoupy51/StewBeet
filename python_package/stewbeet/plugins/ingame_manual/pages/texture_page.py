@@ -47,7 +47,7 @@ class TexturePage(Page):
 	""" Invisible pixels emitted after the texture glyph, shifting it left by half the padding since the dialog centers the line. """
 
 	def build(self, manual: Manual) -> list[TextComponent]:
-		""" Composite the background + baked texts, register it as one glyph, append the body. """
+		""" Composite the background + baked texts, register it as a glyph (a grid of them past 256 pixels), append the body. """
 		config = manual.config
 		if isinstance(self.background, str):
 			Mem.used_textures.add(self.background)  # the file is re-encoded under a new name, mark the source as used

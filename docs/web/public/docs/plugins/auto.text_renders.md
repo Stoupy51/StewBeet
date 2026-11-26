@@ -19,13 +19,34 @@ Put a `render` key where a `text` would go:
 
 - `steel_ingot` is an item of your project, `minecraft:stone` a vanilla item, `mechanization:tin_ore` an item of another pack.
 - `ICON` is your `pack.png`.
+- A value ending with `.png` is a picture of your project: `beer.png` is read from `textures_folder`, and a path that exists as written works too.
 - `height` is the displayed height in pixels (`default_height` when omitted).
 - `resolution` shrinks the stored texture to that height without changing the display. By default the image is stored untouched.
 - `ascent` moves the baseline. By default the picture is centred on the line of text.
+- `offset` moves the pen by that many pixels before the picture. It can be negative.
+- `offset_after` is the number of pixels between the right edge of the picture and the pen once it is drawn. It can be negative. When omitted, Minecraft's own advance applies.
 
 Every other key of the node (`color`, `hover_event`, `click_event`) is kept on the glyph.
 
 <img src="https://raw.githubusercontent.com/Stoupy51/StewBeet/main/docs/plugins/img/auto.text_renders.example_ingame.jpg" alt="Item pictures drawn inside a tooltip and in chat" width="680" height="363">
+
+## Negative space: pictures side by side
+
+Text is drawn by a pen that moves right. A glyph moves it by the visible width of the picture plus one pixel, and a negative `offset` or `offset_after` moves it back. That is how pictures overlap, sit beside text without pushing it, or build a layout out of one line.
+
+```json
+[
+  {"render": "steel_ingot", "height": 16},
+  {"render": "raw_steel", "height": 16, "offset": -12, "offset_after": 4},
+  "end"
+]
+```
+
+The second picture starts 12 pixels back, over the first one, and `end` follows it 4 pixels after its right edge. `offset_after` counts from the edge of the picture, so the transparent columns of an image do not change it.
+
+To draw a picture without moving the line, send the pen back by the picture's width plus a gap, then forward by the gap: `offset` is `-(width + gap)` and `offset_after` is `gap`. The line keeps its length, so a dialog that centres it keeps it where it was. `ascent` then sets how high the picture sits against the line.
+
+[DynamicBookBreakdown](https://github.com/Stoupy51/DynamicBookBreakdown) shows the same technique with raw font spaces, over a whole book.
 
 ## Where the pictures come from
 
@@ -68,4 +89,5 @@ In `meta.stewbeet`:
 ## Next steps
 
 - [In-game manual](../7_ingame_manual/en.md): shares the item PNGs and uses these glyphs in its dialog titles.
+- [DynamicBookBreakdown](https://github.com/Stoupy51/DynamicBookBreakdown): a course on fonts, `ascent`, `height` and the glyph advance, which explains the cutting and spacing used here.
 

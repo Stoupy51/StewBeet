@@ -39,10 +39,28 @@ Personnalisez-le en appelant `get_manual()` dans votre `setup_definitions`, apr�
 | `first_page_text`   | `TextComponent` | `""`                 | Texte de la page d'intro                                                 |
 | `manual_overrides`  | `str`           | `""`                 | Dossier de textures qui remplacent les défauts fournis                   |
 | `showcase_image`    | `int`           | `3`                  | `0` désactivé, `1` items du manual, `2` tous les items, `3` les deux     |
+| `item_layout`       | `str`           | `"craft"`            | Ce que montre une page d'item : `"craft"`, `"item"` ou `"item+craft"`, voir plus bas |
+| `item_box_gap`      | `int`           | `4`                  | Pixels entre la boîte de l'item et la recipe de `"item+craft"`            |
 | `debug_mode`        | `bool`          | `false`              | Dessine une grille en surimpression pour déboguer la mise en page        |
 | `json_dump_path`    | `str`           | `""`                 | Dump de débogage optionnel des pages rendues                             |
 
 Les rendus d'items vivent dans le `iso_renders_path` de premier niveau, et les fonts et textures générées dans `.beet_cache`.
+
+### Mise en page d'une page d'item
+
+`item_layout` choisit ce que montre chaque page d'item. `"craft"` est la recipe principale, ou l'item dans sa boîte quand il n'en a pas. `"item"` est la boîte seule, même pour un item qui a une recipe. `"item+craft"` place la boîte à `item_box_gap` pixels à gauche de la recipe.
+
+Le dialog centre chaque ligne séparément, donc chaque ligne de la recipe finit par un espace négatif aussi large que la boîte plus l'écart : la boîte et la recipe sont centrées ensemble. Un écart négatif ramène la recipe sur la marge vide à gauche de sa grille, puis sur la boîte. `ItemPage.layout` et `ItemPage.box_gap` remplacent ces deux réglages sur une page :
+
+```python
+def change_steel_ingot(page: ItemPage, manual: Manual) -> None:
+	if page.anchor == "item:steel_ingot":
+		page.layout = "item+craft"
+		page.box_gap = -8
+manual.on_item_page(change_steel_ingot)
+```
+
+Pour composer une page sur un `book_texture` personnalisé, `ItemPage.content_offset = (x, y)` déplace la boîte et la recipe ensemble, `x` au pixel près et `y` en lignes de texte entières (9 pixels). `ItemPage.box_offset` déplace la boîte seule vers le bas, ou vers le haut en négatif, au pixel près. La boîte garde son infobulle sur chaque ligne qu'elle couvre.
 
 ---
 
@@ -111,9 +129,13 @@ Attributs de placement de `TexturePage` :
 
 Le dialog centre la ligne, donc `left_padding` décale la texture vers la droite et `right_padding` vers la gauche, chacun de la moitié du padding. Gardez la largeur de la texture plus les paddings dans le corps du dialog (140px), sinon la ligne passe à la ligne suivante.
 
+Une image de page de plus de 256 pixels de haut ou de large, le fond d'une `TexturePage` comme un `book_texture` ou un `home_texture`, est découpée toute seule en une grille de glyphes, avec le même découpage qu'un `render` de [Images d'items dans le texte](../plugins/auto.text_renders.fr.md). La hauteur affichée reste la même, la largeur suit le ratio de l'image, et la grille avance comme le glyphe unique le ferait. Chaque tuile est une texture. Les templates remplacés par `manual_overrides` (`book.png`, `shaped_3x3.png`...) ne sont pas découpés et doivent rester dans 256 pixels.
+
+Pour composer une page à la main avec des fonts (décalages négatifs, plusieurs images côte à côte, texte aligné sur un dessin), [DynamicBookBreakdown](https://github.com/Stoupy51/DynamicBookBreakdown) est un cours qui reconstruit un livre complet à partir d'une font et d'un dialog : providers, `ascent` et `height`, avance d'un glyphe, espacement. Il explique pourquoi les glyphes du manual sont placés comme ils le sont.
+
 ### Fond de livre et bouton home par page
 
-Chaque page (toute sous-classe de `Page`) accepte `book_texture` pour remplacer le fond du livre (`book.png`) et `home_texture` pour remplacer le bouton home (`home.png`) sur cette page seulement, par exemple un livre fermé sur la première page. Les deux prennent une image PIL prête, ou un chemin résolu d'abord comme chemin du projet, puis par rapport au dossier des templates, donc un nom de fichier de votre dossier `manual_overrides` fonctionne. `template_path(filename)` renvoie le chemin effectif d'un asset de template fourni ou remplacé.
+Chaque page (toute sous-classe de `Page`) accepte `book_texture` pour remplacer le fond du livre (`book.png`) et `home_texture` pour remplacer le bouton home (`home.png`) sur cette page seulement, par exemple un livre fermé sur la première page. Les deux prennent une image PIL prête, ou un chemin résolu d'abord comme chemin du projet, puis par rapport au dossier des templates, donc un nom de fichier de votre dossier `manual_overrides` fonctionne. `template_path(filename)` renvoie le chemin effectif d'un asset de template fourni ou remplacé. Un fond de livre est dessiné aussi large que `book.png`, donc une image plus haute que large dessine un livre plus haut.
 
 ```python
 from stewbeet import CustomPage, Mem, Phase, get_manual
@@ -158,6 +180,8 @@ manual.on_item_page(lambda page, _m: setattr(
 | `order`         | Clé de tri, ex : `lambda b: -b.priority`                                 |
 | `include`       | Prédicat `(button) -> bool` pour filtrer                                 |
 | `extra_buttons` | `WikiButtonRender` supplémentaires à ajouter                             |
+| `side_grid`     | `SideGrid(count, columns, gap, lines)` : les `count` premiers boutons dans une seconde grille à gauche, à `gap` pixels et `lines` lignes plus bas |
+| `offset`        | `(x, y)` qui déplace la grille, `x` au pixel près et `y` en lignes entières (9 pixels) |
 
 ### Gestion des pages
 
@@ -317,4 +341,5 @@ Seuls `types` et `render_body` sont requis. `static_glyph` (glyphe de template e
 - [Definitions](../1_definitions_setup/fr.md) : les items dont chaque page de manual est générée.
 - [Recipes](../plugins/custom_recipes.fr.md) : d'où viennent les grilles de crafting dessinées.
 - [Référence de beet.yml](../3_beet_config/fr.md#manual) : chaque option `manual` à côté des autres.
+- [DynamicBookBreakdown](https://github.com/Stoupy51/DynamicBookBreakdown) : comment les fonts, les dialogs et les advancements font un livre, pour des mises en page au-delà des pages du manual.
 

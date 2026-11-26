@@ -39,10 +39,28 @@ Set in `beet.yml` under `meta.stewbeet.manual`:
 | `first_page_text`   | `TextComponent` | `""`                 | Intro page text                                                          |
 | `manual_overrides`  | `str`           | `""`                 | Folder of textures that override the bundled defaults                    |
 | `showcase_image`    | `int`           | `3`                  | `0` off, `1` manual items, `2` all items, `3` both                       |
+| `item_layout`       | `str`           | `"craft"`            | What an item page shows: `"craft"`, `"item"` or `"item+craft"`, see below  |
+| `item_box_gap`      | `int`           | `4`                  | Pixels between the item's box and the recipe of `"item+craft"`           |
 | `debug_mode`        | `bool`          | `false`              | Draws a grid overlay to debug the layout                                 |
 | `json_dump_path`    | `str`           | `""`                 | Optional debug dump of the rendered pages                                |
 
 The item renders live in the top-level `iso_renders_path`, and the generated fonts and textures in `.beet_cache`.
+
+### Item page layout
+
+`item_layout` picks what every item page shows. `"craft"` is the main recipe, or the item in its box when it has none. `"item"` is the box only, even for an item with a recipe. `"item+craft"` puts the box `item_box_gap` pixels left of the recipe.
+
+The dialog centers every line on its own, so each line of the recipe ends with a negative space as wide as the box plus the gap: the box and the recipe are centered together. A negative gap pulls the recipe back over the blank left margin of its grid, then over the box. `ItemPage.layout` and `ItemPage.box_gap` override both settings on one page:
+
+```python
+def change_steel_ingot(page: ItemPage, manual: Manual) -> None:
+	if page.anchor == "item:steel_ingot":
+		page.layout = "item+craft"
+		page.box_gap = -8
+manual.on_item_page(change_steel_ingot)
+```
+
+To lay a page out over a custom `book_texture`, `ItemPage.content_offset = (x, y)` moves the box and the recipe together, `x` to the pixel and `y` in whole lines of text (9 pixels). `ItemPage.box_offset` moves the box alone down, or up when negative, to the pixel. The box keeps its tooltip over every line it covers.
 
 ---
 
@@ -111,9 +129,13 @@ manual.insert_page(TexturePage(
 
 The dialog centers the line, so `left_padding` shifts the texture right and `right_padding` shifts it left, each by half the padding. Keep texture width plus paddings within the dialog body (140px), otherwise the line wraps.
 
+A page image taller or wider than 256 pixels, the background of a `TexturePage` as well as a `book_texture` or a `home_texture`, is cut into a grid of glyphs by itself, with the same cutting as a `render` node of [Item images in text](../plugins/auto.text_renders.md). The displayed height stays the same, the width follows the image ratio, and the grid advances like the single glyph would. Each tile is one texture. The templates replaced through `manual_overrides` (`book.png`, `shaped_3x3.png`...) are not cut and must stay within 256 pixels.
+
+To lay a page out with fonts by hand (negative offsets, several images side by side, text aligned on a drawing), [DynamicBookBreakdown](https://github.com/Stoupy51/DynamicBookBreakdown) is a course that rebuilds a full book from a font and a dialog: providers, `ascent` and `height`, the advance of a glyph, spacing. It explains why the manual's glyphs are placed the way they are.
+
 ### Per-page book background and home button
 
-Every page (any `Page` subclass) accepts `book_texture` to replace the book background (`book.png`) and `home_texture` to replace the home button (`home.png`) on that page only, for example a closed book on the first page. Both take a ready PIL image, or a path resolved as a project path first, then against the templates folder, so a filename from your `manual_overrides` folder works. `template_path(filename)` returns the effective path of a bundled or overridden template asset.
+Every page (any `Page` subclass) accepts `book_texture` to replace the book background (`book.png`) and `home_texture` to replace the home button (`home.png`) on that page only, for example a closed book on the first page. Both take a ready PIL image, or a path resolved as a project path first, then against the templates folder, so a filename from your `manual_overrides` folder works. `template_path(filename)` returns the effective path of a bundled or overridden template asset. A book texture is drawn as wide as `book.png`, so an image taller than wide draws a taller book.
 
 ```python
 from stewbeet import CustomPage, Mem, Phase, get_manual
@@ -158,6 +180,8 @@ manual.on_item_page(lambda page, _m: setattr(
 | `order`         | Sort key, e.g. `lambda b: -b.priority`                                   |
 | `include`       | Predicate `(button) -> bool` to filter                                   |
 | `extra_buttons` | Extra `WikiButtonRender`s to append                                      |
+| `side_grid`     | `SideGrid(count, columns, gap, lines)`: the first `count` buttons in a second grid on the left, `gap` pixels away and `lines` lines lower |
+| `offset`        | `(x, y)` moving the grid, `x` to the pixel and `y` in whole lines (9 pixels) |
 
 ### Page management
 
@@ -317,4 +341,5 @@ Only `types` and `render_body` are required. `static_glyph` (high-res template g
 - [Definitions](../1_definitions_setup/en.md): the items each manual page is generated from.
 - [Recipes](../plugins/custom_recipes.md): where the drawn crafting grids come from.
 - [beet.yml reference](../3_beet_config/en.md#manual): every `manual` option beside the others.
+- [DynamicBookBreakdown](https://github.com/Stoupy51/DynamicBookBreakdown): how fonts, dialogs and advancements make a book, for layouts beyond the manual's own pages.
 
