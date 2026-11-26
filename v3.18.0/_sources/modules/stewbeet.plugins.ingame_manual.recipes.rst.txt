@@ -1,0 +1,33 @@
+🧾 recipes
+==================
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes
+
+.. toctree::
+   :maxdepth: 1
+
+   stewbeet.plugins.ingame_manual.recipes.types
+
+buttons
+--------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.buttons
+   :members: WikiButtonRender
+
+collection
+--------------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.collection
+   :members: convert_shapeless_to_shaped
+
+registry
+----------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.registry
+   :members: CRAFT_RENDERERS, CraftRenderer, get_craft_renderer, load_builtin_renderers, register_craft_renderer
+
+renderer
+----------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.recipes.renderer
+   :members: RecipeRenderer

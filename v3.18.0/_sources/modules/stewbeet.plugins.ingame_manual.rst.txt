@@ -1,0 +1,75 @@
+📖 ingame_manual
+==============================
+
+.. automodule:: stewbeet.plugins.ingame_manual
+
+.. toctree::
+   :maxdepth: 1
+
+   stewbeet.plugins.ingame_manual.pages
+   stewbeet.plugins.ingame_manual.recipes
+
+api
+------
+
+.. automodule:: stewbeet.plugins.ingame_manual.api
+
+button_layout
+--------------------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.button_layout
+
+config
+------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.config
+
+dialog
+------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.dialog
+
+glyphs
+------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.glyphs
+
+images
+------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.images
+
+manual
+------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.manual
+
+manual_emit
+----------------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.manual_emit
+
+optimizer
+------------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.optimizer
+
+paths
+----------
+
+.. automodule:: stewbeet.plugins.ingame_manual.paths
+
+refs
+--------
+
+.. automodule:: stewbeet.plugins.ingame_manual.refs
+
+showcase
+----------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.showcase
+
+special
+--------------
+
+.. automodule:: stewbeet.plugins.ingame_manual.special

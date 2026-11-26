@@ -31,12 +31,12 @@
     aria-haspopup="true"
     aria-expanded="false"
     data-url="https://stoupy51.github.io/stewbeet/switcher.json"
-    data-current="3.17.0"
+    data-current="3.18.0"
   >
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
       <path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"></path>
     </svg>
-    <span>3.17.0</span>
+    <span>3.18.0</span>
   </button>
   <ul role="menu" aria-hidden="true"></ul>
 </div>
@@ -364,8 +364,43 @@ as the manual-wide default (<code class="docutils literal notranslate"><span cla
 <p>Lives at the package root (not under <code class="docutils literal notranslate"><span class="pre">pages/</span></code>) so <code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code> can import it without
 triggering the <code class="docutils literal notranslate"><span class="pre">pages</span></code> package: which would create an import cycle.</p>
 <dl class="py class">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.button_layout.SideGrid">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">SideGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/button_layout.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.button_layout.SideGrid" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A second grid drawn left of the main one, on the same lines, holding the first buttons of the page.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nc">SideGrid</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">gap</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">count</span>
+<span class="go">6</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.button_layout.SideGrid.count">
+<span class="sig-name descname"><span class="pre">count</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/button_layout.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.button_layout.SideGrid.count" title="Link to this definition">#</a></dt>
+<dd><p>How many buttons it takes, from the start of the list.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.button_layout.SideGrid.columns">
+<span class="sig-name descname"><span class="pre">columns</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/button_layout.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.button_layout.SideGrid.columns" title="Link to this definition">#</a></dt>
+<dd><p>Buttons per row.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.button_layout.SideGrid.gap">
+<span class="sig-name descname"><span class="pre">gap</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/button_layout.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.button_layout.SideGrid.gap" title="Link to this definition">#</a></dt>
+<dd><p>Pixels between its right edge and the left edge of the main grid.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.button_layout.SideGrid.lines">
+<span class="sig-name descname"><span class="pre">lines</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/button_layout.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.button_layout.SideGrid.lines" title="Link to this definition">#</a></dt>
+<dd><p>Lines of text it starts below the main grid, negative to start above it.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.button_layout.ButtonLayout">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ButtonLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*,</span> <span class="pre">columns:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">5,</span> <span class="pre">max_buttons:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">20,</span> <span class="pre">position:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~collections.abc.Callable[[...],</span> <span class="pre">~typing.Any]</span> <span class="pre">=</span> <span class="pre">'after_recipe',</span> <span class="pre">order:</span> <span class="pre">~collections.abc.Callable[[~stewbeet.plugins.ingame_manual.recipes.buttons.WikiButtonRender],</span> <span class="pre">~typing.Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">include:</span> <span class="pre">~collections.abc.Callable[[~stewbeet.plugins.ingame_manual.recipes.buttons.WikiButtonRender],</span> <span class="pre">bool]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">extra_buttons:</span> <span class="pre">list[~stewbeet.plugins.ingame_manual.recipes.buttons.WikiButtonRender]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/button_layout.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.button_layout.ButtonLayout" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ButtonLayout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*,</span> <span class="pre">columns:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">5,</span> <span class="pre">max_buttons:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">20,</span> <span class="pre">position:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~collections.abc.Callable[[...],</span> <span class="pre">~typing.Any]</span> <span class="pre">=</span> <span class="pre">'after_recipe',</span> <span class="pre">order:</span> <span class="pre">~collections.abc.Callable[[~stewbeet.plugins.ingame_manual.recipes.buttons.WikiButtonRender],</span> <span class="pre">~typing.Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">include:</span> <span class="pre">~collections.abc.Callable[[~stewbeet.plugins.ingame_manual.recipes.buttons.WikiButtonRender],</span> <span class="pre">bool]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">extra_buttons:</span> <span class="pre">list[~stewbeet.plugins.ingame_manual.recipes.buttons.WikiButtonRender]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;,</span> <span class="pre">side_grid:</span> <span class="pre">~stewbeet.plugins.ingame_manual.button_layout.SideGrid</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">offset:</span> <span class="pre">tuple[int,</span> <span class="pre">int]</span> <span class="pre">=</span> <span class="pre">(0,</span> <span class="pre">0)</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/button_layout.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.button_layout.ButtonLayout" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Controls wiki-button rendering for a page.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">layout</span> <span class="o">=</span> <span class="nc">ButtonLayout</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="s2">"bottom"</span><span class="p">)</span>
@@ -413,6 +448,19 @@ and a callable <code class="docutils literal notranslate"><span class="pre">(con
 <dd><p>Additional developer-supplied buttons appended before layout.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.button_layout.ButtonLayout.side_grid">
+<span class="sig-name descname"><span class="pre">side_grid</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#stewbeet.plugins.ingame_manual.button_layout.SideGrid" title="stewbeet.plugins.ingame_manual.button_layout.SideGrid"><span class="pre">SideGrid</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/button_layout.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.button_layout.ButtonLayout.side_grid" title="Link to this definition">#</a></dt>
+<dd><p>A second grid on the left taking the first buttons, the two of them centered together on the page.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.button_layout.ButtonLayout.offset">
+<span class="sig-name descname"><span class="pre">offset</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/button_layout.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.button_layout.ButtonLayout.offset" title="Link to this definition">#</a></dt>
+<dd><p>Pixels moving the grid right and down: x exactly, y in whole lines of text (9 pixels), rounded.
+A callable <code class="docutils literal notranslate"><span class="pre">position</span></code> ignores it.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.button_layout.ButtonLayout.clone">
 <span class="sig-name descname"><span class="pre">clone</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stewbeet.plugins.ingame_manual.button_layout.ButtonLayout" title="stewbeet.plugins.ingame_manual.button_layout.ButtonLayout"><span class="pre">ButtonLayout</span></a></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/button_layout.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.button_layout.ButtonLayout.clone" title="Link to this definition">#</a></dt>
@@ -434,6 +482,12 @@ and a callable <code class="docutils literal notranslate"><span class="pre">(con
 <p>Replaces the scattered <code class="docutils literal notranslate"><span class="pre">manual_config.get(...)</span></code> calls and the config-ish fields of the old <code class="docutils literal notranslate"><span class="pre">SharedMemory</span></code>. v2 is dialog-first:
 <code class="docutils literal notranslate"><span class="pre">use_dialog</span></code> is validated to be 1 or 2 (0 is coerced to 1 with a warning).
 The old caching keys (<code class="docutils literal notranslate"><span class="pre">cache_pages</span></code>) are intentionally not read; <code class="docutils literal notranslate"><span class="pre">json_dump_path</span></code> survives only as an optional debug dump.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.config.ItemLayout">
+<span class="sig-name descname"><span class="pre">ItemLayout</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">ItemLayout</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/config.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.config.ItemLayout" title="Link to this definition">#</a></dt>
+<dd><p>What an item page shows: its main recipe (the item in its box when it has none), the box only, or the box left of the recipe.</p>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.config.ManualConfig">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ManualConfig</span></span><span class="sig-paren">(</span>
@@ -454,6 +508,8 @@ The old caching keys (<code class="docutils literal notranslate"><span class="pr
 <dd><em class="sig-param"><span class="n"><span class="pre">max_items_per_row</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">max_rows_per_page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">showcase_image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">item_layout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#stewbeet.plugins.ingame_manual.config.ItemLayout" title="stewbeet.plugins.ingame_manual.config.ItemLayout"><span class="pre">ItemLayout</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'craft'</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">item_box_gap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">first_page_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TextComponent</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">components_to_include</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>,</dd>
@@ -544,6 +600,18 @@ The old caching keys (<code class="docutils literal notranslate"><span class="pr
 <dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.config.ManualConfig.showcase_image">
 <span class="sig-name descname"><span class="pre">showcase_image</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/config.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.config.ManualConfig.showcase_image" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.config.ManualConfig.item_layout">
+<span class="sig-name descname"><span class="pre">item_layout</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#stewbeet.plugins.ingame_manual.config.ItemLayout" title="stewbeet.plugins.ingame_manual.config.ItemLayout"><span class="pre">ItemLayout</span></a></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/config.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.config.ManualConfig.item_layout" title="Link to this definition">#</a></dt>
+<dd><p>What every item page shows, unless <code class="docutils literal notranslate"><span class="pre">ItemPage.layout</span></code> says otherwise.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.config.ManualConfig.item_box_gap">
+<span class="sig-name descname"><span class="pre">item_box_gap</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/config.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.config.ManualConfig.item_box_gap" title="Link to this definition">#</a></dt>
+<dd><p>Pixels between the item’s box and the recipe in the <code class="docutils literal notranslate"><span class="pre">&quot;item+craft&quot;</span></code> layout, negative to draw the recipe over the box.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.config.ManualConfig.name">
@@ -1034,7 +1102,7 @@ those instead of globals.</p>
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">page_font</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">output_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">ascent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/images.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.images.GlyphImageBuilder.recipe_image" title="Link to this definition">#</a></dt>
@@ -1089,8 +1157,8 @@ Used by <a class="reference internal" href="stewbeet.plugins.ingame_manual.pages
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/images.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.images.GlyphImageBuilder.register_full_page_glyph" title="Link to this definition">#</a></dt>
-<dd><p>Save a full-page image under font/page/ and register it as a single glyph.</p>
-<p>Returns the glyph character. Used by <a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.html#stewbeet.plugins.ingame_manual.pages.texture_page.TexturePage" title="stewbeet.plugins.ingame_manual.pages.texture_page.TexturePage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TexturePage</span></code></a>.</p>
+<dd><p>Save a full-page image under font/page/ and register it as a glyph, or as a grid of glyphs past 256 pixels.</p>
+<p>Returns the characters drawing it. Used by <a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.html#stewbeet.plugins.ingame_manual.pages.texture_page.TexturePage" title="stewbeet.plugins.ingame_manual.pages.texture_page.TexturePage"><code class="xref py py-class docutils literal notranslate"><span class="pre">TexturePage</span></code></a> and the per-page book and home textures.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1649,7 +1717,8 @@ The source is marked used because it gets re-encoded under a new name.</p>
 <dd><p>Register dedicated glyphs for every page overriding <code class="docutils literal notranslate"><span class="pre">book_texture</span></code> / <code class="docutils literal notranslate"><span class="pre">home_texture</span></code>.</p>
 <p>Each glyph replaces <code class="docutils literal notranslate"><span class="pre">BOOK_FONT</span></code> / <code class="docutils literal notranslate"><span class="pre">HOME_FONT</span></code> in that page’s dialog navigation row,
 with the same ascent/height as the shared provider so the layout stays put (a home texture should keep
-the default’s 16x16 proportions, since the glyph advance follows the image content).</p>
+the default’s 16x16 proportions, since the glyph advance follows the image content).
+A book texture keeps the width of <code class="docutils literal notranslate"><span class="pre">book.png</span></code>, so an image taller than wide draws a taller book.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1753,7 +1822,7 @@ the default’s 16x16 proportions, since the glyph advance follows the image con
 
 <dl class="py data">
 <dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.paths.TEMPLATES_PATH">
-<span class="sig-name descname"><span class="pre">TEMPLATES_PATH</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/tmp/stewbeet_manual_v2_templates_htmp6qfx'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/paths.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.paths.TEMPLATES_PATH" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">TEMPLATES_PATH</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/tmp/stewbeet_manual_v2_templates_3cpibm_x'</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/paths.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.paths.TEMPLATES_PATH" title="Link to this definition">#</a></dt>
 <dd><p>Runtime templates folder, filled with the assets at build time and overlaid with the project’s manual_overrides.</p>
 <p>It is a per-process temporary directory, so concurrent builds never share it, removed on interpreter exit.</p>
 </dd></dl>
@@ -1977,6 +2046,13 @@ a <a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.html#
 </ul>
 </li>
 <li><a class="reference internal" href="#module-stewbeet.plugins.ingame_manual.button_layout">button_​layout</a><ul>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.button_layout.SideGrid"><code class="docutils literal notranslate"><span class="pre">SideGrid</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.button_layout.SideGrid.count"><code class="docutils literal notranslate"><span class="pre">SideGrid​.count</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.button_layout.SideGrid.columns"><code class="docutils literal notranslate"><span class="pre">SideGrid​.columns</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.button_layout.SideGrid.gap"><code class="docutils literal notranslate"><span class="pre">SideGrid​.gap</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.button_layout.SideGrid.lines"><code class="docutils literal notranslate"><span class="pre">SideGrid​.lines</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.button_layout.ButtonLayout"><code class="docutils literal notranslate"><span class="pre">ButtonLayout</span></code></a><ul>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.button_layout.ButtonLayout.columns"><code class="docutils literal notranslate"><span class="pre">ButtonLayout​.columns</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.button_layout.ButtonLayout.max_buttons"><code class="docutils literal notranslate"><span class="pre">ButtonLayout​.max_​buttons</span></code></a></li>
@@ -1984,12 +2060,15 @@ a <a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.html#
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.button_layout.ButtonLayout.order"><code class="docutils literal notranslate"><span class="pre">ButtonLayout​.order</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.button_layout.ButtonLayout.include"><code class="docutils literal notranslate"><span class="pre">ButtonLayout​.include</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.button_layout.ButtonLayout.extra_buttons"><code class="docutils literal notranslate"><span class="pre">ButtonLayout​.extra_​buttons</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.button_layout.ButtonLayout.side_grid"><code class="docutils literal notranslate"><span class="pre">ButtonLayout​.side_​grid</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.button_layout.ButtonLayout.offset"><code class="docutils literal notranslate"><span class="pre">ButtonLayout​.offset</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.button_layout.ButtonLayout.clone"><code class="docutils literal notranslate"><span class="pre">ButtonLayout​.clone()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-stewbeet.plugins.ingame_manual.config">config</a><ul>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.config.ItemLayout"><code class="docutils literal notranslate"><span class="pre">ItemLayout</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.config.ManualConfig"><code class="docutils literal notranslate"><span class="pre">ManualConfig</span></code></a><ul>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.config.ManualConfig.project_id"><code class="docutils literal notranslate"><span class="pre">ManualConfig​.project_​id</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.config.ManualConfig.project_name"><code class="docutils literal notranslate"><span class="pre">ManualConfig​.project_​name</span></code></a></li>
@@ -2005,6 +2084,8 @@ a <a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.html#
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.config.ManualConfig.max_items_per_row"><code class="docutils literal notranslate"><span class="pre">ManualConfig​.max_​items_​per_​row</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.config.ManualConfig.max_rows_per_page"><code class="docutils literal notranslate"><span class="pre">ManualConfig​.max_​rows_​per_​page</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.config.ManualConfig.showcase_image"><code class="docutils literal notranslate"><span class="pre">ManualConfig​.showcase_​image</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.config.ManualConfig.item_layout"><code class="docutils literal notranslate"><span class="pre">ManualConfig​.item_​layout</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.config.ManualConfig.item_box_gap"><code class="docutils literal notranslate"><span class="pre">ManualConfig​.item_​box_​gap</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.config.ManualConfig.name"><code class="docutils literal notranslate"><span class="pre">ManualConfig​.name</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.config.ManualConfig.first_page_text"><code class="docutils literal notranslate"><span class="pre">ManualConfig​.first_​page_​text</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.config.ManualConfig.components_to_include"><code class="docutils literal notranslate"><span class="pre">ManualConfig​.components_​to_​include</span></code></a></li>
@@ -2255,5 +2336,5 @@ a <a class="reference internal" href="stewbeet.plugins.ingame_manual.pages.html#
   <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
   <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
   <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle section navigation">
-  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=47abbe79"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=32290746"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
 </html>

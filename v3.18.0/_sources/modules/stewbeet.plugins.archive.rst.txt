@@ -1,0 +1,9 @@
+🗜️ archive
+====================
+
+.. automodule:: stewbeet.plugins.archive
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.archive.silent

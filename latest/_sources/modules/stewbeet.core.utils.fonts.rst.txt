@@ -37,4 +37,4 @@ splicing
 ----------------
 
 .. automodule:: stewbeet.core.utils.fonts.splicing
-   :members: MAX_GLYPH_SIZE, SpliceLayout, SpliceTile, glyph_advance, opaque_width, plan_splice
+   :members: MAX_GLYPH_SIZE, SpliceLayout, SpliceTile, glyph_advance, opaque_width, plan_splice, write_spliced_glyphs

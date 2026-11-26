@@ -1,0 +1,29 @@
+🚀 initialize
+========================
+
+.. automodule:: stewbeet.plugins.initialize
+
+beet_patches
+------------------------
+
+.. automodule:: stewbeet.plugins.initialize.beet_patches
+
+project_images
+----------------------------
+
+.. automodule:: stewbeet.plugins.initialize.project_images
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.initialize.silent
+
+source_lore_colors
+------------------------------------
+
+.. automodule:: stewbeet.plugins.initialize.source_lore_colors
+
+source_lore_font
+--------------------------------
+
+.. automodule:: stewbeet.plugins.initialize.source_lore_font
