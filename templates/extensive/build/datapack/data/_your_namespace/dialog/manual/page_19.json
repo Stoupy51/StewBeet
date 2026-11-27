@@ -3,7 +3,7 @@
 	"title": [
 		"",
 		{
-			"text": "耬",
+			"text": "耫",
 			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
@@ -14,12 +14,12 @@
 		},
 		" ",
 		{
-			"translate": "_your_namespace.stone_rod","fallback": "Stone Rod",
+			"translate": "_your_namespace.stone_stick","fallback": "Stone Stick",
 			"underlined": true
 		},
 		" ",
 		{
-			"text": "耬",
+			"text": "耫",
 			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
@@ -47,25 +47,20 @@
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
-				"\"$6\n\"U$",
-				{"text": "$聾","hover_event": {"action": "show_item","id": "minecraft:stone"}},
-				"U$  \n\"U$",
+				"\"$5\n\"",
+				{"text": "$肖","hover_event": {"action": "show_item","id": "minecraft:stone"}},
+				"U$  \n\"",
 				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:stone"}},
-				"U$  \n\"U$",
-				{"text": "$聾","hover_event": {"action": "show_item","id": "minecraft:stone"}},
-				"U$\"\"",
-				{"text": "$$耺","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"rod": {"stone": true}},"id": "_your_namespace:stone_rod","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"stone_rod": true}},"item_model": "_your_namespace:stone_rod","item_name": {"translate": "_your_namespace.stone_rod","fallback": "Stone Rod"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]]}}},
-				"#$\n\"U$",
-				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:stone"}},
-				"U$\"\"",
-				{"text": "U$","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"rod": {"stone": true}},"id": "_your_namespace:stone_rod","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"stone_rod": true}},"item_model": "_your_namespace:stone_rod","item_name": {"translate": "_your_namespace.stone_rod","fallback": "Stone Rod"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]]}}},
-				"#$\n\"U$",
-				{"text": "$聾","hover_event": {"action": "show_item","id": "minecraft:stone"}},
-				"U$  \n\"U$",
-				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:stone"}},
-				"U$  \n\n",
-				{"text": "2\n0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"","U$",{"text": "$聾"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n","\"","U$",{"text": "$聾"},"U$","\"\"",{"text": "$$耺"},"\n","\"","U$",{"text": "U$"},"U$","\"\"",{"text": "U$"},"\n","\"","U$",{"text": "$聾"},"U$","\n","\"","U$",{"text": "U$"},"U$","\n"],{"text": "\n- x3 ","color": "gray"},{"translate": "_your_namespace.stone","fallback": "Stone","color": "gray"}]}},
-				"\n\n\n\n\n\n\n\n\n\n\n\n\n"
+				"U$U$",
+				{"text": "$$肕","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"stick": {"stone": true}},"id": "_your_namespace:stone_stick","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"stone_stick": true}},"item_model": "_your_namespace:stone_stick","item_name": {"translate": "_your_namespace.stone_stick","fallback": "Stone Stick"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]]}}},
+				"#$\n\"",
+				{"text": "$肖","hover_event": {"action": "show_item","id": "minecraft:stone"}},
+				"U$U$",
+				{"text": "U$","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"stick": {"stone": true}},"id": "_your_namespace:stone_stick","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"stone_stick": true}},"item_model": "_your_namespace:stone_stick","item_name": {"translate": "_your_namespace.stone_stick","fallback": "Stone Stick"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]]}}},
+				"#$\n\"",
+				{"text": "U$\n\n","hover_event": {"action": "show_item","id": "minecraft:stone"}},
+				{"text": "2\n0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$肖"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$肕"},"\n","\"",{"text": "$肖"},"U$U$",{"text": "U$"},"\n","\"",{"text": "U$"},"\n"],{"text": "\n- x2 ","color": "gray"},{"translate": "_your_namespace.stone","fallback": "Stone","color": "gray"}]}},
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 140
 		}

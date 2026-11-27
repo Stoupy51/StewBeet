@@ -4,6 +4,7 @@ from PIL import Image
 from stewbeet import (
 	BakedText,
 	ButtonLayout,
+	CategoryBrowserPage,
 	CraftingShapedRecipe,
 	CustomPage,
 	Ingr,
@@ -144,6 +145,15 @@ def main() -> None:
 			# As the main recipe of the page
 			page.main_craft = furnace
 	manual.on_item_page(show_vanilla_crafts)
+
+	# 3d) The category browser is not an item page, so on_item_page never sees it: reach it by its anchor once the pages exist.
+	#     Its grid takes a number of columns and moves right and down like the box and the recipe of an item page.
+	@manual.on(Phase.PREPARED)
+	def tweak_category_browser(m: Manual) -> None: # pyright: ignore[reportUnusedFunction]
+		browser = m.get_page("category_browser")
+		if isinstance(browser, CategoryBrowserPage):
+			browser.columns = 3
+			browser.content_offset = (10, 9)
 
 	# 4) Phase hook: edit one specific item's page once the default pages exist.
 	#    Hooks run during manual creation, so get_page_for_item() returns a real page here.

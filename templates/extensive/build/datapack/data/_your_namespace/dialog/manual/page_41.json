@@ -3,7 +3,7 @@
 	"title": [
 		"",
 		{
-			"text": "聂",
+			"text": "聁",
 			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
@@ -14,12 +14,12 @@
 		},
 		" ",
 		{
-			"translate": "_your_namespace.crate","fallback": "Crate",
+			"translate": "_your_namespace.chair","fallback": "Chair",
 			"underlined": true
 		},
 		" ",
 		{
-			"text": "聂",
+			"text": "聁",
 			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
@@ -47,8 +47,8 @@
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
-				"肖\n",
-				{"text": "  \n  \n  \n  \n","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:crate","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"item_model": "_your_namespace:crate","item_name": {"translate": "_your_namespace.crate","fallback": "Crate"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"crate": true},"smithed": {"id": "_your_namespace:crate","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_41"}},
+				"肫\n",
+				{"text": "  \n  \n  \n  \n","hover_event": {"action": "show_item","id": "furnace","components": {"container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:chair","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]},"item_model": "_your_namespace:chair","item_name": {"translate": "_your_namespace.chair","fallback": "Chair"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"chair": true},"smithed": {"id": "_your_namespace:chair","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_41"}},
 				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 140

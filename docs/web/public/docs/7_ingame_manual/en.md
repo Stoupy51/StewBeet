@@ -253,6 +253,18 @@ def tidy_buttons(m):
         )
 ```
 
+### Lay out the category browser
+
+`on_item_page` only sees item pages. The category browser is reached by its anchor, once the default pages exist. `CategoryBrowserPage.columns` sets the cells per row (`max_items_per_row` by default) and `content_offset = (x, y)` moves the grid, `x` to the pixel and `y` in whole lines of text. `book_texture` and `home_texture` work as on any page.
+
+```python
+@manual.on(Phase.PREPARED)
+def browser_layout(m):
+    browser = m.get_page("category_browser")
+    browser.columns = 3
+    browser.content_offset = (10, 9)
+```
+
 ### Choose the main recipe of an item page
 
 By default the main recipe is how the item is mined, when it drops from an ore. Set `ItemPage.main_craft` to show another craft instead. The others stay available as buttons.

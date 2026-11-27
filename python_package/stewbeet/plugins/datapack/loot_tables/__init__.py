@@ -71,7 +71,7 @@ def beet_default(ctx: Context):
 			"items": [{"type": "unjank:loot", "loot": [obj.loot_table for obj in objects]}],
 		}
 		ctx.data.extend_namespace.append(CreativeTab)
-		ctx.data[f"{ns}:{ns}"] = CreativeTab(stp.json_dump(creative_tab, max_level=3))
+		ctx.data[f"{ns}:{ns}"] = CreativeTab(stp.json_dump(creative_tab, max_level=4))
 
 	lore: str = stp.json_dump(ctx.meta["stewbeet"]["source_lore"], max_level=0).strip()
 	write_function(f"{ns}:_give_all", "\n" + "\n\n".join(give_all_chests(not_skipped_items, lore)) + "\n\n")

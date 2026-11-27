@@ -253,6 +253,18 @@ def tidy_buttons(m):
         )
 ```
 
+### Composer le category browser
+
+`on_item_page` ne voit que les pages d'item. Le category browser s'atteint par son ancre, une fois les pages par défaut créées. `CategoryBrowserPage.columns` fixe le nombre de cases par ligne (`max_items_per_row` par défaut) et `content_offset = (x, y)` déplace la grille, `x` au pixel près et `y` en lignes de texte entières. `book_texture` et `home_texture` fonctionnent comme sur toute page.
+
+```python
+@manual.on(Phase.PREPARED)
+def browser_layout(m):
+    browser = m.get_page("category_browser")
+    browser.columns = 3
+    browser.content_offset = (10, 9)
+```
+
 ### Choisir la recipe principale d'une page d'item
 
 Par défaut, la recipe principale est la façon dont l'item est miné, quand il tombe d'un ore. Définissez `ItemPage.main_craft` pour en afficher une autre à la place. Les autres restent disponibles en boutons.

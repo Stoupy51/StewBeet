@@ -25,6 +25,7 @@ from stouputils.typing import JsonDict
 from ....core.utils.fonts import add_border, careful_resize, save_png
 from ..glyphs import BORDER_SIZE, MEDIUM_NONE_FONT, SMALL_NONE_FONT, VERY_SMALL_NONE_FONT
 from .base import Page
+from .item_page import ItemPage
 
 if TYPE_CHECKING:
 	from ..manual import Manual
@@ -42,14 +43,22 @@ class CategoryPage(Page):
 
 
 def grid_page(
-	manual: Manual, file_name: str, items: list[str], decorate: Callable[[int, JsonDict], None] | None = None,
+	manual: Manual,
+	file_name: str,
+	items: list[str],
+	decorate: Callable[[int, JsonDict], None] | None = None,
+	columns: int | None = None,
+	offset: tuple[int, int] = (0, 0),
 ) -> list[TextComponent]:
 	""" A page of item cases over the glyph `font/category/<file_name>.png`, each case overlaid with its item's component.
 
 	Args:
 		decorate: Called with each item's index and component before the component is laid out, to change what it shows or does.
+		columns:  Cells per row, None for ``ManualConfig.max_items_per_row``.
+		offset:   Pixels moving the grid right and down, as :meth:`~.item_page.ItemPage.moved` does.
 	"""
 	config = manual.config
+	columns = columns or config.max_items_per_row
 	simple_case = manual.simple_case
 	page_font = manual.glyphs.allocate()
 	manual.glyphs.add_provider(page_font, f"{config.project_id}:font/category/{file_name}.png", ascent=1, height=131)
@@ -79,20 +88,20 @@ def grid_page(
 		if not config.high_resolution:
 			component["text"] = MEDIUM_NONE_FONT
 		line.append(component)
-		if len(line) == config.max_items_per_row:
+		if len(line) == columns:
 			content += grid_row(line, config.left_padding)
 			line = []
 			rows += 1
 
 	if line:
 		if rows:
-			line.append(MEDIUM_NONE_FONT * max(0, config.max_items_per_row - len(line)))
+			line.append(MEDIUM_NONE_FONT * max(0, columns - len(line)))
 		content += grid_row(line, config.left_padding)
 
 	page_image = add_border(page_image, manual.images.get_border_color(), BORDER_SIZE)
 	os.makedirs(f"{config.font_cache_path}/category", exist_ok=True)
 	save_png(page_image, f"{config.font_cache_path}/category/{file_name}.png")
-	return content
+	return [content[0], *ItemPage.moved(manual, content[1:], offset)]
 
 
 def grid_row(line: list[TextComponent], left_padding: int) -> list[TextComponent]:

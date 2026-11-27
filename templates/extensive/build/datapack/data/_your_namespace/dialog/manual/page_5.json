@@ -1,9 +1,34 @@
 {
 	"type": "minecraft:notice",
-	"title": {
-		"translate": "_your_namespace.category_browser","fallback": "Category browser",
-		"underlined": true
-	},
+	"title": [
+		"",
+		{
+			"text": "耡",
+			"font": "_your_namespace:renders",
+			"shadow_color": [
+				0,
+				0,
+				0,
+				0
+			]
+		},
+		" ",
+		{
+			"translate": "_your_namespace.heavy_workbench","fallback": "Heavy Workbench",
+			"underlined": true
+		},
+		" ",
+		{
+			"text": "耡",
+			"font": "_your_namespace:renders",
+			"shadow_color": [
+				0,
+				0,
+				0,
+				0
+			]
+		}
+	],
 	"body": [
 		{
 			"type": "minecraft:plain_message",
@@ -22,16 +47,29 @@
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
-				"\"耬\n\"",
-				{"text": "$耭","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"lore": [[{"translate": "_your_namespace.smelted_from","fallback": "Smelted from ","color": "gray","italic": false},{"text": "聍","font": "_your_namespace:renders"},[{"text":" ","color": "gray","italic": false}, {"translate": "_your_namespace.raw_steel_2","fallback": "raw steel"}]],["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.material","fallback": "Material","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_6"}},
-				{"text": "$耮","hover_event": {"action": "show_item","id": "iron_helmet","components": {"custom_data": {"smithed": {"dict": {"armor": {"steel": true,"helmet": true}},"id": "_your_namespace:steel_helmet","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_helmet": true}},"max_damage": 495,"equippable": {"slot": "head","asset_id": "_your_namespace:steel"},"attribute_modifiers": [{"type": "armor","amount": 2.5,"operation": "add_value","slot": "head","id": "_your_namespace:armor.head"}],"item_model": "_your_namespace:steel_helmet","item_name": {"translate": "_your_namespace.equipment","fallback": "Equipment","color": "white"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
-				{"text": "$耯","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"_your_namespace": {"shazinho": true},"smithed": {"dict": {"record": {"shazinho": true,"item_name": "Shazinho"},"jukebox_song": {"comparator_output": 15,"length_in_seconds": 128,"sound_event": {"sound_id": "_your_namespace:shazinho"},"description": {"translate": "_your_namespace.shazinho","fallback": "Shazinho"}}},"id": "_your_namespace:shazinho","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}},"item_name": {"translate": "_your_namespace.miscellaneous","fallback": "Miscellaneous","color": "white"},"jukebox_playable": "_your_namespace:shazinho","max_stack_size": 1,"rarity": "rare","item_model": "_your_namespace:shazinho","lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_8"}},
-				"#\n\"",
-				{"text": "!","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"lore": [[{"translate": "_your_namespace.smelted_from","fallback": "Smelted from ","color": "gray","italic": false},{"text": "聍","font": "_your_namespace:renders"},[{"text":" ","color": "gray","italic": false}, {"translate": "_your_namespace.raw_steel_2","fallback": "raw steel"}]],["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.material","fallback": "Material","color": "white"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_6"}},
-				{"text": "!","hover_event": {"action": "show_item","id": "iron_helmet","components": {"custom_data": {"smithed": {"dict": {"armor": {"steel": true,"helmet": true}},"id": "_your_namespace:steel_helmet","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_helmet": true}},"max_damage": 495,"equippable": {"slot": "head","asset_id": "_your_namespace:steel"},"attribute_modifiers": [{"type": "armor","amount": 2.5,"operation": "add_value","slot": "head","id": "_your_namespace:armor.head"}],"item_model": "_your_namespace:steel_helmet","item_name": {"translate": "_your_namespace.equipment","fallback": "Equipment","color": "white"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_7"}},
-				{"text": "!","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"_your_namespace": {"shazinho": true},"smithed": {"dict": {"record": {"shazinho": true,"item_name": "Shazinho"},"jukebox_song": {"comparator_output": 15,"length_in_seconds": 128,"sound_event": {"sound_id": "_your_namespace:shazinho"},"description": {"translate": "_your_namespace.shazinho","fallback": "Shazinho"}}},"id": "_your_namespace:shazinho","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}},"item_name": {"translate": "_your_namespace.miscellaneous","fallback": "Miscellaneous","color": "white"},"jukebox_playable": "_your_namespace:shazinho","max_stack_size": 1,"rarity": "rare","item_model": "_your_namespace:shazinho","lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]]}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_8"}},
-				"#\n",
-				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+				"\"$6\n\"",
+				{"text": "$耮$耮$耮","hover_event": {"action": "show_item","id": "minecraft:oak_log"}},
+				"  \n\"",
+				{"text": "U$U$U$","hover_event": {"action": "show_item","id": "minecraft:oak_log"}},
+				"  \n\"",
+				{"text": "$耮","hover_event": {"action": "show_item","id": "minecraft:oak_log"}},
+				{"text": "$耯","hover_event": {"action": "show_item","id": "minecraft:crafting_table"}},
+				{"text": "$耮","hover_event": {"action": "show_item","id": "minecraft:oak_log"}},
+				"\"\"",
+				{"text": "$$耭","hover_event": {"action": "show_item","id": "furnace","components": {"item_name": "Heavy Workbench","item_model": "_your_namespace:heavy_workbench","container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:heavy_workbench","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]}}}},
+				"#$\n\"",
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:oak_log"}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:crafting_table"}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:oak_log"}},
+				"\"\"",
+				{"text": "U$","hover_event": {"action": "show_item","id": "furnace","components": {"item_name": "Heavy Workbench","item_model": "_your_namespace:heavy_workbench","container": [{"slot": 0,"item": {"id": "minecraft:stone","count": 1,"components": {"minecraft:custom_data": {"smithed": {"block": {"id": "_your_namespace:heavy_workbench","from": "_your_namespace"}}}}}}],"tooltip_display": {"hidden_components": ["minecraft:container"]}}}},
+				"#$\n\"",
+				{"text": "$耰$耰$耰","hover_event": {"action": "show_item","id": "minecraft:smooth_stone"}},
+				"  \n\"",
+				{"text": "U$U$U$","hover_event": {"action": "show_item","id": "minecraft:smooth_stone"}},
+				"  \n",
+				[[{"text":"\n","font": "minecraft:default","color": "black"}, {"translate": "_your_namespace.every_recipe_that_uses_custom_items","fallback": "Every recipe that uses custom items "}],{"translate": "_your_namespace.must","fallback": "must","color": "red","underlined": true}," be crafted using the Heavy Workbench."],
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 140
 		}

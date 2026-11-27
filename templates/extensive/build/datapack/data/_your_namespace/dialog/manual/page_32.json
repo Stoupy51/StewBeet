@@ -3,7 +3,7 @@
 	"title": [
 		"",
 		{
-			"text": "耹",
+			"text": "耸",
 			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
@@ -14,12 +14,12 @@
 		},
 		" ",
 		{
-			"translate": "_your_namespace.extensive_template_manual","fallback": "Extensive Template Manual",
+			"translate": "_your_namespace.stewbeet_painting","fallback": "Stewbeet Painting",
 			"underlined": true
 		},
 		" ",
 		{
-			"text": "耹",
+			"text": "耸",
 			"font": "_your_namespace:renders",
 			"shadow_color": [
 				0,
@@ -47,22 +47,36 @@
 			"type": "minecraft:plain_message",
 			"contents": [
 				{"text": "","font": "_your_namespace:manual","color": "white","shadow_color": [0,0,0,0]},
-				"\"$5\n\"",
-				{"text": "$聪","hover_event": {"action": "show_item","id": "minecraft:book"}},
-				{"text": "$耭","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"lore": [[{"translate": "_your_namespace.smelted_from","fallback": "Smelted from ","color": "gray","italic": false},{"text": "聍","font": "_your_namespace:renders"},[{"text":" ","color": "gray","italic": false}, {"translate": "_your_namespace.raw_steel_2","fallback": "raw steel"}]],["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot","fallback": "Steel Ingot"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_9"}},
+				"\"$6\n\"",
+				{"text": "$耢$耢$耢","hover_event": {"action": "show_item","id": "minecraft:egg"}},
 				"  \n\"",
-				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:book"}},
-				{"text": "U$","hover_event": {"action": "show_item","id": "recovery_compass","components": {"custom_data": {"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},"_your_namespace": {"steel_ingot": true}},"lore": [[{"translate": "_your_namespace.smelted_from","fallback": "Smelted from ","color": "gray","italic": false},{"text": "聍","font": "_your_namespace:renders"},[{"text":" ","color": "gray","italic": false}, {"translate": "_your_namespace.raw_steel_2","fallback": "raw steel"}]],["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"item_model": "_your_namespace:steel_ingot","item_name": {"translate": "_your_namespace.steel_ingot","fallback": "Steel Ingot"}}},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_9"}},
-				"U$",
-				{"text": "$$聆","hover_event": {"action": "show_item","id": "recovery_compass","components": {"item_name": "Extensive Template Manual","item_model": "_your_namespace:manual","lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"manual": true},"smithed": {"id": "_your_namespace:manual","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
-				"#$\n\"U$U$U$",
-				{"text": "U$","hover_event": {"action": "show_item","id": "recovery_compass","components": {"item_name": "Extensive Template Manual","item_model": "_your_namespace:manual","lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"manual": true},"smithed": {"id": "_your_namespace:manual","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
-				"#$\n\n\n",
-				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$聪"},{"text": "$耭"},"\n","\"",{"text": "U$"},{"text": "U$"},"U$",{"text": "$$聆"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.book","fallback": "Book","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","fallback": "Steel Ingot","color": "gray"}]}},
-				{"text": "2\n","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$聆"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聆"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.extensive_template_manual","fallback": "Extensive Template Manual","color": "gray"}]}},
-				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$聪"},{"text": "$耭"},"\n","\"",{"text": "U$"},{"text": "U$"},"U$",{"text": "$$聆"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.book","fallback": "Book","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.steel_ingot","fallback": "Steel Ingot","color": "gray"}]}},
-				{"text": "0","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"E\n","\"",{"text": "$聆"},"\n","\"",{"text": "U$"},"U$U$",{"text": "$$聆"},"\n\"","U$U$U$",{"text": "U$"},"\n","\n"],{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.extensive_template_manual","fallback": "Extensive Template Manual","color": "gray"}]}},
-				"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+				{"text": "U$U$U$","hover_event": {"action": "show_item","id": "minecraft:egg"}},
+				"  \n\"",
+				{"text": "$耢","hover_event": {"action": "show_item","id": "minecraft:egg"}},
+				{"text": "$耣","hover_event": {"action": "show_item","id": "minecraft:beetroot"}},
+				{"text": "$耢","hover_event": {"action": "show_item","id": "minecraft:egg"}},
+				"\"\"",
+				{"text": "$$耡","hover_event": {"action": "show_item","id": "painting","components": {"painting/variant": "_your_namespace:stewbeet_painting","item_model": "_your_namespace:stewbeet_painting","item_name": {"translate": "_your_namespace.stewbeet_painting","fallback": "Stewbeet Painting"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"stewbeet_painting": true},"smithed": {"id": "_your_namespace:stewbeet_painting","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
+				"#$\n\"",
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:egg"}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:beetroot"}},
+				{"text": "U$","hover_event": {"action": "show_item","id": "minecraft:egg"}},
+				"\"\"",
+				{"text": "U$","hover_event": {"action": "show_item","id": "painting","components": {"painting/variant": "_your_namespace:stewbeet_painting","item_model": "_your_namespace:stewbeet_painting","item_name": {"translate": "_your_namespace.stewbeet_painting","fallback": "Stewbeet Painting"},"lore": [["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]],"custom_data": {"_your_namespace": {"stewbeet_painting": true},"smithed": {"id": "_your_namespace:stewbeet_painting","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}}}}}},
+				"#$\n\"",
+				{"text": "$耢$耢$耢","hover_event": {"action": "show_item","id": "minecraft:egg"}},
+				"  \n\"",
+				{"text": "U$U$U$","hover_event": {"action": "show_item","id": "minecraft:egg"}},
+				"  \n\n",
+				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耢"},{"text": "$耢"},{"text": "$耢"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耢"},{"text": "$耣"},{"text": "$耢"},"\"\"",{"text": "$$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耢"},{"text": "$耢"},{"text": "$耢"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.egg","fallback": "Egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","fallback": "Beetroot","color": "gray"}]}},
+				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$肤"},{"text": "$肤"},{"text": "$肤"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$肤"},{"text": "$耣"},{"text": "$肤"},"\"\"",{"text": "$$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$肤"},{"text": "$肤"},{"text": "$肤"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.blue_egg","fallback": "Blue Egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","fallback": "Beetroot","color": "gray"}]}},
+				{"text": "2##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$肥"},{"text": "$肥"},{"text": "$肥"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$肥"},{"text": "$耣"},{"text": "$肥"},"\"\"",{"text": "$$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$肥"},{"text": "$肥"},{"text": "$肥"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.brown_egg","fallback": "Brown Egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","fallback": "Beetroot","color": "gray"}]}},
+				{"text": "耤\n","hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.super_stone","fallback": "Super Stone","color": "yellow"},[{"text":"\n","color": "gray"}, {"translate": "_your_namespace.click_to_open_this_page","fallback": "Click to open this page"}]]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_31"}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$耢"},{"text": "$耢"},{"text": "$耢"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$耢"},{"text": "$耣"},{"text": "$耢"},"\"\"",{"text": "$$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$耢"},{"text": "$耢"},{"text": "$耢"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.egg","fallback": "Egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","fallback": "Beetroot","color": "gray"}]}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$肤"},{"text": "$肤"},{"text": "$肤"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$肤"},{"text": "$耣"},{"text": "$肤"},"\"\"",{"text": "$$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$肤"},{"text": "$肤"},{"text": "$肤"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.blue_egg","fallback": "Blue Egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","fallback": "Beetroot","color": "gray"}]}},
+				{"text": "0##","hover_event": {"action": "show_text","value": [{"text": ""},[{"text": "","font": "_your_namespace:manual","color": "white"},"\"F\n","\"",{"text": "$肥"},{"text": "$肥"},{"text": "$肥"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n","\"",{"text": "$肥"},{"text": "$耣"},{"text": "$肥"},"\"\"",{"text": "$$耡"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\"\"",{"text": "U$"},"\n","\"",{"text": "$肥"},{"text": "$肥"},{"text": "$肥"},"\n","\"",{"text": "U$"},{"text": "U$"},{"text": "U$"},"\n"],{"text": "\n- x8 ","color": "gray"},{"translate": "_your_namespace.brown_egg","fallback": "Brown Egg","color": "gray"},{"text": "\n- x1 ","color": "gray"},{"translate": "_your_namespace.beetroot","fallback": "Beetroot","color": "gray"}]}},
+				{"text": "0","hover_event": {"action": "show_text","value": [{"translate": "_your_namespace.super_stone","fallback": "Super Stone","color": "yellow"},[{"text":"\n","color": "gray"}, {"translate": "_your_namespace.click_to_open_this_page","fallback": "Click to open this page"}]]},"click_event": {"action": "show_dialog","dialog": "_your_namespace:manual/page_31"}},
+				"\n\n\n\n\n\n\n\n\n\n\n\n\n"
 			],
 			"width": 140
 		}

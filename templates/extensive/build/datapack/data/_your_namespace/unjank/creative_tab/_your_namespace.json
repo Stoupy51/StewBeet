@@ -1,0 +1,69 @@
+{
+	"icon": {
+		"id": "minecraft:recovery_compass",
+		"components": {
+			"minecraft:custom_data": {
+				"smithed": {"dict": {"ingot": {"steel": true}},"id": "_your_namespace:steel_ingot","origin": "_your_namespace","ignore": {"functionality": true,"crafting": true}},
+				"_your_namespace": {"steel_ingot": true}
+			},
+			"minecraft:lore": [
+				[{"translate": "_your_namespace.smelted_from","fallback": "Smelted from ","color": "gray","italic": false},{"text": "聍","font": "_your_namespace:renders"},[{"text":" ","color": "gray","italic": false}, {"translate": "_your_namespace.raw_steel_2","fallback": "raw steel"}]],
+				["",{"text": "ꀁ","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"translate": "_your_namespace.extensive_template","fallback": "Extensive Template","color": "white","italic": false,"font": "_your_namespace:tooltip"}," ",{"text": "聎","font": "_your_namespace:renders","color": "white","italic": false}]
+			],
+			"minecraft:item_model": "_your_namespace:steel_ingot",
+			"minecraft:item_name": {
+				"translate": "_your_namespace.steel_ingot","fallback": "Steel Ingot"
+			}
+		}
+	},
+	"title": "Extensive Template",
+	"items": [
+		{
+			"type": "unjank:loot",
+			"loot": [
+				"_your_namespace:i/steel_ingot",
+				"_your_namespace:i/steel_nugget",
+				"_your_namespace:i/raw_steel",
+				"_your_namespace:i/steel_dust",
+				"_your_namespace:i/steel_stick",
+				"_your_namespace:i/steel_block",
+				"_your_namespace:i/steel_ore",
+				"_your_namespace:i/deepslate_steel_ore",
+				"_your_namespace:i/raw_steel_block",
+				"_your_namespace:i/steel_helmet",
+				"_your_namespace:i/steel_chestplate",
+				"_your_namespace:i/steel_leggings",
+				"_your_namespace:i/steel_boots",
+				"_your_namespace:i/steel_sword",
+				"_your_namespace:i/steel_pickaxe",
+				"_your_namespace:i/steel_axe",
+				"_your_namespace:i/steel_shovel",
+				"_your_namespace:i/steel_hoe",
+				"_your_namespace:i/stone_stick",
+				"_your_namespace:i/stone_rod",
+				"_your_namespace:i/shazinho",
+				"_your_namespace:i/super_stone",
+				"_your_namespace:i/stewbeet_painting",
+				"_your_namespace:i/manual",
+				"_your_namespace:i/vb_no_facing",
+				"_your_namespace:i/vb_visual_facing",
+				"_your_namespace:i/vb_block_facing",
+				"_your_namespace:i/vb_block_states",
+				"_your_namespace:i/vb_contents",
+				"_your_namespace:i/vb_contents_player",
+				"_your_namespace:i/vb_contents_frame",
+				"_your_namespace:i/chair",
+				"_your_namespace:i/crate",
+				"_your_namespace:i/plank_slab",
+				"_your_namespace:i/plank_stairs",
+				"_your_namespace:i/fast_furnace",
+				"_your_namespace:i/ruby_ore",
+				"_your_namespace:i/lamp",
+				"_your_namespace:i/beer_mug",
+				"_your_namespace:i/beer",
+				"_your_namespace:i/bolt",
+				"_your_namespace:i/crossbow"
+			]
+		}
+	]
+}

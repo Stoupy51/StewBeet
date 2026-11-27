@@ -1,11 +1,11 @@
 {
 	"asset_id": "_your_namespace:stewbeet_painting_2x2",
 	"author": {
-		"text": "Stoupy",
+		"translate": "_your_namespace.stoupy","fallback": "Stoupy",
 		"color": "yellow"
 	},
 	"title": {
-		"text": "Da' Icon",
+		"translate": "_your_namespace.da_icon","fallback": "Da' Icon",
 		"color": "gray"
 	},
 	"width": 2,

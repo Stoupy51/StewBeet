@@ -25,6 +25,10 @@ if TYPE_CHECKING:
 @dataclass(kw_only=True, slots=True)
 class CategoryBrowserPage(Page):
 	""" The "Category browser" page: one clickable cell per category page. """
+	columns: int | None = None
+	""" Cells per row, None to follow ``ManualConfig.max_items_per_row``. """
+	content_offset: tuple[int, int] = (0, 0)
+	""" Pixels moving the grid right and down: x exactly, y in whole lines of text (9 pixels), rounded. """
 
 	def build(self, manual: Manual) -> list[TextComponent]:
 		""" Draw the case-grid background glyph and overlay one clickable cell per category page, showing its first item. """
@@ -35,5 +39,6 @@ class CategoryBrowserPage(Page):
 			component["hover_event"]["components"]["item_name"] = {"text": categories[index].title, "color": "white"}
 			component["click_event"] = {"action": "change_page", "page": PageRef(anchor=categories[index].anchor)}
 
-		return grid_page(manual, "categories_page", [category.items[0] for category in categories], link_to_category)
+		items: list[str] = [category.items[0] for category in categories]
+		return grid_page(manual, "categories_page", items, link_to_category, self.columns, self.content_offset)
 
