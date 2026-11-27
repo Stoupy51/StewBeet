@@ -31,19 +31,25 @@ def centred_shape(shape: list[str]) -> list[str]:
 
 
 def crop_to_grid(template: Image.Image) -> Image.Image:
-	""" A crafting template up to its first blank column, the one separating the grid from the result slot.
+	""" A crafting template up to the first blank column after its first drawn one, the one separating the grid from the result slot.
 
-	>>> crop_to_grid(Image.new("RGBA", (4, 2), (0, 0, 0, 255))).size
+	>>> crop_to_grid(Image.new("RGBA", (4, 2))).size
 	(4, 2)
-	>>> template = Image.new("RGBA", (5, 2))
+	>>> template = Image.new("RGBA", (6, 2))
 	>>> template.paste((0, 0, 0, 255), (0, 0, 2, 2))
-	>>> template.paste((0, 0, 0, 255), (4, 0, 5, 2))
+	>>> template.paste((0, 0, 0, 255), (5, 0, 6, 2))
 	>>> crop_to_grid(template).size
 	(2, 2)
+	>>> template = Image.new("RGBA", (6, 2))
+	>>> template.paste((0, 0, 0, 255), (1, 0, 3, 2))
+	>>> crop_to_grid(template).size
+	(3, 2)
 	"""
 	alpha = template.getchannel("A")
-	blank = next((x for x in range(template.width) if alpha.crop((x, 0, x + 1, template.height)).getbbox() is None), template.width)
-	return template.crop((0, 0, blank, template.height))
+	drawn: list[bool] = [alpha.crop((x, 0, x + 1, template.height)).getbbox() is not None for x in range(template.width)]
+	first = next((x for x, column in enumerate(drawn) if column), None)
+	end = template.width if first is None else next((x for x in range(first, template.width) if not drawn[x]), template.width)
+	return template.crop((0, 0, end, template.height))
 
 
 def invisible_copy(component: JsonDict) -> JsonDict:
