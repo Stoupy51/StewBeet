@@ -1,0 +1,9 @@
+🔁 custom_blocks_ticking
+==============================================
+
+.. automodule:: stewbeet.plugins.finalyze.custom_blocks_ticking
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.finalyze.custom_blocks_ticking.silent
