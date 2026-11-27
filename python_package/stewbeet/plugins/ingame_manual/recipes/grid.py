@@ -7,9 +7,13 @@ __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
 from beet.core.utils import TextComponent
+from PIL import Image
 from stouputils.typing import JsonDict
 
 from ..glyphs import INVISIBLE_ITEM_WIDTH, MICRO_NONE_FONT, SMALL_NONE_FONT, VERY_SMALL_NONE_FONT
+
+GRID_END_PAD: str = SMALL_NONE_FONT + VERY_SMALL_NONE_FONT
+""" Ends every line of a grid shown without its result, balancing the blank opening them so the dialog centers the grid. """
 
 
 # Functions
@@ -26,6 +30,22 @@ def centred_shape(shape: list[str]) -> list[str]:
 	return shape
 
 
+def crop_to_grid(template: Image.Image) -> Image.Image:
+	""" A crafting template up to its first blank column, the one separating the grid from the result slot.
+
+	>>> crop_to_grid(Image.new("RGBA", (4, 2), (0, 0, 0, 255))).size
+	(4, 2)
+	>>> template = Image.new("RGBA", (5, 2))
+	>>> template.paste((0, 0, 0, 255), (0, 0, 2, 2))
+	>>> template.paste((0, 0, 0, 255), (4, 0, 5, 2))
+	>>> crop_to_grid(template).size
+	(2, 2)
+	"""
+	alpha = template.getchannel("A")
+	blank = next((x for x in range(template.width) if alpha.crop((x, 0, x + 1, template.height)).getbbox() is None), template.width)
+	return template.crop((0, 0, blank, template.height))
+
+
 def invisible_copy(component: JsonDict) -> JsonDict:
 	""" A copy of a component drawn as blank space, keeping its hover and click. """
 	copy: JsonDict = component.copy()
@@ -40,23 +60,37 @@ def append_grid(
 	dialog_filler: str | None,
 	columns: int,
 	small: bool,
+	result_beside: bool = True,
 ) -> None:
 	""" Each row of the grid on two lines, its ingredients then the same components blank, so a cell hovers over its whole height.
 
 	Args:
-		dialog_filler: What ends a row in a dialog after padding it to `columns` cells, None outside a dialog.
+		dialog_filler: What ends a row in a dialog after padding it to `columns` cells, None outside a dialog, empty for no filler.
 		small:         Whether the grid is the small one, whose blank lines a dialog leaves unpadded.
+		result_beside: Whether the result is placed right of the rows, which fills the lines a dialog would otherwise pad.
 	"""
 	for index, line in enumerate(shape):
 		for i in range(2):
 			content.append(SMALL_NONE_FONT)
 			content.extend(grid_cell(symbol, ingredients, i) for symbol in line)
-			if dialog_filler is not None and index != 1 and (not small or i != 1):
+			if dialog_filler is not None and not (result_beside and result_on_line(index, i, small)):
 				content.append(INVISIBLE_ITEM_WIDTH * max(0, columns - len(line)))
-				content.append(dialog_filler)
+				if dialog_filler:
+					content.append(dialog_filler)
 			content.append("\n")
 	if len(shape) == 1 and len(shape[0]) < 3:
 		content.append("\n")
+
+
+def result_on_line(row: int, half: int, small: bool) -> bool:
+	""" Whether the result is placed on line `half` of grid row `row`: both lines of the middle row, the second only of a small grid.
+
+	>>> [result_on_line(row, half, small=False) for row in range(3) for half in range(2)]
+	[False, False, True, True, False, False]
+	>>> result_on_line(0, 1, small=True)
+	True
+	"""
+	return row == 1 or (small and half == 1)
 
 
 def grid_cell(symbol: str, ingredients: dict[str, JsonDict], half: int) -> TextComponent:
@@ -99,6 +133,11 @@ def place_result_beside(
 	if use_dialog:
 		content.insert(break_line_pos + 2, VERY_SMALL_NONE_FONT + MICRO_NONE_FONT)
 
+	pad_short_grid(content, shape, full_width)
+
+
+def pad_short_grid(content: list[TextComponent], shape: list[str], full_width: int) -> None:
+	""" Blank lines under a grid of `full_width` columns shorter than three rows, so the buttons below keep their place. """
 	if len(shape) < 3 and len(shape[0]) == full_width:
 		content.append("\n\n")
 		if len(shape) < 2:

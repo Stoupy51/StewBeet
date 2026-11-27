@@ -32,7 +32,7 @@ from ..refs import PageRef
 from .buttons import WikiButtonRender
 from .collection import collect_for_item, convert_shapeless_to_shaped
 from .components import build_item_component, high_res_font_from_ingredient
-from .grid import invisible_copy
+from .grid import GRID_END_PAD, invisible_copy
 from .registry import get_craft_renderer
 
 if TYPE_CHECKING:
@@ -101,14 +101,21 @@ class RecipeRenderer:
 		content.append(component if i == 0 else invisible_copy(component))
 
 	# --- main craft content ---
-	def render_main(self, craft: JsonDict, name: str, page_font: str, in_lore: bool = False) -> list[TextComponent]:
-		""" Build the full text-component layout for a single craft shown on a page. """
+	def render_main(
+		self, craft: JsonDict, name: str, page_font: str, in_lore: bool = False, show_result: bool = True
+	) -> list[TextComponent]:
+		""" Build the full text-component layout for a single craft shown on a page.
+
+		``show_result=False`` draws a crafting grid without its result slot, in high resolution only.
+		"""
 		craft_type = craft["type"]
 		content: list[TextComponent] = [{"text": "", "font": self.config.font, "color": "white"}]
 
 		if craft_type == "crafting_shapeless":
 			craft = convert_shapeless_to_shaped(craft)
 			craft_type = "crafting_shaped"
+		if not show_result:
+			craft = {**craft, "hide_result": True}
 
 		renderer = get_craft_renderer(craft_type)
 		if renderer is None:
@@ -126,7 +133,8 @@ class RecipeRenderer:
 		titled = item_id_to_name(name) + "\n"
 		content.append({"text": titled, "font": "minecraft:default", "color": "black", "underlined": True})
 		padding: str = MICRO_NONE_FONT if use_dialog else ""
-		content.append(SMALL_NONE_FONT + padding + page_font + "\n")
+		trailing: str = GRID_END_PAD if use_dialog and craft.get("hide_result") else ""
+		content.append(SMALL_NONE_FONT + padding + page_font + trailing + "\n")
 
 		renderer.build_image(self, name, page_font, craft)
 

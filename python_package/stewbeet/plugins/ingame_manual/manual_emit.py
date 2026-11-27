@@ -48,7 +48,9 @@ from .glyphs import (
 	NONE_FONT,
 	PULVERIZING_FONT,
 	SHAPED_2X2_FONT,
+	SHAPED_2X2_GRID_FONT,
 	SHAPED_3X3_FONT,
+	SHAPED_3X3_GRID_FONT,
 	SMALL_NONE_FONT,
 	STONECUTTING_FONT,
 	VERY_SMALL_NONE_FONT,
@@ -59,6 +61,7 @@ from .glyphs import (
 	WIKI_RESULT_OF_CRAFT_FONT,
 )
 from .paths import TEMPLATES_PATH, template_path
+from .recipes.grid import crop_to_grid
 
 if TYPE_CHECKING:
 	from .manual import Manual
@@ -86,6 +89,9 @@ def register_static_assets(manual: Manual) -> None:
 	if manual.config.high_resolution:
 		for n in ("shaped_2x2", "shaped_3x3", "furnace", "stonecutting", "pulverizing", "mining"):
 			tex(f"font/{n}", f"{n}.png")
+		for size in ("2x2", "3x3"):
+			grid = crop_to_grid(Image.open(f"{TEMPLATES_PATH}/shaped_{size}.png").convert("RGBA"))
+			assets.textures[f"font/shaped_{size}_grid"] = Texture(grid)
 		if manual.has_forge_3x3:
 			tex("font/awakened_forge_3x3", "awakened_forge_3x3.png")
 		if manual.has_forge_3x4:
@@ -119,6 +125,8 @@ def register_static_providers(manual: Manual) -> None:
 	if manual.config.high_resolution:
 		add(SHAPED_3X3_FONT, f("shaped_3x3"), 1, 58)
 		add(SHAPED_2X2_FONT, f("shaped_2x2"), 1, 58)
+		add(SHAPED_3X3_GRID_FONT, f("shaped_3x3_grid"), 1, 58)
+		add(SHAPED_2X2_GRID_FONT, f("shaped_2x2_grid"), 1, 58)
 		add(FURNACE_FONT, f("furnace"), 1, 58)
 		add(STONECUTTING_FONT, f("stonecutting"), 4, 58)
 		add(PULVERIZING_FONT, f("pulverizing"), 4, 58)

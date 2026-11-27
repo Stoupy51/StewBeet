@@ -57,6 +57,9 @@ INVISIBLE_ITEM_FONT: str =          get_font(0x0035)
 INVISIBLE_ITEM_WIDTH: str =         INVISIBLE_ITEM_FONT + MICRO_NONE_FONT
 BOOK_FONT: str =                    get_font(0x0036)
 AWAKENED_FORGE_STRUCT_FONT: tuple[str, str] = (get_font(0x0037), get_font(0x0038))
+SHAPED_2X2_GRID_FONT: str =         get_font(0x0039)
+SHAPED_3X3_GRID_FONT: str =         get_font(0x003A)
+""" The crafting grids without their result slot, for a page showing the result elsewhere. """
 
 HOVER_EQUIVALENTS: dict[str, str] = {
 	SHAPED_2X2_FONT: HOVER_SHAPED_2X2_FONT,

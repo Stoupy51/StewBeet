@@ -62,6 +62,8 @@ manual.on_item_page(change_steel_ingot)
 
 Pour composer une page sur un `book_texture` personnalisé, `ItemPage.content_offset = (x, y)` déplace la boîte et la recipe ensemble, `x` au pixel près et `y` en lignes de texte entières (9 pixels). `ItemPage.box_offset` déplace la boîte seule vers le bas, ou vers le haut en négatif, au pixel près. La boîte garde son infobulle sur chaque ligne qu'elle couvre.
 
+`ItemPage.show_result = False` dessine une grille de craft sans sa case de résultat, pour une page dont la boîte montre déjà le résultat. La grille reste centrée seule et ne fonctionne qu'en haute résolution.
+
 ---
 
 ## API d'extension
@@ -261,6 +263,20 @@ def craft_first(m):
     page = m.get_page_for_item("stardust_fragment")
     if page is not None:
         page.main_craft = next(c for c in page.crafts if c["type"].startswith("crafting"))
+```
+
+### Afficher une recipe sans item custom
+
+Une recipe dont les ingrédients et le résultat sont tous vanilla n'a pas de page propre : affichez-la sur la page d'un de vos items. Un craft est le dict d'un objet recipe, avec un `result` puisque ce n'est pas l'item de la page. Ajoutez-le à `page.crafts` pour un bouton wiki montrant la recipe au survol, ou définissez-le comme `page.main_craft` pour le dessiner sur la page.
+
+```python
+furnace = CraftingShapedRecipe(
+    shape=["###", "# #", "###"], ingredients={"#": Ingr("minecraft:cobblestone")}, result=Ingr("minecraft:furnace"),
+).to_dict()
+def show_furnace(page: ItemPage, manual: Manual) -> None:
+    if page.anchor == "item:steel_block":
+        page.crafts.append(furnace)
+manual.on_item_page(show_furnace)
 ```
 
 ### Relier deux pages d'items liés

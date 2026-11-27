@@ -81,6 +81,8 @@ class ItemPage(Page):
 	""" What this page shows, None to follow ``ManualConfig.item_layout``. """
 	box_gap: int | None = None
 	""" Pixels between the box and the recipe in the ``"item+craft"`` layout, None to follow ``ManualConfig.item_box_gap``. """
+	show_result: bool = True
+	""" Whether a crafting grid shows its result slot, False when the page shows the result elsewhere (high resolution only). """
 	box_offset: int = 0
 	""" Pixels moving the box down, negative to move it up, without moving the recipe beside it. """
 	content_offset: tuple[int, int] = (0, 0)
@@ -155,7 +157,7 @@ class ItemPage(Page):
 		if craft is None:
 			return self.item_box(manual, name)
 
-		content: list[TextComponent] = list(manual.recipes.render_main(craft, name, ""))
+		content: list[TextComponent] = list(manual.recipes.render_main(craft, name, "", show_result=self.show_result))
 		if layout == "craft":
 			return content
 		gap: int = manual.config.item_box_gap if self.box_gap is None else self.box_gap

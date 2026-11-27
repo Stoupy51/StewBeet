@@ -62,6 +62,8 @@ manual.on_item_page(change_steel_ingot)
 
 To lay a page out over a custom `book_texture`, `ItemPage.content_offset = (x, y)` moves the box and the recipe together, `x` to the pixel and `y` in whole lines of text (9 pixels). `ItemPage.box_offset` moves the box alone down, or up when negative, to the pixel. The box keeps its tooltip over every line it covers.
 
+`ItemPage.show_result = False` draws a crafting grid without its result slot, for a page whose box already shows the result. The grid stays centered on its own and only works in high resolution.
+
 ---
 
 ## Extension API
@@ -261,6 +263,20 @@ def craft_first(m):
     page = m.get_page_for_item("stardust_fragment")
     if page is not None:
         page.main_craft = next(c for c in page.crafts if c["type"].startswith("crafting"))
+```
+
+### Show a recipe that uses no custom item
+
+A recipe whose ingredients and result are all vanilla has no page of its own: show it on the page of one of your items. A craft is the dict of a recipe object, with a `result` since it is not the item of the page. Append it to `page.crafts` for a wiki button with the recipe on hover, or set it as `page.main_craft` to draw it on the page.
+
+```python
+furnace = CraftingShapedRecipe(
+    shape=["###", "# #", "###"], ingredients={"#": Ingr("minecraft:cobblestone")}, result=Ingr("minecraft:furnace"),
+).to_dict()
+def show_furnace(page: ItemPage, manual: Manual) -> None:
+    if page.anchor == "item:steel_block":
+        page.crafts.append(furnace)
+manual.on_item_page(show_furnace)
 ```
 
 ### Cross-link two related item pages

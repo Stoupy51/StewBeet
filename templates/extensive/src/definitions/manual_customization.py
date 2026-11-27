@@ -4,7 +4,9 @@ from PIL import Image
 from stewbeet import (
 	BakedText,
 	ButtonLayout,
+	CraftingShapedRecipe,
 	CustomPage,
+	Ingr,
 	ItemPage,
 	Manual,
 	Mem,
@@ -109,9 +111,11 @@ def main() -> None:
 			# The box centered on the photo and the craft on the CRAFTING frame of the book below:
 			# both 8 pixels right and 4 lines down, the box 19 pixels left of the craft and 9 pixels higher than it
 			page.layout = "item+craft"
-			page.box_gap = 19
-			page.content_offset = (8, 36)
+			page.box_gap = 48
+			page.content_offset = (-2, 36)
 			page.box_offset = -9
+			# The box already shows the result, so the grid is drawn without its own result slot
+			page.show_result = False
 
 			# Book art by yunaorin, 5 texture pixels per art pixel, shown at 6 so its CRAFTING frame holds the craft.
 			# The book keeps book.png's 300 pixel width, so this 1200x1320 canvas, cut into tiles, draws it 330 pixels tall.
@@ -126,6 +130,20 @@ def main() -> None:
 			home.putpixel((15, 15), (0, 0, 0, 1))
 			page.home_texture = home
 	manual.on_item_page(change_item_layouts)
+
+	# 3c) A recipe with no custom item has no page of its own, so it shows on the page of an item of yours.
+	#     A craft is the dict of a recipe object, with a result since it is not the item of the page.
+	furnace = CraftingShapedRecipe(
+		shape=["###", "# #", "###"], ingredients={"#": Ingr("minecraft:cobblestone")}, result=Ingr("minecraft:furnace"),
+	).to_dict()
+	def show_vanilla_crafts(page: ItemPage, manual: Manual) -> None:
+		if page.anchor == "item:steel_block":
+			# As a wiki button among the others, its recipe on hover
+			page.crafts.append(furnace)
+		elif page.anchor == "item:super_stone":
+			# As the main recipe of the page
+			page.main_craft = furnace
+	manual.on_item_page(show_vanilla_crafts)
 
 	# 4) Phase hook: edit one specific item's page once the default pages exist.
 	#    Hooks run during manual creation, so get_page_for_item() returns a real page here.
