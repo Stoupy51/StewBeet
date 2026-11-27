@@ -23,7 +23,7 @@ Item.from_id("life_crystal").loot_table
 - `loot_table/i/<item>.json` : une par item, avec son item de base et chaque component de sa définition, les components écrits `"!name"` étant retirés.
 - `loot_table/i/<item>_x<count>.json` pour chaque nombre autre que 1 que donne l'une des recipes de l'item, comme `i/stardust_ingot_x5`.
 - `loot_table/i/<namespace>_manual.json` quand le pack a un manuel : la même que `i/manual`, sous un nom qu'aucun autre pack n'utilise.
-- `loot_table/creative_loot_table.json` : un exemplaire de chaque item.
+- `unjank/creative_tab/<namespace>.json` : un onglet de l'inventaire creative au nom du projet, avec un exemplaire de chaque item et le premier item pour icône. Seuls les joueurs qui ont le mod [Unjank](https://github.com/Smithed-MC/unjank) le voient.
 - `function/_give_all` : des coffres de 27 items, nommés "Chest [1/3]" et ainsi de suite, avec le lore source.
 
 Un item avec `skip_gives=True` n'a droit à rien de tout cela.

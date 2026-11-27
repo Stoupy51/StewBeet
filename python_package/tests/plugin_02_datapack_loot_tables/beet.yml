@@ -1,7 +1,7 @@
 
 # Test: stewbeet.plugins.datapack.loot_tables
 # Verifies per-item loot tables, skip_gives exclusion, count variant tables,
-# creative_loot_table, and the _give_all function.
+# the Unjank creative tab, and the _give_all function.
 
 id: "tns"
 name: "Test Datapack Loot Tables"

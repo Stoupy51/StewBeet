@@ -5,8 +5,10 @@ from stouputils.lazy import ALWAYS_LAZY
 __lazy_modules__ = ALWAYS_LAZY
 
 # Imports
+from typing import ClassVar
+
 import stouputils as stp
-from beet import Context, LootTable
+from beet import Context, JsonFile, LootTable, NamespaceFileScope
 from stouputils.typing import JsonDict
 
 from ....core.__memory__ import Mem
@@ -18,6 +20,12 @@ from ....core.constants import ITEMS_LOOT_FOLDER
 from ....core.definitions_helper.completion import resolve_use_remainders
 from ....core.utils.io import write_function
 from ....core.utils.loot_table import loot_function, loot_modifiers
+
+
+class CreativeTab(JsonFile):
+	""" A creative inventory tab read by the [Unjank](https://github.com/Smithed-MC/unjank) mod. """
+	scope: ClassVar[NamespaceFileScope] = ("unjank", "creative_tab")
+	extension: ClassVar[str] = ".json"
 
 
 # Main entry point
@@ -36,13 +44,10 @@ def beet_default(ctx: Context):
 	assert ctx.project_id, "Project ID is not set. Please set it in the project configuration."
 	ns: str = ctx.project_id
 
-	# Creative loot table (sort of give all loot table)
-	creative_loot_table: JsonDict = {"pools": []}
 	not_skipped_items: list[str] = [item for item in Mem.definitions if not Item.from_id(item).skip_gives]
-	for item in not_skipped_items:
-		obj = Item.from_id(item)
+	objects: list[Item] = [Item.from_id(item) for item in not_skipped_items]
+	for obj in objects:
 		write_item_loot_table(obj)
-		creative_loot_table["pools"].append({"rolls": 1, "entries":[{"type":"minecraft:loot_table","value":obj.loot_table}] })
 	for item in not_skipped_items:
 		write_count_loot_tables(item, Item.from_id(item))
 
@@ -59,8 +64,14 @@ def beet_default(ctx: Context):
 		}
 		Resource(LootTable, f"{ITEMS_LOOT_FOLDER}/{ns}_manual").write(LootTable(stp.json_dump(loot_table, max_level=10)))
 
-	if creative_loot_table["pools"]:
-		ctx.data[ns].loot_tables["creative_loot_table"] = LootTable(stp.json_dump(creative_loot_table, max_level=2))
+	if objects:
+		creative_tab: JsonDict = {
+			"icon": {"id": objects[0].base_item, "components": component_patch(objects[0])},
+			"title": ctx.project_name,
+			"items": [{"type": "unjank:loot", "loot": [obj.loot_table for obj in objects]}],
+		}
+		ctx.data.extend_namespace.append(CreativeTab)
+		ctx.data[f"{ns}:{ns}"] = CreativeTab(stp.json_dump(creative_tab, max_level=3))
 
 	lore: str = stp.json_dump(ctx.meta["stewbeet"]["source_lore"], max_level=0).strip()
 	write_function(f"{ns}:_give_all", "\n" + "\n\n".join(give_all_chests(not_skipped_items, lore)) + "\n\n")
@@ -68,12 +79,7 @@ def beet_default(ctx: Context):
 
 def write_item_loot_table(obj: Item) -> None:
 	""" Write the loot table giving one of an item, its base item with every component set, a `!` one removed. """
-	set_components: JsonDict = loot_function("minecraft:set_components", components={})
-	for k, v in obj.components.items():
-		if k.startswith("!"):
-			set_components["components"][f"!minecraft:{k[1:]}"] = {}
-		else:
-			set_components["components"][f"minecraft:{k}"] = v
+	set_components: JsonDict = loot_function("minecraft:set_components", components=component_patch(obj))
 	loot_table: JsonDict = {
 		"pools": [{
 			"rolls": 1,
@@ -85,6 +91,17 @@ def write_item_loot_table(obj: Item) -> None:
 		}]
 	}
 	obj.loot_table.write(LootTable(stp.json_dump(loot_table, max_level = 10)))
+
+
+def component_patch(obj: Item) -> JsonDict:
+	""" The item's components as a vanilla component patch, a `!` one written as a removal. """
+	patch: JsonDict = {}
+	for k, v in obj.components.items():
+		if k.startswith("!"):
+			patch[f"!minecraft:{k[1:]}"] = {}
+		else:
+			patch[f"minecraft:{k}"] = v
+	return patch
 
 
 def write_count_loot_tables(item: str, obj: Item) -> None:
