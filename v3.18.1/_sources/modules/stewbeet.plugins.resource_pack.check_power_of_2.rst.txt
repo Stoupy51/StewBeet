@@ -1,0 +1,9 @@
+📐 check_power_of_2
+====================================
+
+.. automodule:: stewbeet.plugins.resource_pack.check_power_of_2
+
+silent
+------------
+
+.. automodule:: stewbeet.plugins.resource_pack.check_power_of_2.silent

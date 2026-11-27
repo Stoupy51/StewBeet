@@ -31,12 +31,12 @@
     aria-haspopup="true"
     aria-expanded="false"
     data-url="https://stoupy51.github.io/stewbeet/switcher.json"
-    data-current="3.18.0"
+    data-current="3.18.1"
   >
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
       <path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"></path>
     </svg>
-    <span>3.18.0</span>
+    <span>3.18.1</span>
   </button>
   <ul role="menu" aria-hidden="true"></ul>
 </div>
@@ -463,11 +463,27 @@ content whose element positions are significant (e.g. a RawPage relying on absol
 <dd><em class="sig-param"><span class="n"><span class="pre">home_button</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">transformers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Transformer</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">optimize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">content_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple[int</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">int]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">0)</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/pages/browser_page.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.pages.browser_page.CategoryBrowserPage" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#stewbeet.plugins.ingame_manual.pages.base.Page" title="stewbeet.plugins.ingame_manual.pages.base.Page"><code class="xref py py-class docutils literal notranslate"><span class="pre">Page</span></code></a></p>
 <p>The “Category browser” page: one clickable cell per category page.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.pages.browser_page.CategoryBrowserPage.columns">
+<span class="sig-name descname"><span class="pre">columns</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/pages/browser_page.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.pages.browser_page.CategoryBrowserPage.columns" title="Link to this definition">#</a></dt>
+<dd><p>Cells per row, None to follow <code class="docutils literal notranslate"><span class="pre">ManualConfig.max_items_per_row</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.pages.browser_page.CategoryBrowserPage.content_offset">
+<span class="sig-name descname"><span class="pre">content_offset</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/pages/browser_page.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.pages.browser_page.CategoryBrowserPage.content_offset" title="Link to this definition">#</a></dt>
+<dd><p>Pixels moving the grid right and down: x exactly, y in whole lines of text (9 pixels), rounded.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.pages.browser_page.CategoryBrowserPage.build">
 <span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span>
@@ -536,13 +552,19 @@ clickable per-item glyphs are overlaid on top, each linking to its item page via
 <dd><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">decorate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">JsonDict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0)</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">TextComponent</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/pages/category_page.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.pages.category_page.grid_page" title="Link to this definition">#</a></dt>
 <dd><p>A page of item cases over the glyph <code class="docutils literal notranslate"><span class="pre">font/category/&lt;file_name&gt;.png</span></code>, each case overlaid with its item’s component.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>decorate</strong> – Called with each item’s index and component before the component is laid out, to change what it shows or does.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>decorate</strong> – Called with each item’s index and component before the component is laid out, to change what it shows or does.</p></li>
+<li><p><strong>columns</strong> – Cells per row, None for <code class="docutils literal notranslate"><span class="pre">ManualConfig.max_items_per_row</span></code>.</p></li>
+<li><p><strong>offset</strong> – Pixels moving the grid right and down, as <a class="reference internal" href="#stewbeet.plugins.ingame_manual.pages.item_page.ItemPage.moved" title="stewbeet.plugins.ingame_manual.pages.item_page.ItemPage.moved"><code class="xref py py-meth docutils literal notranslate"><span class="pre">moved()</span></code></a> does.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -715,6 +737,7 @@ emitted as deferred <code class="xref py py-class docutils literal notranslate">
 <dd><em class="sig-param"><span class="n"><span class="pre">main_craft</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">JsonDict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="stewbeet.plugins.ingame_manual.html#stewbeet.plugins.ingame_manual.config.ItemLayout" title="stewbeet.plugins.ingame_manual.config.ItemLayout"><span class="pre">ItemLayout</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">box_gap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">show_result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">box_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">content_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple[int</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">int]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0</span></span></em>,</dd>
@@ -750,6 +773,12 @@ mutated by <code class="docutils literal notranslate"><span class="pre">on_item_
 <dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.pages.item_page.ItemPage.box_gap">
 <span class="sig-name descname"><span class="pre">box_gap</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/pages/item_page.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.pages.item_page.ItemPage.box_gap" title="Link to this definition">#</a></dt>
 <dd><p>Pixels between the box and the recipe in the <code class="docutils literal notranslate"><span class="pre">&quot;item+craft&quot;</span></code> layout, None to follow <code class="docutils literal notranslate"><span class="pre">ManualConfig.item_box_gap</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stewbeet.plugins.ingame_manual.pages.item_page.ItemPage.show_result">
+<span class="sig-name descname"><span class="pre">show_result</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="reference external" href="https://github.com/Stoupy51/stewbeet/blob/main/stewbeet/plugins/ingame_manual/pages/item_page.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#stewbeet.plugins.ingame_manual.pages.item_page.ItemPage.show_result" title="Link to this definition">#</a></dt>
+<dd><p>Whether a crafting grid shows its result slot, False when the page shows the result elsewhere (high resolution only).</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1315,6 +1344,8 @@ clickable links).</p>
 </li>
 <li><a class="reference internal" href="#module-stewbeet.plugins.ingame_manual.pages.browser_page">browser_​page</a><ul>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.pages.browser_page.CategoryBrowserPage"><code class="docutils literal notranslate"><span class="pre">CategoryBrowserPage</span></code></a><ul>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.pages.browser_page.CategoryBrowserPage.columns"><code class="docutils literal notranslate"><span class="pre">CategoryBrowserPage​.columns</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.pages.browser_page.CategoryBrowserPage.content_offset"><code class="docutils literal notranslate"><span class="pre">CategoryBrowserPage​.content_​offset</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.pages.browser_page.CategoryBrowserPage.build"><code class="docutils literal notranslate"><span class="pre">CategoryBrowserPage​.build()</span></code></a></li>
 </ul>
 </li>
@@ -1360,6 +1391,7 @@ clickable links).</p>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.pages.item_page.ItemPage.main_craft"><code class="docutils literal notranslate"><span class="pre">ItemPage​.main_​craft</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.pages.item_page.ItemPage.layout"><code class="docutils literal notranslate"><span class="pre">ItemPage​.layout</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.pages.item_page.ItemPage.box_gap"><code class="docutils literal notranslate"><span class="pre">ItemPage​.box_​gap</span></code></a></li>
+<li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.pages.item_page.ItemPage.show_result"><code class="docutils literal notranslate"><span class="pre">ItemPage​.show_​result</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.pages.item_page.ItemPage.box_offset"><code class="docutils literal notranslate"><span class="pre">ItemPage​.box_​offset</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.pages.item_page.ItemPage.content_offset"><code class="docutils literal notranslate"><span class="pre">ItemPage​.content_​offset</span></code></a></li>
 <li><a class="reference internal" href="#stewbeet.plugins.ingame_manual.pages.item_page.ItemPage.buttons"><code class="docutils literal notranslate"><span class="pre">ItemPage​.buttons</span></code></a></li>
@@ -1481,5 +1513,5 @@ clickable links).</p>
   <label class="bz-overlay bz-overlay-primary" for="bz-sidebar-primary"></label>
   <label class="bz-overlay bz-overlay-secondary" for="bz-sidebar-secondary"></label>
   <input type="checkbox" name="bz-sidebar-primary" id="bz-sidebar-primary" aria-label="Toggle section navigation">
-  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=32290746"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
+  <input type="checkbox" name="bz-sidebar-secondary" id="bz-sidebar-secondary" aria-label="Toggle table of contents"><script src="../_static/documentation_options.js?v=9b697320"></script><script src="../_static/doctools.js?v=fd6eb6e6"></script><script src="../_static/sphinx_highlight.js?v=6ffebe34"></script><script src="../_static/clipboard.min.js?v=a7894cd8"></script><script src="../_static/copybutton.js?v=18a8d5f5"></script><script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script><script src="../_static/treeview.js?v=265ad9b8"></script></body>
 </html>
